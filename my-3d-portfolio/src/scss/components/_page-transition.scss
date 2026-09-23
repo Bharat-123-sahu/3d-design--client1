@@ -1,0 +1,15 @@
+.page-transition {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 9999;
+
+  background: #050505;
+
+  transform: scaleY(0);
+
+  transform-origin: top;
+
+  pointer-events: none;
+}

@@ -1,0 +1,28 @@
+:root {
+  --color-background: #000000;
+  --color-foreground: #ffffff;
+  --color-muted: #8a8a8a;
+
+  --color-accent-1: #29d9ff;
+  --color-accent-2: #f84f8f;
+  --color-accent-3: #bbff5c;
+
+  --font-primary: "Inter", sans-serif;
+
+  --text-huge: clamp(4rem, 10vw, 12rem);
+  --text-h1: clamp(3rem, 6vw, 6rem);
+  --text-h2: clamp(2rem, 4vw, 4rem);
+  --text-body: clamp(1rem, 1.2vw, 1.5rem);
+
+  --container-width: 1600px;
+
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+  --space-xl: 8rem;
+  --space-xxl: 16rem;
+
+  --transition-fast: 0.3s ease;
+  --transition-smooth: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}

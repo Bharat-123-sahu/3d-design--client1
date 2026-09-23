@@ -1,0 +1,23 @@
+#app {
+  width: 100%;
+  overflow: hidden;
+}
+
+.container {
+  width: min(
+    calc(100% - 3rem),
+    var(--container-width)
+  );
+
+  margin-inline: auto;
+}
+
+main {
+  width: 100%;
+}
+
+section {
+  position: relative;
+  width: 100%;
+  z-index: 2;
+}

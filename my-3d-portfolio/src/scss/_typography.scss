@@ -1,0 +1,30 @@
+body {
+  font-size: var(--text-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: var(--text-huge);
+}
+
+h2 {
+  font-size: var(--text-h1);
+}
+
+p {
+  color: var(--color-muted);
+}

@@ -1,0 +1,253 @@
+.thunder-intro {
+  --intro-blackout: 0.98;
+  --intro-reveal: 0;
+  --intro-spark-opacity: 0.08;
+  position: fixed;
+  inset: 0;
+  z-index: 180;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 24, 48, calc(0.12 * var(--intro-reveal))), transparent 34%),
+    rgba(0, 0, 0, var(--intro-blackout));
+  color: #fff7f4;
+  pointer-events: auto;
+  isolation: isolate;
+}
+
+.thunder-intro::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  content: "";
+  background:
+    radial-gradient(circle at 18% 42%, rgba(255, 24, 48, 0.12), transparent 22%),
+    radial-gradient(circle at 72% 52%, rgba(120, 0, 15, 0.2), transparent 30%),
+    linear-gradient(180deg, #020202 0%, #090205 58%, #030303 100%);
+  opacity: calc(0.16 + var(--intro-reveal) * 0.28);
+}
+
+.thunder-intro::after {
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  content: "";
+  background-image:
+    radial-gradient(circle, rgba(255, 58, 76, 0.8) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.42) 0 1px, transparent 1.6px);
+  background-position: 0 0, 35px 55px;
+  background-size: 118px 118px, 176px 176px;
+  opacity: var(--intro-spark-opacity);
+  filter: drop-shadow(0 0 10px rgba(255, 24, 48, 0.9));
+  animation: thunderSparkDrift 9s linear infinite;
+}
+
+.thunder-intro__veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 50% 52%, transparent calc(9% + var(--intro-reveal) * 24%), rgba(0, 0, 0, 0.72) calc(42% + var(--intro-reveal) * 16%)),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.72), transparent 44%, rgba(0, 0, 0, 0.7));
+  opacity: calc(1 - var(--intro-reveal) * 0.62);
+}
+
+.thunder-intro__atmosphere {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.thunder-intro__atmosphere span {
+  position: absolute;
+  width: 1px;
+  height: min(18vh, 120px);
+  background: linear-gradient(180deg, transparent, rgba(255, 36, 57, 0.76), transparent);
+  filter: blur(0.2px) drop-shadow(0 0 14px rgba(255, 36, 57, 0.9));
+  opacity: 0.18;
+  transform: rotate(62deg);
+  animation: thunderArcIdle 3.8s ease-in-out infinite;
+}
+
+.thunder-intro__atmosphere span:nth-child(1) { top: 22%; left: 14%; animation-delay: 0.2s; }
+.thunder-intro__atmosphere span:nth-child(2) { top: 68%; left: 24%; animation-delay: 1.1s; }
+.thunder-intro__atmosphere span:nth-child(3) { top: 28%; right: 18%; animation-delay: 1.9s; }
+.thunder-intro__atmosphere span:nth-child(4) { right: 30%; bottom: 18%; animation-delay: 2.7s; }
+.thunder-intro__atmosphere span:nth-child(5) { top: 48%; left: 50%; animation-delay: 3.3s; }
+
+.thunder-intro__copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: clamp(24px, 4vw, 38px);
+  width: min(calc(100% - 36px), 980px);
+  text-align: center;
+}
+
+.thunder-intro__title {
+  display: grid;
+  gap: 0.02em;
+  margin: 0;
+  font-size: clamp(3.15rem, 10vw, 9rem);
+  font-weight: 950;
+  line-height: 0.82;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 22px rgba(255, 20, 44, 0.22),
+    0 18px 60px rgba(0, 0, 0, 0.82);
+}
+
+.thunder-intro__line {
+  display: block;
+  will-change: transform, opacity, filter;
+}
+
+.thunder-intro__start {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: 132px;
+  min-height: 48px;
+  padding: 0 26px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 47, 68, 0.72);
+  border-radius: 7px;
+  background:
+    linear-gradient(135deg, rgba(255, 24, 48, 0.18), rgba(20, 0, 4, 0.72)),
+    rgba(5, 0, 2, 0.68);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 28px rgba(255, 24, 48, 0.28),
+    0 18px 64px rgba(0, 0, 0, 0.62);
+  color: #fff3f0;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  will-change: transform, opacity;
+}
+
+.thunder-intro__start::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgba(255, 42, 62, 0.66), transparent);
+  transform: translateX(-120%);
+  animation: thunderButtonTrace 2.8s ease-in-out infinite;
+}
+
+.thunder-intro__start::after {
+  position: absolute;
+  inset: 4px;
+  content: "";
+  border: 1px solid rgba(255, 96, 111, 0.18);
+  border-radius: 4px;
+  box-shadow: 0 0 18px rgba(255, 24, 48, 0.16) inset;
+}
+
+.thunder-intro__start:hover {
+  border-color: rgba(255, 112, 126, 0.96);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 0 38px rgba(255, 24, 48, 0.48),
+    0 22px 70px rgba(0, 0, 0, 0.66);
+}
+
+.thunder-intro__start span {
+  position: relative;
+  z-index: 1;
+}
+
+.is-intro-active {
+  overflow: hidden;
+}
+
+.is-intro-active #page-content,
+.is-intro-active .navbar,
+.is-intro-active .footer {
+  pointer-events: none;
+}
+
+:root[data-theme="light"] .thunder-intro {
+  color: #fff8f7;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 24, 48, calc(0.1 * var(--intro-reveal))), transparent 34%),
+    rgba(246, 248, 252, calc(var(--intro-blackout) * 0.98));
+}
+
+:root[data-theme="light"] .thunder-intro::before {
+  background:
+    radial-gradient(circle at 20% 45%, rgba(255, 24, 48, 0.16), transparent 26%),
+    linear-gradient(180deg, #eef2f8 0%, #f9fbff 100%);
+  opacity: calc(0.56 + var(--intro-reveal) * 0.1);
+}
+
+:root[data-theme="light"] .thunder-intro__title {
+  color: #251014;
+  text-shadow: 0 0 22px rgba(255, 24, 48, 0.16);
+}
+
+@media (max-width: 700px) {
+  .thunder-intro__copy {
+    gap: 24px;
+  }
+
+  .thunder-intro__title {
+    font-size: clamp(3rem, 18vw, 5.8rem);
+  }
+
+  .thunder-intro__start {
+    min-width: 118px;
+    min-height: 46px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thunder-intro::after,
+  .thunder-intro__atmosphere span,
+  .thunder-intro__start::before {
+    animation: none;
+  }
+
+  .thunder-intro::after {
+    opacity: calc(var(--intro-spark-opacity) * 0.55);
+  }
+}
+
+@keyframes thunderSparkDrift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-80px, 80px, 0);
+  }
+}
+
+@keyframes thunderArcIdle {
+  0%, 72%, 100% {
+    opacity: 0.05;
+    transform: rotate(62deg) scaleY(0.35);
+  }
+  76% {
+    opacity: 0.7;
+    transform: rotate(62deg) scaleY(1);
+  }
+  80% {
+    opacity: 0.22;
+    transform: rotate(62deg) scaleY(0.58);
+  }
+}
+
+@keyframes thunderButtonTrace {
+  0%, 68% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}

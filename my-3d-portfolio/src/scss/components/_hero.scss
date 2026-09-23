@@ -1,0 +1,49 @@
+@use "components/navbar";
+@use "components/footer";
+
+.placeholder-section {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: var(--space-xl);
+}
+
+.hero__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: 1200px;
+}
+
+.hero__title {
+  margin: 0;
+  span {
+    display: block;
+    color: var(--color-accent-1);
+    font-size: clamp(2rem, 4vw, 4rem);
+    text-transform: none;
+    letter-spacing: normal;
+  }
+}
+
+.hero__description {
+  font-size: var(--text-body);
+  max-width: 600px;
+}
+
+#hero-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}

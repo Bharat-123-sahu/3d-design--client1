@@ -1,0 +1,33 @@
+.footer {
+  padding: 3rem 0;
+}
+
+.footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+
+  padding-top: 2rem;
+}
+
+.footer__copyright {
+  font-size: 0.8rem;
+}
+
+.footer__links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer__links a {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+
+  transition: color var(--transition-fast);
+}
+
+.footer__links a:hover {
+  color: var(--color-foreground);
+}

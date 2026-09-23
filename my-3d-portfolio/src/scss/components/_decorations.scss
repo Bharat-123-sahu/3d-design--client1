@@ -1,0 +1,57 @@
+// Floating geometric decoration styles
+.parallax-container {
+  position: relative;
+  overflow: visible;
+}
+
+.parallax-shape {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  color: var(--cyan);
+  
+  &--circle {
+    border-radius: 50%;
+    border: 1px solid currentColor;
+  }
+  
+  &--triangle {
+    width: 0;
+    height: 0;
+    background: transparent;
+  }
+  
+  &--cross {
+    width: var(--cross-size, 20px);
+    height: var(--cross-size, 20px);
+    
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+    }
+    
+    &::before {
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      transform: translateY(-50%);
+    }
+    
+    &::after {
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 100%;
+      transform: translateX(-50%);
+    }
+  }
+  
+  &--diamond {
+    transform: rotate(45deg);
+    border: 1px solid currentColor;
+  }
+}
