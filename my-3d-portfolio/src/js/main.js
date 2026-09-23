@@ -305,6 +305,18 @@ function bootstrap() {
     { path: "/contact", page: ContactPage, scene: "contact" },
   ]);
 
+  threeScene?.worldScene?.setDestinationSelectHandler?.((nodeId) => {
+    const routeByNode = {
+      home: "/",
+      about: "/about",
+      work: "/work",
+      value: "/value",
+      contact: "/contact",
+    };
+    const route = routeByNode[nodeId];
+    if (route) router.navigateTo(route, true);
+  });
+
   // Initial render (no character nav yet — intro hasn't fired)
   router.start();
 
@@ -331,22 +343,11 @@ function bootstrap() {
 
         // Activate the persistent 3D world (fade it in)
         threeScene.worldScene?.activate?.();
+        threeScene.container.style.pointerEvents = "auto";
 
-        // Unlock character and auto-walk to home
-        // This also fires characterArrived('home') which triggers content reveal
-        // But home content is already rendered, so we just set active state.
+        router.enterWorldMode();
         navManager.unlock();
-
-        // When character first arrives at home, update nav active state
-        const homeHandler = (e) => {
-          if (e.detail?.node === "home") {
-            window.removeEventListener("characterArrived", homeHandler);
-            router._updateActiveLink("/");
-            router._updateActivePill("/");
-            initNavPill();
-          }
-        };
-        window.addEventListener("characterArrived", homeHandler);
+        initNavPill();
       },
       { once: true },
     );

@@ -51,12 +51,6 @@ export function Navbar() {
 
       </div>
 
-      <!-- Travel status indicator -->
-      <div class="navbar__travel-status" id="navbar-travel-status" aria-hidden="true">
-        <span class="navbar__travel-dot" aria-hidden="true"></span>
-        <span class="navbar__travel-text" id="navbar-travel-text">TRAVELING...</span>
-      </div>
-
       <div class="navbar__mobile-menu" id="mobile-menu" role="dialog" aria-label="Mobile navigation" aria-hidden="true">
         <button class="navbar__mobile-close" id="mobile-close" aria-label="Close menu">✕</button>
         <nav class="navbar__mobile-nav" aria-label="Mobile navigation">

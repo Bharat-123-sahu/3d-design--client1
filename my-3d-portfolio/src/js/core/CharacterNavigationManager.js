@@ -141,9 +141,9 @@ export class CharacterNavigationManager {
     // Pending navigation queue (only one item max)
     this._pendingNode = null;
 
-    // Travel indicator element
+    // Optional status UI is intentionally disabled. The visible character and
+    // red path are the travel indicator.
     this._travelEl = null;
-    this._createTravelIndicator();
   }
 
   /* ── Travel Indicator UI ──────────────────────────────────────── */
@@ -153,7 +153,7 @@ export class CharacterNavigationManager {
     el.className = "travel-indicator";
     el.setAttribute("aria-live", "polite");
     el.setAttribute("aria-label", "Navigation status");
-    el.innerHTML = `<span class="travel-indicator__dot"></span><span class="travel-indicator__text">TRAVELING...</span>`;
+    el.innerHTML = `<span class="travel-indicator__dot"></span><span class="travel-indicator__text"></span>`;
     document.body.appendChild(el);
     this._travelEl = el;
   }
@@ -161,7 +161,7 @@ export class CharacterNavigationManager {
   _showTravelIndicator(label) {
     if (!this._travelEl) return;
     this._travelEl.querySelector(".travel-indicator__text").textContent =
-      `TRAVELING TO ${label.toUpperCase()}...`;
+      label;
     gsap.to(this._travelEl, {
       opacity: 1,
       y: 0,
@@ -186,31 +186,28 @@ export class CharacterNavigationManager {
 
   /**
    * Unlock navigation after intro complete.
-   * Places character at start position and navigates to home.
+   * Places character at the world start point and waits for user selection.
    */
   unlock() {
     this.isLocked = false;
     this.character.group.visible = true;
 
-    // Place character slightly below home (approach from contact side)
+    // Place character slightly below home (approach from contact side).
     const homeNode = navigationNodes.home;
     this.character.group.position.set(
       homeNode.position.x,
       homeNode.position.y,
-      homeNode.position.z + 1.5,
+      homeNode.position.z + 2.2,
     );
     this.character.group.scale.setScalar(0);
+    this.currentNode = null;
 
-    // Reveal character
     gsap.to(this.character.group.scale, {
       x: 1,
       y: 1,
       z: 1,
       duration: 1.0,
       ease: "back.out(1.5)",
-      onComplete: () => {
-        this.navigate("home");
-      },
     });
   }
 
@@ -255,8 +252,11 @@ export class CharacterNavigationManager {
     this.targetNode = nodeId;
     this.navState = NAV_STATE.ROTATING;
 
-    // Get waypoints
-    const waypoints = getPath(fromId, nodeId);
+    const waypoints = getPath(fromId, nodeId).map((point) => point.clone());
+    const currentPos = this.character.group.position.clone();
+    if (!waypoints.length || currentPos.distanceTo(waypoints[0]) > 0.05) {
+      waypoints.unshift(currentPos);
+    }
 
     // Build CatmullRomCurve
     this.currentPath = new THREE.CatmullRomCurve3(
@@ -267,10 +267,6 @@ export class CharacterNavigationManager {
     );
     this.pathProgress = 0;
     this.pathLength = this.currentPath.getLength();
-
-    // Show travel indicator
-    const label = toNode.label || nodeId;
-    this._showTravelIndicator(label);
 
     // Dispatch navigation start event
     window.dispatchEvent(
@@ -429,9 +425,6 @@ export class CharacterNavigationManager {
       default:
         this._doIdle();
     }
-
-    // Hide travel indicator
-    this._hideTravelIndicator();
 
     // Highlight active node
     this.worldScene?.setActiveNode?.(nodeId);

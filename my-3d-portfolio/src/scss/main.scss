@@ -268,15 +268,22 @@ select {
 
 .navbar__mobile-menu {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh; /* use dvh for mobile browsers */
   z-index: 45;
-  display: grid;
-  place-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   gap: 40px;
   background: rgba(5, 5, 5, 0.96);
   opacity: 0;
   pointer-events: none;
   transition: opacity 240ms ease;
+  overflow-y: auto;
+  padding: 80px 20px;
 }
 
 .navbar__mobile-menu.is-open {
@@ -1930,6 +1937,7 @@ body,
   .stack-carousel__stage {
     min-height: 460px;
     overflow: hidden;
+    touch-action: pan-y; /* Allow vertical scroll, capture horizontal swipe */
   }
 
   .stack-carousel__card {
@@ -1943,7 +1951,7 @@ body,
   }
 
   .stack-carousel__controls {
-    justify-content: space-between;
+    display: none; /* Hide on mobile to encourage swiping */
   }
 
   .experience-item {
@@ -2069,3 +2077,37 @@ body.is-navigating .navbar__link {
 body.is-navigating .navbar__link.is-active {
   opacity: 1;
 }
+
+:root[data-app-state="intro"] .footer,
+:root[data-app-state="world"] .footer,
+:root[data-app-state="traveling"] .footer,
+:root[data-app-state="destination"] .footer {
+  display: none;
+}
+
+:root[data-app-state="world"] #page-content,
+:root[data-app-state="traveling"] #page-content,
+:root[data-app-state="destination"] #page-content {
+  pointer-events: none;
+}
+
+.travel-indicator,
+.navbar__travel-status {
+  display: none !important;
+}
+  
+/* --- Mobile View Enhancements --- */  
+@media (max-width: 768px) {  
+  .container { width: calc(100% - 2rem); padding: 0; }  
+  section { padding: 40px 0 !important; }  
+  h1, h2 { word-break: break-word; }  
+  .hero-title { font-size: clamp(2.5rem, 12vw, 4rem) !important; line-height: 1.1 !important; margin-bottom: 20px !important; }  
+  .hero-subtitle { font-size: 1rem !important; }  
+  .about-philosophy h2 { font-size: 2rem !important; }  
+  .contact-form-wrapper { padding: 20px !important; margin-top: 20px !important; }  
+  .stack-carousel__stage { min-height: 480px; }  
+  .experience-item__year { font-size: 2rem !important; }  
+  .credential-card { min-height: auto; padding: 20px; }  
+  .navbar__links { gap: 4px; padding: 4px; }  
+  .navbar__link { min-width: auto; padding: 0.4rem 0.6rem; font-size: 0.65rem; }  
+} 

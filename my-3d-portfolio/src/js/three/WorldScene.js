@@ -413,12 +413,18 @@ function createNodeLights(scene) {
 /* ── WorldScene Class ─────────────────────────────────────────────── */
 
 export class WorldScene {
-  constructor(scene, camera) {
+  constructor(scene, camera, container = null) {
     this.scene = scene;
     this.camera = camera;
+    this.container = container;
     this.isActive = false;
     this.markers = {};
     this.signs = {};
+    this.interactiveObjects = [];
+    this.onDestinationSelect = null;
+    this.raycaster = new THREE.Raycaster();
+    this.pointer = new THREE.Vector2();
+    this.hoveredNode = null;
     this.pathSegments = [];
     this.pathParticles = null;
     this.nodeLights = {};
@@ -426,6 +432,7 @@ export class WorldScene {
     this.elapsed = 0;
 
     this._build();
+    this._bindPointerEvents();
   }
 
   _build() {
@@ -450,6 +457,14 @@ export class WorldScene {
       this.signs[id] = sign;
     }
 
+    for (const [id, marker] of Object.entries(this.markers)) {
+      this._registerInteractive(marker, id);
+    }
+
+    for (const [id, sign] of Object.entries(this.signs)) {
+      this._registerInteractive(sign, id);
+    }
+
     // Path particles
     this.pathParticles = createPathParticles(this.scene, this.pathSegments);
 
@@ -458,6 +473,65 @@ export class WorldScene {
 
     // Start hidden, activate after intro
     this._setVisibility(false);
+  }
+
+  _registerInteractive(object, nodeId) {
+    object.userData.navNode = nodeId;
+    object.traverse?.((child) => {
+      child.userData.navNode = nodeId;
+      this.interactiveObjects.push(child);
+    });
+
+    if (!object.children?.length) {
+      this.interactiveObjects.push(object);
+    }
+  }
+
+  _bindPointerEvents() {
+    if (!this.container) return;
+
+    this._handlePointerMove = (event) => {
+      if (!this.isActive) return;
+      const hit = this._pickDestination(event);
+      const nodeId = hit?.object?.userData?.navNode || null;
+      this.hoveredNode = nodeId;
+      this.container.style.cursor = nodeId ? "pointer" : "";
+    };
+
+    this._handlePointerLeave = () => {
+      this.hoveredNode = null;
+      this.container.style.cursor = "";
+    };
+
+    this._handleClick = (event) => {
+      if (!this.isActive) return;
+      const hit = this._pickDestination(event);
+      const nodeId = hit?.object?.userData?.navNode;
+      if (!nodeId) return;
+
+      event.preventDefault();
+      this.onDestinationSelect?.(nodeId);
+    };
+
+    this.container.addEventListener("pointermove", this._handlePointerMove);
+    this.container.addEventListener("pointerleave", this._handlePointerLeave);
+    this.container.addEventListener("click", this._handleClick);
+  }
+
+  _pickDestination(event) {
+    if (!this.container || !this.interactiveObjects.length) return null;
+
+    const rect = this.container.getBoundingClientRect();
+    this.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    this.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    this.raycaster.setFromCamera(this.pointer, this.camera);
+
+    const hits = this.raycaster.intersectObjects(this.interactiveObjects, true);
+    return hits.find((hit) => hit.object?.userData?.navNode) || null;
+  }
+
+  setDestinationSelectHandler(handler) {
+    this.onDestinationSelect = handler;
   }
 
   _setVisibility(visible) {
@@ -599,6 +673,11 @@ export class WorldScene {
   }
 
   destroy() {
-    // Cleanup is handled by ThreeScene.destroy
+    if (this.container) {
+      this.container.removeEventListener("pointermove", this._handlePointerMove);
+      this.container.removeEventListener("pointerleave", this._handlePointerLeave);
+      this.container.removeEventListener("click", this._handleClick);
+      this.container.style.cursor = "";
+    }
   }
 }

@@ -161,7 +161,7 @@ export class ThreeScene {
     });
 
     // Persistent 3D navigation world (sits alongside existing effects)
-    this.worldScene = new WorldScene(this.scene, this.camera);
+    this.worldScene = new WorldScene(this.scene, this.camera, this.container);
 
     // Character navigation manager — set externally by main.js
     this.navManager = null;

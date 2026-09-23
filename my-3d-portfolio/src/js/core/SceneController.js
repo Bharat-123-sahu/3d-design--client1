@@ -76,18 +76,18 @@ export class SceneController {
     }
 
     const bloomMap = {
-      morphBlob: 1.0,
-      plasmaRings: 0.9,
-      flowRibbon: 0.7,
-      glassCards: 0.5,
-      constellationGraph: 0.85,
-      warpTunnel: 1.2,
-      magnetAttractor: 0.8,
-      campaignHalo: 1.15,
+      morphBlob: 0.6,
+      plasmaRings: 0.5,
+      flowRibbon: 0.35,
+      glassCards: 0.3,
+      constellationGraph: 0.5,
+      warpTunnel: 0.7,
+      magnetAttractor: 0.5,
+      campaignHalo: 0.5,
     };
 
     this.threeScene.postProcessing?.setBloomStrength?.(
-      bloomMap[activeKey] ?? 0.8,
+      bloomMap[activeKey] ?? 0.5,
     );
   }
 }

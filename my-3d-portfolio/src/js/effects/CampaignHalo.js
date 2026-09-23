@@ -18,8 +18,12 @@ export class CampaignHalo {
         uniforms: {
           uTime: { value: index * 1.7 },
           uPulse: { value: 0.8 + index * 0.2 },
-          uColorA: { value: new THREE.Color(index === 0 ? "#29d9ff" : "#bbff5c") },
-          uColorB: { value: new THREE.Color(index === 1 ? "#f84f8f" : "#8855ff") },
+          uColorA: {
+            value: new THREE.Color(index === 0 ? "#29d9ff" : "#bbff5c"),
+          },
+          uColorB: {
+            value: new THREE.Color(index === 1 ? "#f84f8f" : "#8855ff"),
+          },
           uColorC: { value: new THREE.Color("#ffffff") },
           uOpacity: { value: 0.0 },
         },
@@ -50,7 +54,8 @@ export class CampaignHalo {
     });
 
     this.group.rotation.y += (mouseX * 0.22 - this.group.rotation.y) * 0.035;
-    this.group.rotation.x += ((-0.18 - mouseY * 0.12) - this.group.rotation.x) * 0.035;
+    this.group.rotation.x +=
+      (-0.18 - mouseY * 0.12 - this.group.rotation.x) * 0.035;
   }
 
   show() {
@@ -64,7 +69,7 @@ export class CampaignHalo {
 
     this.layers.forEach((layer, index) => {
       gsap.to(layer.material.uniforms.uOpacity, {
-        value: 0.68 - index * 0.12,
+        value: 0.35 - index * 0.1, // Reduced significantly from 0.68
         duration: 1.1,
         delay: index * 0.08,
         ease: "power2.out",
