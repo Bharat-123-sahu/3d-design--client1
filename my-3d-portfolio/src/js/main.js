@@ -7,7 +7,7 @@ import { Router } from "./core/Router.js";
 import { ThemeManager } from "./core/ThemeManager.js";
 import { ThunderIntro } from "./core/ThunderIntro.js";
 import { CharacterNavigationManager } from "./core/CharacterNavigationManager.js";
-import { cleanupRouteAnimations } from "./utils/animationRegistry.js";
+import { initWorkScroll } from "./animations/WorkScrollController.js";
 
 import { Navbar } from "./components/Navbar.js";
 import { Footer } from "./components/Footer.js";
@@ -54,7 +54,8 @@ import {
 import { initContactFormHandler } from "./animations/contactFormHandler.js";
 import { initNavbarStateManager } from "./animations/navbarStateManager.js";
 
-function initPageAnimations(sceneController) {
+function initPageAnimations(sceneController, lenis) {
+  initWorkScroll(lenis);
   // Existing systems
   try {
     initScrollAnimations();
@@ -288,8 +289,7 @@ function bootstrap() {
     sceneController,
     lenis,
     onRouteChange: () => {
-      cleanupRouteAnimations();
-      setTimeout(() => initPageAnimations(sceneController), 120);
+      initPageAnimations(sceneController, lenis);
     },
   });
 

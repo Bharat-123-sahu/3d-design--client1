@@ -1,6 +1,15 @@
+import { workCinematics } from "../components/WorkCinematics.js";
 import { siteContent as c } from "../data/siteContent.js";
 
-const projectCategories = ["ALL", "SOCIAL", "ADS", "ECOMMERCE", "CONTENT", "SEO", "BRANDING"];
+const projectCategories = [
+  "ALL",
+  "SOCIAL",
+  "ADS",
+  "ECOMMERCE",
+  "CONTENT",
+  "SEO",
+  "BRANDING",
+];
 
 function projectCard(p) {
   return `
@@ -22,35 +31,6 @@ function projectCard(p) {
         <span class="work-card__year">${p.year}</span>
       </div>
     </div>
-  `;
-}
-
-function stackedProjectCard(p) {
-  return `
-    <article class="stack-carousel__card work-card magnetic js-work-card"
-      data-category="${p.category}"
-      data-category-label="${p.categoryLabel}"
-      data-title="${p.title}"
-      data-description="${p.description}"
-      data-cursor="project">
-      <div class="work-card__image js-image-reveal" style="background:${p.color}20;">
-        ${
-          p.image
-            ? `<img src="${p.image}" alt="${p.title}" loading="lazy">`
-            : `<div class="work-card__placeholder" style="--card-color:${p.color};"></div>`
-        }
-        <span class="work-card__cat-badge">${p.categoryLabel}</span>
-      </div>
-      <div class="work-card__body">
-        <span class="work-card__year">${p.year}</span>
-        <h3 class="work-card__title">${p.title}</h3>
-        <p class="work-card__desc">${p.description}</p>
-        <div class="work-card__tags">
-          ${p.services.map((s) => `<span class="work-card__tag">${s}</span>`).join("")}
-        </div>
-        <span class="work-card__cta">View Project <span aria-hidden="true">-></span></span>
-      </div>
-    </article>
   `;
 }
 
@@ -93,8 +73,10 @@ export function WorkPage() {
       </div>
     </section>
 
+    ${workCinematics(projects)}
+
     <!-- Work grid with filters -->
-    <section class="work-section">
+    <section class="work-section" id="work-grid">
       <div class="container">
         <div class="work-filters" role="tablist">
           ${projectCategories
@@ -107,29 +89,15 @@ export function WorkPage() {
             )
             .join("")}
         </div>
-        <div class="stack-carousel stack-carousel--work" data-carousel="work" aria-label="Selected work carousel">
-          <div class="stack-carousel__stage">
-            ${projects.map(stackedProjectCard).join("")}
-          </div>
-          <div class="stack-carousel__meta">
-            <span class="stack-carousel__index" data-carousel-index>01 / ${String(projects.length).padStart(2, "0")}</span>
-            <span class="stack-carousel__category" data-carousel-category>${projects[0].categoryLabel}</span>
-            <h3 class="stack-carousel__title" data-carousel-title>${projects[0].title}</h3>
-            <p class="stack-carousel__description" data-carousel-description>${projects[0].description}</p>
-          </div>
-          <div class="stack-carousel__controls">
-            <button class="stack-carousel__control magnetic" type="button" data-carousel-prev aria-label="Previous project">Prev</button>
-            <button class="stack-carousel__control magnetic" type="button" data-carousel-next aria-label="Next project">Next</button>
-          </div>
-        </div>
-        <div class="work-grid js-work-grid work-grid--fallback">
+        <div class="work-grid js-work-grid">
           ${projects.map(projectCard).join("")}
         </div>
       </div>
     </section>
 
     <!-- Canva gallery -->
-    <section class="canva-section" id="section-canva">
+
+  <!--     <section class="canva-section" id="section-canva">
       <div class="container">
         <p class="section-label" data-animate="fade-up">Creative Design</p>
         <h2 class="animate-title" data-animate="split-text">
@@ -179,6 +147,8 @@ export function WorkPage() {
       </div>
       <div class="gallery-hint" aria-hidden="true">← DRAG TO EXPLORE →</div>
     </section>
+-->
+
 
     <!-- Case Studies -->
     <section class="case-section" id="section-case">

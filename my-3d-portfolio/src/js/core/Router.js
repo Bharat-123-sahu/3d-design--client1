@@ -1,3 +1,4 @@
+import { cleanupRouteAnimations } from "../utils/animationRegistry.js";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ContentVisibilityManager } from "./ContentVisibilityManager.js";
@@ -46,6 +47,7 @@ export class Router {
   }
 
   enterWorldMode() {
+    cleanupRouteAnimations();
     this._setAppState(APP_STATE.WORLD);
     this.activePath = null;
     this.contentManager.hideAll({ clear: true, animate: false });
@@ -69,6 +71,7 @@ export class Router {
       this.currentPath = normPath;
     }
 
+    cleanupRouteAnimations();
     await this.contentManager.hideAll({
       clear: true,
       animate: animate && this.appState === APP_STATE.CONTENT,
@@ -118,6 +121,7 @@ export class Router {
   }
 
   async _swapContent(route, animate) {
+    cleanupRouteAnimations();
     await this.contentManager.hideAll({ clear: true, animate: false });
 
     this.root.innerHTML = route.page();
@@ -130,7 +134,6 @@ export class Router {
     }
 
     this.sceneController?.setState(route.scene);
-    this.onRouteChange?.(route);
 
     if (animate) {
       await Promise.all([
@@ -148,7 +151,9 @@ export class Router {
     }
 
     this._setAppState(APP_STATE.CONTENT);
-    requestAnimationFrame(() => ScrollTrigger.refresh());
+    this.onRouteChange?.(route);
+    ScrollTrigger.refresh();
+    this.lenis?.resize();
   }
 
   _setAppState(state) {

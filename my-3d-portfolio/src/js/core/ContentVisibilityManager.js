@@ -59,6 +59,7 @@ export class ContentVisibilityManager {
         y: 0,
         filter: "none",
         pointerEvents: "auto",
+        clearProps: "transform,filter",
       });
       return Promise.resolve();
     }
@@ -71,6 +72,7 @@ export class ContentVisibilityManager {
       duration: 0.72,
       ease: "power3.out",
       delay: 0.06,
+      onComplete: () => gsap.set(this.root, { clearProps: "transform,filter" }),
     });
   }
 }
