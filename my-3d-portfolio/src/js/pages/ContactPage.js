@@ -26,15 +26,15 @@ export function ContactPage() {
             <form class="contact-form js-contact-form" novalidate>
               <div class="form-group">
                 <label class="form-label" for="cf-name">Name</label>
-                <input type="text" id="cf-name" name="from_name" class="form-control" placeholder="Your name" required>
+                <input type="text" id="cf-name" name="from_name" autocomplete="name" class="form-control" placeholder="Your name" required>
               </div>
               <div class="form-group">
                 <label class="form-label" for="cf-email">Email</label>
-                <input type="email" id="cf-email" name="reply_to" class="form-control" placeholder="your@email.com" required>
+                <input type="email" id="cf-email" name="reply_to" autocomplete="email" inputmode="email" class="form-control" placeholder="your@email.com" required>
               </div>
               <div class="form-group">
                 <label class="form-label" for="cf-company">Company (Optional)</label>
-                <input type="text" id="cf-company" name="company" class="form-control" placeholder="Your company name">
+                <input type="text" id="cf-company" name="company" autocomplete="organization" class="form-control" placeholder="Your company name">
               </div>
               <div class="form-group">
                 <label class="form-label" for="cf-type">Project Type</label>

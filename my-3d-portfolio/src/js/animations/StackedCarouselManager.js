@@ -1,3 +1,4 @@
+import { onViewportChange } from "../utils/responsive.js";
 import gsap from "gsap";
 import { trackDisposer, prefersReducedMotion } from "../utils/animationRegistry.js";
 
@@ -30,7 +31,7 @@ export class StackedCarouselManager {
     this.nextHandler = () => this.go(1);
     this.prevHandler = () => this.go(-1);
     this.keyHandler = (event) => {
-      if (!this.root.matches(":hover")) return;
+      if (!this.root.contains(document.activeElement)) return;
       if (event.key === "ArrowRight") this.go(1);
       if (event.key === "ArrowLeft") this.go(-1);
     };
@@ -44,28 +45,23 @@ export class StackedCarouselManager {
       }
     };
     this.pointerDownHandler = (event) => {
-      this.pointerStart = event.clientX ?? event.touches?.[0]?.clientX ?? null;
+      if (event.target.closest("button")) return;
+      this.pointerStart = event.clientX;
+      this.pointerY = event.clientY;
+      this.root.dataset.dragged = "false";
       this.root.classList.add("is-dragging");
     };
     this.pointerUpHandler = (event) => {
       const x = event.clientX ?? event.changedTouches?.[0]?.clientX ?? null;
       if (this.pointerStart !== null && x !== null) {
         const delta = x - this.pointerStart;
-        if (Math.abs(delta) > 44) this.go(delta < 0 ? 1 : -1);
+        if (Math.abs(delta) > 44 && Math.abs(delta) > Math.abs(event.clientY - this.pointerY)) {
+          this.root.dataset.dragged = "true";
+          this.go(delta < 0 ? 1 : -1);
+        }
       }
       this.pointerStart = null;
       this.root.classList.remove("is-dragging");
-    };
-    this.wheelHandler = (event) => {
-      if (!this.root.matches(":hover") || this.wheelLock || Math.abs(event.deltaY) < 18) {
-        return;
-      }
-      event.preventDefault();
-      this.wheelLock = true;
-      this.go(event.deltaY > 0 ? 1 : -1);
-      window.setTimeout(() => {
-        this.wheelLock = false;
-      }, 720);
     };
     this.resizeHandler = () => this.render(true);
 
@@ -74,9 +70,9 @@ export class StackedCarouselManager {
     window.addEventListener("keydown", this.keyHandler);
     window.addEventListener("portfolio:filter", this.filterHandler);
     this.root.addEventListener("pointerdown", this.pointerDownHandler);
-    this.root.addEventListener("wheel", this.wheelHandler, { passive: false });
+    this.root.addEventListener("pointercancel", this.pointerUpHandler);
     window.addEventListener("pointerup", this.pointerUpHandler);
-    window.addEventListener("resize", this.resizeHandler);
+    this.unsubscribeViewport = onViewportChange(this.resizeHandler);
 
     trackDisposer(() => this.destroy());
   }
@@ -148,7 +144,7 @@ export class StackedCarouselManager {
 
   render(immediate = false) {
     this.isAnimating = true;
-
+    this.reduceMotion = prefersReducedMotion();
     const duration = immediate || this.reduceMotion ? 0 : 0.82;
     const ease = "power3.inOut";
 
@@ -166,6 +162,8 @@ export class StackedCarouselManager {
         } : undefined,
       };
 
+      card.tabIndex = diff === 0 ? 0 : -1;
+      card.setAttribute("aria-hidden", String(diff !== 0));
       card.classList.toggle("is-active", diff === 0);
       card.classList.toggle("is-previous", diff === -1);
       gsap.to(card, vars);
@@ -220,9 +218,11 @@ export class StackedCarouselManager {
     window.removeEventListener("keydown", this.keyHandler);
     window.removeEventListener("portfolio:filter", this.filterHandler);
     this.root.removeEventListener("pointerdown", this.pointerDownHandler);
-    this.root.removeEventListener("wheel", this.wheelHandler);
+    this.root.removeEventListener("pointercancel", this.pointerUpHandler);
     window.removeEventListener("pointerup", this.pointerUpHandler);
-    window.removeEventListener("resize", this.resizeHandler);
+    this.unsubscribeViewport?.();
+    gsap.killTweensOf([...this.cards, ...Object.values(this.metaEls)]);
+    delete this.root.dataset.carouselManaged;
   }
 }
 

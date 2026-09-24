@@ -1,3 +1,5 @@
+import { navigationNodes } from "../data/navigationData.js";
+import { prefersReducedMotion } from "../utils/animationRegistry.js";
 import { cleanupRouteAnimations } from "../utils/animationRegistry.js";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -64,6 +66,7 @@ export class Router {
     const route = this.routes[normPath] || this.routes["/"];
     if (!route) return;
 
+    animate = animate && !prefersReducedMotion();
     this.isTransitioning = true;
 
     if (normPath !== this.currentPath) {
@@ -80,10 +83,12 @@ export class Router {
     this._updateActiveLink(null);
     this._updateActivePill(null);
 
-    if (this.navManager && !this.navManager.isLocked) {
+    if (this.navManager && !this.navManager.isLocked && navigationNodes[route.scene] && !prefersReducedMotion()) {
       await this.navManager.standUp();
 
       const sceneId = route.scene;
+      this._setAppState(APP_STATE.TRAVELING);
+      const arrival = this._waitForCharacterArrival(sceneId);
       const didNavigate = this.navManager.navigate(sceneId);
 
       if (!didNavigate) {
@@ -91,8 +96,7 @@ export class Router {
         return;
       }
 
-      this._setAppState(APP_STATE.TRAVELING);
-      await this._waitForCharacterArrival(sceneId);
+      await arrival;
     } else {
       await this._swapContent(route, animate);
     }
@@ -101,6 +105,9 @@ export class Router {
     this._updateActiveLink(normPath);
     this._updateActivePill(normPath);
     this.isTransitioning = false;
+    const heading = this.root.querySelector("h1");
+    heading?.setAttribute("tabindex", "-1");
+    heading?.focus({ preventScroll: true });
   }
 
   _waitForCharacterArrival(expectedSceneId) {

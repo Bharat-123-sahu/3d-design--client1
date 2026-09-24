@@ -1,3 +1,4 @@
+import { prefersReducedMotion } from "../utils/animationRegistry.js";
 import gsap from "gsap";
 
 export class ContentVisibilityManager {
@@ -51,6 +52,7 @@ export class ContentVisibilityManager {
 
   show(pageId, { animate = true } = {}) {
     this.activePage = pageId;
+    animate = animate && !prefersReducedMotion();
     if (!this.root) return Promise.resolve();
 
     if (!animate) {

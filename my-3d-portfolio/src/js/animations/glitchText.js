@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 export function initGlitchText() {
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const titles = document.querySelectorAll('.section-title, .hero__title');
   titles.forEach(t => t.classList.add('glitch-text'));
 

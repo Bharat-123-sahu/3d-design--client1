@@ -32,7 +32,7 @@ export function ValuePage() {
                 </div>
               </div>
               
-              <div class="service-row__image-wrap" style="width: 120px; height: 80px; border-radius: 8px; overflow: hidden; margin: 0 20px; flex-shrink: 0;" class="js-image-reveal">
+              <div class="service-row__image-wrap js-image-reveal">
                 ${s.image ? `<img src="${s.image}" alt="${s.title}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">` : ""}
               </div>
 

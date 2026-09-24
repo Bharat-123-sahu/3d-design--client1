@@ -1,9 +1,11 @@
+import { prefersReducedMotion } from "../utils/animationRegistry.js";
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export function initParallaxElements() {
+  if (prefersReducedMotion() || matchMedia("(pointer: coarse)").matches) return;
   const parallaxFloats = document.querySelectorAll('.parallax-float');
   
   parallaxFloats.forEach(el => {
@@ -36,8 +38,8 @@ export function initParallaxElements() {
       const size = Math.random() * 32 + 8;
       const color = colors[Math.floor(Math.random() * colors.length)];
       
-      shape.style.left = `${Math.random() * 100}%`;
-      shape.style.top = `${Math.random() * 100}%`;
+      shape.style.left = `calc(${Math.random() * 90}% + 8px)`;
+      shape.style.top = `calc(${Math.random() * 90}% + 8px)`;
       shape.style.color = color; // For currentColor usage
       
       if (type !== 'triangle' && type !== 'cross') {

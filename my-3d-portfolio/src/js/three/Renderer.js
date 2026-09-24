@@ -1,15 +1,17 @@
+import { getViewportProfile } from "../utils/responsive.js";
 import * as THREE from "three";
 
 export function createRenderer(container) {
+  const profile = getViewportProfile();
   const renderer = new THREE.WebGLRenderer({
-    antialias: true,
+    antialias: !profile.lowPower,
     alpha: true,
-    preserveDrawingBuffer: true,
-    powerPreference: "high-performance",
+    preserveDrawingBuffer: false,
+    powerPreference: profile.lowPower ? "default" : "high-performance",
   });
 
   renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio, 2)
+    profile.dpr
   );
 
   renderer.setSize(
@@ -27,7 +29,7 @@ export function createRenderer(container) {
 
   renderer.toneMappingExposure = 1;
 
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = !profile.lowPower;
   renderer.shadowMap.type =
     THREE.PCFSoftShadowMap;
 

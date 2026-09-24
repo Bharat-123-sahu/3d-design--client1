@@ -1,3 +1,4 @@
+import gsap from "gsap";
 /**
  * Maps route scene states to page-specific 3D effects.
  */
@@ -61,6 +62,8 @@ export class SceneController {
   }
 
   _showOnly(activeKey) {
+    if (this.activeEffect === activeKey) return;
+    this.activeEffect = activeKey;
     const effects = this.threeScene.sceneEffects;
 
     if (!effects) {
@@ -68,10 +71,23 @@ export class SceneController {
     }
 
     for (const [key, effect] of Object.entries(effects)) {
+      const object = effect.group || effect.container || effect.mesh;
+      effect.visibilityDelay?.kill();
+      if (object) {
+        gsap.killTweensOf(object.scale);
+        object.traverse(child => {
+          if (child.material) {
+            gsap.killTweensOf(child.material);
+            if (child.material.uniforms?.uOpacity) gsap.killTweensOf(child.material.uniforms.uOpacity);
+          }
+        });
+      }
       if (key === activeKey) {
+        if (object) object.visible = true;
         effect.show?.();
       } else {
         effect.hide?.();
+        effect.visibilityDelay = gsap.delayedCall(1.5, () => { if (object) object.visible = false; });
       }
     }
 

@@ -1,3 +1,4 @@
+import { getViewportProfile } from "../utils/responsive.js";
 import * as THREE from "three";
 import gsap from "gsap";
 import vertexShader from "../shaders/flowRibbon/flowRibbonVertex.glsl";
@@ -6,10 +7,9 @@ import fragmentShader from "../shaders/flowRibbon/flowRibbonFragment.glsl";
 export class FlowRibbon {
   constructor(scene) {
     this.scene = scene;
-    // Changed to a much cooler, premium shape (TorusKnot)
-    this.geometry = new THREE.TorusKnotGeometry(1.5, 0.4, 256, 64);
+    const profile = getViewportProfile();
     // Changed to a highly elegant thin ring (Torus) that will wave into a ribbon
-    this.geometry = new THREE.TorusGeometry(1.8, 0.15, 64, 128);
+    this.geometry = new THREE.TorusGeometry(1.8, 0.15, profile.lowPower ? 24 : 64, profile.lowPower ? 64 : 128);
 
     this.material = new THREE.ShaderMaterial({
       vertexShader,

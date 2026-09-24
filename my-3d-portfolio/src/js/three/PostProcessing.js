@@ -33,7 +33,7 @@ const ChromaticAberrationShader = {
       // Offset increases toward edges for a lens-like effect
       float aberration = uOffset * dist * (1.0 + sin(uTime * 0.5) * 0.2);
 
-      vec2 dir = normalize(center);
+      vec2 dir = center / max(length(center), 0.0001);
       float r = texture2D(tDiffuse, vUv + dir * aberration).r;
       float g = texture2D(tDiffuse, vUv).g;
       float b = texture2D(tDiffuse, vUv - dir * aberration).b;
@@ -85,7 +85,7 @@ const FilmGrainVignetteShader = {
       // Vignette
       vec2 center = vUv - 0.5;
       float dist = length(center);
-      float vignette = smoothstep(0.5, 0.5 - uVignetteSmoothness, dist);
+      float vignette = 1.0 - smoothstep(0.5 - uVignetteSmoothness, 0.5, dist);
       color.rgb *= mix(1.0 - uVignetteIntensity, 1.0, vignette);
 
       gl_FragColor = color;
@@ -123,6 +123,15 @@ export function createPostProcessing(renderer, scene, camera, width, height) {
     chromaticPass,
     filmGrainPass,
 
+    resize(width, height, profile) {
+      composer.setPixelRatio(profile.dpr * (profile.lowPower ? 0.8 : 1));
+      composer.setSize(width, height);
+      chromaticPass.enabled = !profile.lowPower && !profile.reduced;
+      filmGrainPass.uniforms.uGrainIntensity.value = profile.reduced ? 0 : profile.lowPower ? 0.025 : 0.06;
+    },
+    destroy() {
+      bloomPass.dispose(); chromaticPass.dispose(); filmGrainPass.dispose(); composer.dispose();
+    },
     /**
      * Update time-based uniforms each frame
      */

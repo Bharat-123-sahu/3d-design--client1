@@ -1,3 +1,4 @@
+import { getViewportProfile } from "../utils/responsive.js";
 import * as THREE from "three";
 import gsap from "gsap";
 
@@ -9,7 +10,7 @@ export class CampaignHalo {
     this.group = new THREE.Group();
     this.layers = [];
 
-    const geometry = new THREE.PlaneGeometry(5.8, 5.8, 180, 180);
+    const geometry = new THREE.PlaneGeometry(5.8, 5.8, getViewportProfile().lowPower ? 64 : 120, getViewportProfile().lowPower ? 64 : 120);
 
     for (let index = 0; index < 3; index += 1) {
       const material = new THREE.ShaderMaterial({

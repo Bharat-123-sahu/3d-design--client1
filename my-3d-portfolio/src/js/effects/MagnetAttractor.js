@@ -1,3 +1,4 @@
+import { getViewportProfile } from "../utils/responsive.js";
 import * as THREE from 'three';
 import gsap from 'gsap';
 import vertexShader from '../shaders/magnetField/magnetFieldVertex.glsl';
@@ -9,7 +10,7 @@ export class MagnetAttractor {
         this.container = new THREE.Group();
         this.scene.add(this.container);
         
-        this.numParticles = 2000;
+        this.numParticles = getViewportProfile().lowPower ? 600 : 2000;
         this.attractor = new THREE.Vector3(0, 0, 0);
         
         this.initParticles();

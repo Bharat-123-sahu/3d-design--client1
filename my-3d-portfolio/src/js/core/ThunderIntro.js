@@ -192,7 +192,7 @@ export class ThunderIntro {
   }
 
   handlePointerMove(event) {
-    if (this.state !== INTRO_STATES.READY) return;
+    if (this.state !== INTRO_STATES.READY || this.reduceMotion || event.pointerType === "touch") return;
 
     const rect = this.button.getBoundingClientRect();
     const x = event.clientX - rect.left - rect.width / 2;

@@ -42,7 +42,7 @@ export function Navbar() {
             <span class="navbar__theme-icon navbar__theme-icon--moon" aria-hidden="true"></span>
           </button>
 
-          <button class="navbar__hamburger magnetic" id="hamburger-btn" aria-label="Toggle menu" aria-expanded="false">
+          <button class="navbar__hamburger magnetic" type="button" id="hamburger-btn" aria-controls="mobile-menu" aria-label="Toggle menu" aria-expanded="false">
             <span class="navbar__hamburger-line"></span>
             <span class="navbar__hamburger-line"></span>
             <span class="navbar__hamburger-line"></span>
@@ -51,7 +51,7 @@ export function Navbar() {
 
       </div>
 
-      <div class="navbar__mobile-menu" id="mobile-menu" role="dialog" aria-label="Mobile navigation" aria-hidden="true">
+      <div class="navbar__mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" inert data-lenis-prevent aria-label="Mobile navigation" aria-hidden="true">
         <button class="navbar__mobile-close" id="mobile-close" aria-label="Close menu">✕</button>
         <nav class="navbar__mobile-nav" aria-label="Mobile navigation">
           ${navItems

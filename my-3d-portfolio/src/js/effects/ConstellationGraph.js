@@ -1,3 +1,4 @@
+import { getViewportProfile } from "../utils/responsive.js";
 import * as THREE from 'three';
 import gsap from 'gsap';
 import vertexShader from '../shaders/constellationNet/constellationNetVertex.glsl';
@@ -9,7 +10,7 @@ export class ConstellationGraph {
         this.container = new THREE.Group();
         this.scene.add(this.container);
         
-        this.numNodes = 40;
+        this.numNodes = getViewportProfile().lowPower ? 24 : 40;
         this.radius = 4;
         this.maxConnectDistance = 2.5;
         

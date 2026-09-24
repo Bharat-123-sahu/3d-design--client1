@@ -1,237 +1,96 @@
-/**
- * Work section filter buttons + GSAP hide/show
- * Canva gallery horizontal drag scroll
- * Gallery card modal preview
- */
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { trackDisposer, prefersReducedMotion } from "../utils/animationRegistry.js";
+import { containDialog } from "../utils/dialog.js";
 
-/* ── Work Grid Filter ─────────────────────────────────── */
 export function initWorkFilter() {
-  const buttons = document.querySelectorAll(".js-filter-btn");
-  const cards = document.querySelectorAll(".js-work-card");
-
-  if (!buttons.length || !cards.length) return;
-
-  buttons.forEach((btn) => {
-    if (btn.dataset.filterManaged === "true") return;
-    btn.dataset.filterManaged = "true";
-    btn.addEventListener("click", () => {
-      // Update active state
-      buttons.forEach((b) => {
-        b.classList.remove("is-active");
-        b.setAttribute("aria-selected", "false");
-      });
-      btn.classList.add("is-active");
-      btn.setAttribute("aria-selected", "true");
-
-      const filter = btn.dataset.filter;
-      window.dispatchEvent(new CustomEvent("portfolio:filter", { detail: { filter } }));
-
-      cards.forEach((card) => {
-        if (card.closest(".stack-carousel")) return;
-        const show = filter === "all" || card.dataset.category === filter;
-
-        if (show) {
-          gsap.to(card, {
-            opacity: 1,
-            scale: 1,
-            duration: 0.4,
-            ease: "power2.out",
-            pointerEvents: "auto",
-            display: "block",
-          });
-        } else {
-          gsap.to(card, {
-            opacity: 0,
-            scale: 0.96,
-            duration: 0.3,
-            ease: "power2.in",
-            pointerEvents: "none",
-            onComplete: () => {
-              card.style.display = "none";
-            },
-          });
-        }
-      });
+  const buttons = [...document.querySelectorAll(".js-filter-btn")];
+  const cards = [...document.querySelectorAll(".work-grid .js-work-card")];
+  if (!buttons.length) return;
+  const abort = new AbortController();
+  buttons.forEach(button => button.addEventListener("click", () => {
+    buttons.forEach(b => { b.classList.toggle("is-active", b === button); b.setAttribute("aria-selected", String(b === button)); });
+    cards.forEach(card => {
+      const show = button.dataset.filter === "all" || card.dataset.category === button.dataset.filter;
+      gsap.killTweensOf(card);
+      gsap.set(card, {display:show ? "flex" : "none", autoAlpha:show ? 1 : 0, scale:1, y:0, filter:"none"});
     });
-  });
+    ScrollTrigger.refresh();
+  }, {signal:abort.signal}));
+  trackDisposer(() => abort.abort());
 }
 
-/* ── Canva Gallery — Drag Scroll ──────────────────────── */
 export function initGalleryDrag() {
   const wrap = document.querySelector(".js-gallery-wrap");
-  const track = document.querySelector(".js-gallery-track");
-
-  if (!wrap || !track) return;
-  if (wrap.dataset.galleryDragManaged === "true") return;
-  wrap.dataset.galleryDragManaged = "true";
-
-  let isDragging = false;
-  let startX = 0;
-  let scrollLeft = 0;
-
-  // Mouse drag
-  wrap.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    startX = e.pageX - wrap.offsetLeft;
-    scrollLeft = wrap.scrollLeft;
-    wrap.classList.add("is-dragging");
+  const cards = [...document.querySelectorAll(".js-gallery-card")];
+  if (!cards.length) return;
+  const abort = new AbortController();
+  const options = {signal:abort.signal};
+  let start = null, moved = false, closePreview;
+  if (wrap) {
+    wrap.addEventListener("pointerdown", event => {
+      moved = false;
+      if (event.pointerType !== "mouse" || event.button !== 0) return;
+      start = {x:event.clientX, scroll:wrap.scrollLeft};
+    }, options);
+    wrap.addEventListener("pointermove", event => {
+      if (!start) return;
+      const distance = event.clientX - start.x;
+      if (Math.abs(distance) > 8) {
+        moved = true;
+        wrap.scrollLeft = start.scroll - distance;
+        wrap.classList.add("is-dragging");
+        event.preventDefault();
+      }
+    }, options);
+    const release = () => { start = null; wrap.classList.remove("is-dragging"); };
+    window.addEventListener("pointerup", release, options);
+    wrap.addEventListener("pointerleave", release, options);
+  }
+  cards.forEach(card => {
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", `Preview ${card.dataset.title || card.querySelector('.gallery-card__title')?.textContent || 'design'}`);
+    card.tabIndex = card.closest('.stack-carousel') && !card.classList.contains('is-active') ? -1 : 0;
+    const open = event => {
+      if (event.detail && (moved || card.closest('.stack-carousel')?.dataset.dragged === 'true')) return;
+      closePreview?.();
+      closePreview = openGalleryModal(card);
+    };
+    card.addEventListener("click", open, options);
+    card.addEventListener("keydown", event => { if(event.key === "Enter" || event.key === " ") { event.preventDefault(); open(event); } }, options);
   });
-
-  wrap.addEventListener("mouseleave", () => {
-    isDragging = false;
-    wrap.classList.remove("is-dragging");
-  });
-
-  wrap.addEventListener("mouseup", () => {
-    isDragging = false;
-    wrap.classList.remove("is-dragging");
-  });
-
-  wrap.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - wrap.offsetLeft;
-    const walk = (x - startX) * 1.4;
-    wrap.scrollLeft = scrollLeft - walk;
-  });
-
-  // Touch drag
-  let touchStartX = 0;
-  let touchScrollLeft = 0;
-
-  wrap.addEventListener(
-    "touchstart",
-    (e) => {
-      touchStartX = e.touches[0].pageX;
-      touchScrollLeft = wrap.scrollLeft;
-    },
-    { passive: true },
-  );
-
-  wrap.addEventListener(
-    "touchmove",
-    (e) => {
-      const x = e.touches[0].pageX;
-      const walk = (touchStartX - x) * 1.2;
-      wrap.scrollLeft = touchScrollLeft + walk;
-    },
-    { passive: true },
-  );
-
-  // Click opens modal
-  document.querySelectorAll(".js-gallery-card").forEach((card) => {
-    if (card.dataset.galleryCardManaged === "true") return;
-    card.dataset.galleryCardManaged = "true";
-    card.addEventListener("click", () => {
-      if (wrap.classList.contains("is-dragging")) return;
-      openGalleryModal(card);
-    });
-
-    // Hover scale
-    card.addEventListener("mouseenter", () => {
-      gsap.to(card, { scale: 1.04, duration: 0.4, ease: "power2.out" });
-    });
-    card.addEventListener("mouseleave", () => {
-      gsap.to(card, { scale: 1, duration: 0.5, ease: "elastic.out(1, 0.4)" });
-    });
-  });
+  trackDisposer(() => { abort.abort(); closePreview?.(); });
 }
 
-/* ── Gallery Modal ────────────────────────────────────── */
 function openGalleryModal(card) {
-  const existing = document.querySelector(".gallery-modal");
-  if (existing) existing.remove();
-
-  const img = card.querySelector("img");
-  const typeLabel =
-    card.querySelector(".gallery-card__type-label")?.textContent || "";
-  const title = card.querySelector(".gallery-card__title")?.textContent || "";
-  const bg = card.style.getPropertyValue("--card-bg") || "#1a1a2e";
-
+  const source = card.querySelector("img");
+  const title = card.dataset.title || card.querySelector(".gallery-card__title")?.textContent || "Creative preview";
   const modal = document.createElement("div");
   modal.className = "gallery-modal";
-  modal.setAttribute("role", "dialog");
-  modal.setAttribute("aria-modal", "true");
-  modal.setAttribute("aria-label", `Preview: ${title}`);
-
-  modal.innerHTML = `
-    <div class="gallery-modal__backdrop js-modal-close"></div>
-    <div class="gallery-modal__panel">
-      <button class="gallery-modal__close js-modal-close" aria-label="Close preview">✕</button>
-      <div class="gallery-modal__media" style="background:${bg}20;">
-        ${
-          img
-            ? `<img src="${img.src}" alt="${title}" class="gallery-modal__img">`
-            : `<div class="gallery-modal__placeholder" style="background:${bg};">
-               <span>${typeLabel}</span>
-             </div>`
-        }
-      </div>
-      <div class="gallery-modal__info">
-        <span class="gallery-modal__type">${typeLabel}</span>
-        <h2 class="gallery-modal__title">${title}</h2>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  // Animate in
-  gsap.fromTo(
-    modal,
-    { opacity: 0 },
-    { opacity: 1, duration: 0.35, ease: "power2.out" },
-  );
-  gsap.fromTo(
-    modal.querySelector(".gallery-modal__panel"),
-    { y: 50, scale: 0.96 },
-    { y: 0, scale: 1, duration: 0.5, ease: "expo.out" },
-  );
-
-  // Close
-  const closeEls = modal.querySelectorAll(".js-modal-close");
-  closeEls.forEach((el) => {
-    el.addEventListener("click", closeGalleryModal);
-  });
-
-  document.addEventListener("keydown", handleModalKeydown);
+  modal.setAttribute("role", "dialog"); modal.setAttribute("aria-modal", "true"); modal.setAttribute("aria-label", title);
+  modal.innerHTML = '<div class="gallery-modal__backdrop"></div><div class="gallery-modal__panel" data-lenis-prevent><button class="gallery-modal__close" type="button" aria-label="Close preview">&times;</button><div class="gallery-modal__media"></div><div class="gallery-modal__info"><h2 class="gallery-modal__title"></h2></div></div>';
+  modal.querySelector("h2").textContent = title;
+  if (source) { const image = new Image(); image.src = source.currentSrc || source.src; image.alt = title; image.className = "gallery-modal__img"; modal.querySelector('.gallery-modal__media').append(image); }
+  document.body.append(modal);
+  const release = containDialog(modal, card, [document.getElementById("app")]);
+  const abort = new AbortController();
+  const close = () => { abort.abort(); gsap.killTweensOf(modal); modal.remove(); release(); };
+  modal.querySelector('button').addEventListener('click',close,{signal:abort.signal});
+  modal.querySelector('.gallery-modal__backdrop').addEventListener('click',close,{signal:abort.signal});
+  modal.addEventListener('keydown',event=>{if(event.key === 'Escape')close();},{signal:abort.signal});
+  gsap.from(modal, {opacity:0, duration:prefersReducedMotion() ? 0 : .25});
+  return close;
 }
 
-function closeGalleryModal() {
-  const modal = document.querySelector(".gallery-modal");
-  if (!modal) return;
-  gsap.to(modal, {
-    opacity: 0,
-    duration: 0.25,
-    onComplete: () => modal.remove(),
-  });
-  document.removeEventListener("keydown", handleModalKeydown);
-}
-
-function handleModalKeydown(e) {
-  if (e.key === "Escape") closeGalleryModal();
-}
-
-/* ── Service Row hover reveal ─────────────────────────── */
 export function initServiceRowAnimations() {
-  const rows = document.querySelectorAll(".js-service-row");
-  if (!rows.length) return;
-
-  rows.forEach((row) => {
-    if (row.dataset.serviceRowManaged === "true") return;
-    row.dataset.serviceRowManaged = "true";
-    const arrow = row.querySelector(".service-row__arrow");
-    const desc = row.querySelector(".service-row__desc");
-
-    row.addEventListener("mouseenter", () => {
-      gsap.to(arrow, { x: 8, duration: 0.3, ease: "power2.out" });
-      gsap.to(row, { paddingLeft: "6px", duration: 0.3, ease: "power2.out" });
-    });
-
-    row.addEventListener("mouseleave", () => {
-      gsap.to(arrow, { x: 0, duration: 0.4, ease: "elastic.out(1, 0.4)" });
-      gsap.to(row, { paddingLeft: "0px", duration: 0.3, ease: "power2.out" });
-    });
+  // Information is always available; decorative hover motion belongs to fine pointers.
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches || prefersReducedMotion()) return;
+  const abort = new AbortController();
+  document.querySelectorAll('.js-service-row').forEach(row => {
+    const arrow = row.querySelector('.service-row__arrow');
+    if (!arrow) return;
+    row.addEventListener('mouseenter',()=>gsap.to(arrow,{x:6,duration:.25,overwrite:'auto'}),{signal:abort.signal});
+    row.addEventListener('mouseleave',()=>gsap.to(arrow,{x:0,duration:.25,overwrite:'auto'}),{signal:abort.signal});
   });
+  trackDisposer(()=>abort.abort());
 }

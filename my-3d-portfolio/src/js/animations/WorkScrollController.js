@@ -1,3 +1,4 @@
+import { onViewportChange } from "../utils/responsive.js";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
@@ -27,7 +28,7 @@ export function initWorkScroll(lenis) {
           tl.fromTo(section.querySelector(".work-cinema__progress i"), { scaleX: 0 }, { scaleX: 1, duration, ease: "none" }, 0);
           ScrollTrigger.create({
             id: `route:work-${kind}`, trigger: section, animation: tl,
-            start: "top top", end: () => `+=${Math.round(duration * section.clientHeight * (window.innerWidth < 720 ? 0.48 : 0.62))}`,
+            start: "top top", end: () => `+=${Math.round(duration * section.clientHeight * (0.38 + 0.24 * Math.min(1, Math.max(0, (window.innerWidth - 360) / 840))))}`,
             pin: true, pinSpacing: true, scrub: true, anticipatePin: 1,
             invalidateOnRefresh: true, refreshPriority: 3 - order,
           });
@@ -35,15 +36,14 @@ export function initWorkScroll(lenis) {
       }, root);
     };
     build();
-    const resize = () => {
-      if (width === window.innerWidth && Math.abs(height - window.innerHeight) < 100) return;
+    const unsubscribe = onViewportChange(() => {
+      if (width === window.innerWidth && (height === window.innerHeight || (matchMedia("(pointer: coarse)").matches && Math.abs(height - window.innerHeight) < 100))) return;
       width = window.innerWidth; height = window.innerHeight;
       const active = ScrollTrigger.getAll().find(t => t.vars.id?.startsWith("route:work-") && t.isActive);
       const saved = active && { id: active.vars.id, progress: active.progress };
       context.revert();
       build();
-      ScrollTrigger.refresh();
-      lenis?.resize();
+      return () => {
       if (saved) {
         const trigger = ScrollTrigger.getById(saved.id);
         const position = trigger.start + (trigger.end - trigger.start) * saved.progress;
@@ -51,13 +51,10 @@ export function initWorkScroll(lenis) {
         else trigger.scroll(position);
         ScrollTrigger.update();
       }
-    };
-    const delayed = gsap.delayedCall(0.2, resize).pause();
-    const onResize = () => delayed.restart(true);
-    window.addEventListener("resize", onResize);
+      };
+    }, 10);
     return () => {
-      window.removeEventListener("resize", onResize);
-      delayed.kill(); context.revert();
+      unsubscribe(); context.revert();
       root.querySelectorAll("[data-cinematic]").forEach(s => s.classList.remove("is-cinematic"));
     };
   });

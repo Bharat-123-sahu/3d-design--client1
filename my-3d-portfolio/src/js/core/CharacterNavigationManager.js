@@ -1,3 +1,4 @@
+import { getViewportProfile } from "../utils/responsive.js";
 import * as THREE from "three";
 import gsap from "gsap";
 import {
@@ -125,6 +126,8 @@ export class CharacterNavigationManager {
     this._camTargetPos = new THREE.Vector3(0, 1.2, 5.5);
     this._camTargetLook = new THREE.Vector3(0, -0.5, 0);
     this._camCurrentLook = new THREE.Vector3(0, -0.5, 0);
+    this._responsiveCamera = new THREE.Vector3();
+    this.profile = getViewportProfile();
 
     // Walk animation time
     this._walkTime = 0;
@@ -298,7 +301,7 @@ export class CharacterNavigationManager {
       this.navState === NAV_STATE.IDLE ||
       this.navState === NAV_STATE.AT_DESTINATION
     ) {
-      this._updateIdleAnimation(delta, char, elapsed);
+      if (!this.profile.reduced) this._updateIdleAnimation(delta, char, elapsed);
     }
 
     // Camera follow
@@ -525,12 +528,16 @@ export class CharacterNavigationManager {
 
   /* ── Camera Follow ────────────────────────────────────────────── */
 
-  _updateCamera(delta) {
-    // Smooth camera position
-    this.camera.position.lerp(this._camTargetPos, CAMERA_LERP);
+  handleResize(profile = getViewportProfile()) { this.profile = profile; }
 
-    // Smooth look-at
-    this._camCurrentLook.lerp(this._camTargetLook, CAMERA_LERP);
+  _updateCamera(delta) {
+    // Preserve each destination's direction, expanding the view for portrait screens.
+    const overview = !this.currentNode && !this.isMoving && !this.targetNode;
+    const fit = overview ? Math.max(1.6, this.profile.cameraDistance * 1.35) : Math.max(1, this.profile.cameraDistance * 0.8);
+    this._responsiveCamera.copy(this._camTargetPos).sub(this._camTargetLook).multiplyScalar(fit).add(this._camTargetLook);
+    const damping = 1 - Math.pow(1 - CAMERA_LERP, delta * 60);
+    this.camera.position.lerp(this._responsiveCamera, damping);
+    this._camCurrentLook.lerp(this._camTargetLook, damping);
     this.camera.lookAt(this._camCurrentLook);
   }
 

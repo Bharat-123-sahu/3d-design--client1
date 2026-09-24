@@ -9,6 +9,7 @@ import { createRouteTrigger, prefersReducedMotion } from "../utils/animationRegi
 gsap.registerPlugin(ScrollTrigger);
 
 export function initCounterAnimations() {
+  if (prefersReducedMotion()) return;
   const counters = document.querySelectorAll(".js-counter");
   if (!counters.length) return;
 
@@ -62,6 +63,7 @@ export function initCounterAnimations() {
  * Scroll-triggered section label + title stagger reveal
  */
 export function initSectionReveal() {
+  if (prefersReducedMotion()) return;
   gsap.utils.toArray(".section-label").forEach((el) => {
     gsap.fromTo(
       el,
@@ -82,6 +84,7 @@ export function initSectionReveal() {
  * Process steps — scroll-driven active state
  */
 export function initProcessStepsAnimation() {
+  if (prefersReducedMotion()) return;
   const wrapper = document.querySelector(".js-process-steps");
   const steps = document.querySelectorAll(".js-process-step");
   if (!steps.length) return;
@@ -131,6 +134,7 @@ export function initProcessStepsAnimation() {
  * Case study journey block animate-in
  */
 export function initCaseStudyAnimations() {
+  if (prefersReducedMotion()) return;
   const steps = document.querySelectorAll(".case-journey__step");
   if (!steps.length) return;
 
@@ -179,6 +183,7 @@ export function initCaseStudyAnimations() {
  * Testimonial cards horizontal scroll reveal
  */
 export function initTestimonialAnimations() {
+  if (prefersReducedMotion()) return;
   const cards = document.querySelectorAll(".testimonial-card");
   if (!cards.length) return;
 
@@ -202,6 +207,7 @@ export function initTestimonialAnimations() {
  * Stat cards count-up + scale in
  */
 export function initStatCardAnimations() {
+  if (prefersReducedMotion()) return;
   const cards = document.querySelectorAll(".stat-card");
   if (!cards.length) return;
 

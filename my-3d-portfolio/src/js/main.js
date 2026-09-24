@@ -1,3 +1,7 @@
+import gsap from "gsap";
+import { trackDisposer } from "./utils/animationRegistry.js";
+import { setOverlayScroller } from "./utils/dialog.js";
+import { initMobileNavigation } from "./components/MobileNavigation.js";
 import "../scss/main.scss";
 
 import { ThreeScene } from "./three/ThreeScene.js";
@@ -83,7 +87,7 @@ function initPageAnimations(sceneController, lenis) {
     console.warn("[processAnimations]", e);
   }
   try {
-    initCursorEffects();
+    // Persistent cursor is initialized outside the route animation context.
   } catch (e) {
     console.warn("[cursorEffects]", e);
   }
@@ -118,7 +122,7 @@ function initPageAnimations(sceneController, lenis) {
     console.warn("[stackedCarousels]", e);
   }
   try {
-    initScrollProgress();
+    // Persistent progress bar is initialized outside the route context.
   } catch (e) {
     console.warn("[scrollProgress]", e);
   }
@@ -182,37 +186,6 @@ function initPageAnimations(sceneController, lenis) {
   }
 }
 
-function initHamburger() {
-  const btn = document.getElementById("hamburger-btn");
-  const menu = document.getElementById("mobile-menu");
-  const close = document.getElementById("mobile-close");
-
-  if (!btn || !menu) return;
-
-  const open = () => {
-    btn.classList.add("is-open");
-    menu.classList.add("is-open");
-    menu.setAttribute("aria-hidden", "false");
-    btn.setAttribute("aria-expanded", "true");
-  };
-  const shut = () => {
-    btn.classList.remove("is-open");
-    menu.classList.remove("is-open");
-    menu.setAttribute("aria-hidden", "true");
-    btn.setAttribute("aria-expanded", "false");
-  };
-
-  btn.addEventListener("click", () =>
-    menu.classList.contains("is-open") ? shut() : open(),
-  );
-  close?.addEventListener("click", shut);
-
-  // Close when a route link inside the menu is clicked
-  menu.addEventListener("click", (e) => {
-    if (e.target.closest("[data-route]")) shut();
-  });
-}
-
 function bindSectionNavigation(transitionManager) {
   document.addEventListener("click", (e) => {
     const link = e.target.closest("[data-nav-target]");
@@ -274,10 +247,11 @@ function bootstrap() {
     <div class="page-transition" aria-hidden="true"></div>
   `;
 
-  initHamburger();
+  initMobileNavigation();
   initNavbarStateManager();
 
   const lenis = initSmoothScroll();
+  setOverlayScroller(lenis);
   const sceneController = new SceneController();
   const threeScene = initThreeLayer(sceneController);
   new ThemeManager({ sceneController });
@@ -289,7 +263,11 @@ function bootstrap() {
     sceneController,
     lenis,
     onRouteChange: () => {
-      initPageAnimations(sceneController, lenis);
+      // Capture route-owned decorative timelines as well as explicit triggers.
+      initCursorEffects();
+      initScrollProgress();
+      const context = gsap.context(() => initPageAnimations(sceneController, lenis));
+      trackDisposer(() => context.revert());
     },
   });
 

@@ -1,3 +1,4 @@
+import { getViewportProfile, onViewportChange } from "../utils/responsive.js";
 import * as THREE from "three";
 import { WorldScene } from "./WorldScene.js";
 import gsap from "gsap";
@@ -22,7 +23,8 @@ import { ElectricThunderEffect } from "../effects/ElectricThunderEffect.js";
 
 class LiquidBackground {
   constructor(scene) {
-    const geometry = new THREE.PlaneGeometry(18, 14, 128, 128);
+    const segments = getViewportProfile().lowPower ? 40 : 96;
+    const geometry = new THREE.PlaneGeometry(18, 14, segments, segments);
 
     this.material = new THREE.ShaderMaterial({
       vertexShader: liquidVertex,
@@ -66,7 +68,7 @@ class LiquidBackground {
 }
 
 function createStarField(scene) {
-  const count = window.matchMedia("(max-width: 700px)").matches ? 720 : 1800;
+  const count = 1800;
   const positions = new Float32Array(count * 3);
   const speeds = new Float32Array(count);
 
@@ -125,7 +127,9 @@ export class ThreeScene {
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
+    this.profile = getViewportProfile();
     this.clock = new THREE.Clock();
+    this.effectTime = 0;
     this.scene = new THREE.Scene();
     this.scene.fog = new THREE.FogExp2("#050505", 0.03);
     this.interaction = new InteractionManager();
@@ -170,7 +174,8 @@ export class ThreeScene {
       effect.hide?.();
     }
 
-    window.addEventListener("resize", this.handleResize);
+    this.unsubscribeViewport = onViewportChange(this.handleResize, -20);
+    this.handleResize();
     this.onReady?.(this);
     this.animate();
   }
@@ -296,10 +301,7 @@ export class ThreeScene {
   }
 
   createParticleField() {
-    const count =
-      window.matchMedia("(max-width: 700px)").matches || this.reduceMotion
-        ? 620
-        : 1400;
+    const count = 1400;
     const positions = new Float32Array(count * 3);
 
     for (let index = 0; index < count; index += 1) {
@@ -343,9 +345,17 @@ export class ThreeScene {
 
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
+    this.profile = getViewportProfile();
+    this.reduceMotion = this.profile.reduced;
+    this.renderer.setPixelRatio(this.profile.dpr);
     this.renderer.setSize(width, height, false);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.postProcessing?.composer?.setSize(width, height);
+    this.postProcessing?.resize(width, height, this.profile);
+    this.particles.geometry.setDrawRange(0, this.profile.lowPower ? 420 : 1400);
+    this.stars.geometry.setDrawRange(0, this.profile.lowPower ? 540 : 1800);
+    this.navManager?.handleResize?.(this.profile);
+    if (!this.navManager) this.camera.position.z = 6 * this.profile.cameraDistance;
+    const planeHeight = 2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * (this.camera.position.z + 5);
+    this.liquidBackground.mesh.scale.set(Math.max(1, planeHeight * this.camera.aspect / 18), Math.max(1, planeHeight / 14), 1);
     this.introEffect?.handleResize?.();
   };
 
@@ -354,10 +364,16 @@ export class ThreeScene {
       return;
     }
 
-    requestAnimationFrame(this.animate);
+    this.frameId = requestAnimationFrame(this.animate);
+    if (document.hidden) { this.clock.getDelta(); return; }
+    const now = performance.now();
+    const interval = 1000 / (this.profile.reduced ? 24 : this.profile.lowPower ? 30 : 60);
+    if (this.lastFrame && now - this.lastFrame < interval - 1) return;
+    this.lastFrame = now;
 
-    const delta = this.clock.getDelta();
-    const elapsed = this.clock.elapsedTime;
+    const delta = Math.min(this.clock.getDelta(), 0.1);
+    this.effectTime += this.reduceMotion ? 0 : delta;
+    const elapsed = this.effectTime;
     const interaction = this.interaction.update();
 
     this.liquidBackground.update(interaction, elapsed);
@@ -369,6 +385,7 @@ export class ThreeScene {
     this.stars.rotation.y += delta * (this.reduceMotion ? 0.004 : 0.015);
     this.stars.rotation.x = interaction.y * (this.reduceMotion ? 0.003 : 0.01);
 
+    if (!this.navManager && !this.reduceMotion) {
     this.camera.position.x +=
       (interaction.x * (this.reduceMotion ? 0.04 : 0.15) -
         this.camera.position.x) *
@@ -379,10 +396,15 @@ export class ThreeScene {
       0.02;
     this.camera.lookAt(0, 0, 0);
 
-    for (const effect of Object.values(this.sceneEffects)) {
-      effect.update?.(delta, interaction.x, interaction.y);
     }
-    this.introEffect?.update?.(delta, elapsed);
+
+    for (const effect of Object.values(this.sceneEffects)) {
+      const object = effect.group || effect.container || effect.mesh;
+      if (object?.visible !== false && (!object?.scale || object.scale.lengthSq() > 0.00001)) {
+        effect.update?.(this.reduceMotion ? 0 : delta, interaction.x, interaction.y);
+      }
+    }
+    if (!this.worldScene?.isActive) this.introEffect?.update?.(delta, elapsed);
 
     // Navigation world + character
     this.worldScene?.update?.(delta, elapsed);
@@ -394,7 +416,11 @@ export class ThreeScene {
 
   destroy() {
     this.isDestroyed = true;
-    window.removeEventListener("resize", this.handleResize);
+    cancelAnimationFrame(this.frameId);
+    this.unsubscribeViewport?.();
+    this.postProcessing?.destroy?.();
+    this.worldScene?.destroy?.();
+    this.navManager?.destroy?.();
 
     this.liquidBackground?.destroy?.();
     this.particles?.geometry?.dispose?.();

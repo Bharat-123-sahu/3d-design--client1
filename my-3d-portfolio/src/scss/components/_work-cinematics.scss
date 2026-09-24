@@ -1,7 +1,7 @@
 .work-cinema {
   position: relative; padding: 0 !important; color: var(--ink);
   background: var(--page-bg); border-top: 1px solid var(--line);
-  &__inner { padding: 90px clamp(16px, 4vw, 64px) 24px; }
+  &__inner { padding: calc(90px + env(safe-area-inset-top)) max(clamp(16px, 4vw, 64px), env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(clamp(16px, 4vw, 64px), env(safe-area-inset-left)); }
   &__header { position: relative; z-index: 5; display: grid; gap: 8px; }
   &__header p, &__footer, .dice-caption > span { font-size: 10px; letter-spacing: .16em; color: var(--muted); }
   &__header h2 { font-size: clamp(22px, 3.3vw, 48px); line-height: 1.1; margin: 0; }
@@ -18,7 +18,7 @@
   &__body { padding: 14px; }
   span { color: var(--project-color); font-size: 10px; letter-spacing: .08em; }
   h3 { margin: 8px 0; font-size: clamp(16px, 1.6vw, 23px); line-height: 1.1; }
-  p { margin: 0; font-size: 11px; line-height: 1.5; color: var(--muted); }
+  p { margin: 0; font-size: clamp(12px, 1vw, 14px); line-height: 1.5; color: var(--muted); }
 }
 .radial-stage, .project-dice, .bird-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 24px 0; }
 .compass, .story-tree, .story-bird, .dice-captions { display: none; }
@@ -31,7 +31,7 @@
   .compass b { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; font-size: 10px; letter-spacing: .3em; color: var(--muted); }
   .compass span { position: absolute; font-size: 9px; color: var(--muted); &:nth-child(1) { top: 0; left: 50%; } &:nth-child(2) { right: 0; top: 50%; } &:nth-child(3) { bottom: 0; left: 50%; } &:nth-child(4) { left: 0; top: 50%; } }
   .dice-stage { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 6vw; min-height: 0; }
-  .dice-camera { perspective: 1100px; display: grid; place-items: center; }
+  .dice-camera { perspective: clamp(600px, 85vw, 1100px); display: grid; place-items: center; }
   .project-dice { --dice-size: min(29vw, 35svh, 330px); --dice-depth: calc(var(--dice-size) / 2); position: relative; display: block; margin: 0; width: var(--dice-size); height: var(--dice-size); transform-style: preserve-3d; }
   .dice-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 0; box-shadow: inset 0 0 40px #0002; display: flex; flex-direction: column; border-color: var(--project-color); img { height: 55%; min-height: 0; } h3 { font-size: clamp(13px, 1.7vw, 23px); } p { display: none; } }
   .dice-face--front { transform: translateZ(var(--dice-depth)); }
@@ -44,7 +44,7 @@
   .bird-stage { position: relative; min-height: 0; }
   .story-tree { display: block; position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; path { fill: none; stroke: var(--muted); stroke-width: 2; } circle { fill: var(--cyan); } }
   .story-bird { display: block; position: absolute; width: 52px; height: 33px; top: 0; left: 0; color: var(--cyan); svg { width: 100%; fill: currentColor; } .bird-wing { fill: var(--ink); } }
-  .bird-cards { position: absolute; left: 50%; bottom: 0; width: min(310px, 74vw); transform: translateX(-50%); display: grid; margin: 0; .cinema-card { grid-area: 1 / 1; } img { height: 90px; } }
+  .bird-cards { position: absolute; left: 50%; bottom: 0; width: min(340px, 74vw); transform: translateX(-50%); display: grid; margin: 0; .cinema-card { grid-area: 1 / 1; } img { height: 90px; } }
 }
 @media (max-width: 720px) {
   .work-cinema.is-cinematic {

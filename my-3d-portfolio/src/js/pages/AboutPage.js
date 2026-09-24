@@ -17,7 +17,7 @@ export function AboutPage() {
 
     <section class="philosophy-section">
       <div class="container">
-        <div class="philosophy-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center;">
+        <div class="philosophy-layout">
           <div class="philosophy-block" data-animate="fade-up">
             <p class="section-label">Philosophy</p>
             <h2 class="philosophy-block__title animate-title">
@@ -26,18 +26,18 @@ export function AboutPage() {
               then gives them a reason to act.
             </h2>
           </div>
-          <div class="philosophy-image js-image-reveal" style="border-radius:12px; overflow:hidden; aspect-ratio:1/1;">
+          <div class="philosophy-image js-image-reveal">
             <img src="${brand.images.marketing}" alt="Marketing Philosophy" loading="lazy" style="width:100%; height:100%; object-fit:cover;">
           </div>
         </div>
       </div>
     </section>
 
-    <section class="capabilities-section" style="padding-top: 100px;">
+    <section class="capabilities-section" >
       <div class="container">
-        <div class="capabilities-header-layout" style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 60px;">
+        <div class="capabilities-header-layout">
           <p class="section-label" data-animate="fade-up">What I Bring</p>
-          <div class="team-image js-image-reveal" style="width: 200px; height: 120px; border-radius: 8px; overflow:hidden;">
+          <div class="team-image js-image-reveal">
             <img src="${brand.images.team}" alt="Team Collaboration" loading="lazy" style="width:100%; height:100%; object-fit:cover;">
           </div>
         </div>
@@ -73,12 +73,12 @@ export function AboutPage() {
       </div>
     </section>
 
-    <section class="process-section" style="padding-top: 100px;">
+    <section class="process-section" >
       <div class="container">
         <p class="section-label" data-animate="fade-up">The Playbook</p>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center; margin-bottom: 60px;">
+        <div class="about-process-header">
           <h2 class="animate-title" data-animate="split-text">HOW I WORK<br>& DELIVER</h2>
-          <div class="location-image js-image-reveal" style="border-radius:12px; overflow:hidden; aspect-ratio:16/9; max-width: 400px; margin-left: auto;">
+          <div class="location-image js-image-reveal">
              <img src="${brand.images.location}" alt="Based in India" loading="lazy" style="width:100%; height:100%; object-fit:cover;">
           </div>
         </div>

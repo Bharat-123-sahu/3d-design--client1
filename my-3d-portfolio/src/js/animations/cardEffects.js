@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 
 export function initCardEffects() {
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const cards = document.querySelectorAll('.service-card, .service-row, .process-card, .campaign-card, .value-card, .work-card, .team-member, .signal-card, .info-block');
   
   cards.forEach(card => {

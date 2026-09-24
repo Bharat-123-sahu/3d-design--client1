@@ -1,3 +1,4 @@
+@use "responsive";
 @use "variables";
 @use "components/work-cinematics";
 @use "reset";
@@ -2097,18 +2098,4 @@ body.is-navigating .navbar__link.is-active {
   display: none !important;
 }
   
-/* --- Mobile View Enhancements --- */  
-@media (max-width: 768px) {  
-  .container { width: calc(100% - 2rem); padding: 0; }  
-  section { padding: 40px 0 !important; }  
-  h1, h2 { word-break: break-word; }  
-  .hero-title { font-size: clamp(2.5rem, 12vw, 4rem) !important; line-height: 1.1 !important; margin-bottom: 20px !important; }  
-  .hero-subtitle { font-size: 1rem !important; }  
-  .about-philosophy h2 { font-size: 2rem !important; }  
-  .contact-form-wrapper { padding: 20px !important; margin-top: 20px !important; }  
-  .stack-carousel__stage { min-height: 480px; }  
-  .experience-item__year { font-size: 2rem !important; }  
-  .credential-card { min-height: auto; padding: 20px; }  
-  .navbar__links { gap: 4px; padding: 4px; }  
-  .navbar__link { min-width: auto; padding: 0.4rem 0.6rem; font-size: 0.65rem; }  
-} 
+@include responsive.site;

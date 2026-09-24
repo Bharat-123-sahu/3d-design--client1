@@ -1,3 +1,4 @@
+import { onViewportChange } from "../utils/responsive.js";
 import gsap from "gsap";
 
 export function initNavbarStateManager() {
@@ -36,5 +37,5 @@ export function initNavbarStateManager() {
   });
 
   setTimeout(movePillToActiveLink, 300);
-  window.addEventListener("resize", movePillToActiveLink);
+  onViewportChange(movePillToActiveLink);
 }

@@ -16,12 +16,13 @@ export class InteractionManager {
     };
 
     window.addEventListener(
-      "mousemove",
+      "pointermove",
       this.handleMouseMove
     );
   }
 
   handleMouseMove = (event) => {
+    if (event.pointerType === "touch" || !matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     this.target.x =
       (event.clientX / window.innerWidth) * 2 - 1;
 
@@ -54,6 +55,6 @@ export class InteractionManager {
   }
 
   destroy() {
-    window.removeEventListener("mousemove", this.handleMouseMove);
+    window.removeEventListener("pointermove", this.handleMouseMove);
   }
 }

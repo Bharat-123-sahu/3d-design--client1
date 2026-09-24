@@ -1,3 +1,4 @@
+import { getViewportProfile } from "../utils/responsive.js";
 import * as THREE from "three";
 import gsap from "gsap";
 
@@ -290,7 +291,7 @@ export class ElectricThunderEffect {
       uniforms: {
         uTime: { value: 0 },
         uBurst: { value: 0 },
-        uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+        uPixelRatio: { value: getViewportProfile().dpr },
         uColor: { value: new THREE.Color("#ff1830") },
         uOpacity: { value: 0.06 },
       },
@@ -473,7 +474,7 @@ export class ElectricThunderEffect {
 
   handleResize() {
     this.rebuildPaths();
-    this.sparkField.material.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, 2);
+    this.sparkField.material.uniforms.uPixelRatio.value = getViewportProfile().dpr;
   }
 
   destroy() {
