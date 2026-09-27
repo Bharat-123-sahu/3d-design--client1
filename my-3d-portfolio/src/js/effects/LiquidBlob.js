@@ -5,6 +5,7 @@ import fragmentShader from "../shaders/liquid/jellyFragment.glsl";
 import { stickerLibrary } from "../data/stickerData.js";
 import { SurfaceStickers } from "./SurfaceStickers.js";
 import { StickerField } from "./StickerField.js";
+import { ClickStarBurst } from "./ClickStarBurst.js";
 
 /** Persistent gel sphere; the CPU surface and shared GPU displacement agree. */
 export class LiquidBlob {
@@ -43,6 +44,7 @@ export class LiquidBlob {
     this.group.add(this.mesh);
     this.surfaceStickers = new SurfaceStickers(this.mesh, this.uniforms);
     this.stickerField = new StickerField(this);
+    this.clickStarBurst = new ClickStarBurst(this.scene);
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
     this.scratch = new THREE.Vector3();
@@ -131,6 +133,41 @@ export class LiquidBlob {
     );
   }
 
+  triggerImpact(hit, strength = 1) {
+    if (!hit) return;
+    this.impact(hit, strength);
+
+    let normal = null;
+    if (hit.face?.normal) {
+      normal = hit.face.normal
+        .clone()
+        .transformDirection(this.mesh.matrixWorld)
+        .normalize();
+    } else {
+      const ballWorldPos = new THREE.Vector3();
+      this.mesh.getWorldPosition(ballWorldPos);
+      normal = hit.point.clone().sub(ballWorldPos).normalize();
+    }
+
+    const colors =
+      this.config?.clickBurstColors ||
+      (this.config
+        ? [this.config.colorA, this.config.colorB, this.config.glow, "#ffffff"]
+        : null);
+
+    const lowPower =
+      this.reduced ||
+      (typeof window !== "undefined" && window.innerWidth <= 700);
+
+    this.clickStarBurst.trigger({
+      position: hit.point,
+      normal,
+      colors,
+      intensity: strength,
+      lowPower,
+    });
+  }
+
   hitTest(clientX, clientY, camera, rect) {
     if (!this.group.visible || this.reveal.value < 0.2) return null;
     this.pointer.set(
@@ -189,6 +226,7 @@ export class LiquidBlob {
   }
 
   update(delta, camera, profile, postProcessing) {
+    this.clickStarBurst.update(delta);
     if (!this.group.visible || !this.config) return;
     this.reduced = profile.reduced;
     this.time += this.reduced ? 0 : delta;
@@ -266,6 +304,7 @@ export class LiquidBlob {
     this.destroyed = true;
     this.hide(true);
     gsap.killTweensOf(this.reveal);
+    this.clickStarBurst.destroy();
     this.stickerField.destroy();
     this.surfaceStickers.destroy();
     for (const key of ["uColorA", "uColorB", "uGlow", "uBase"])

@@ -117,6 +117,7 @@ export function mountDestinationHero(root, destination, controller) {
     const center = controller.ballCenter();
     const hit = center && controller.hitBall(center.x, center.y);
     if (hit) {
+      controller.triggerClickImpact(hit);
       controller.targetSticker(center.x, center.y);
       attach(hit);
     }
@@ -164,6 +165,7 @@ export function mountDestinationHero(root, destination, controller) {
         return;
       const hit = controller.hitBall(event.clientX, event.clientY);
       if (hit) {
+        controller.triggerClickImpact(hit);
         if (!controller.currentSticker())
           controller.targetSticker(event.clientX, event.clientY);
         attach(hit);
