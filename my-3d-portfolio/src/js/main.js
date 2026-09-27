@@ -252,6 +252,7 @@ function bootstrap() {
 
   initMobileNavigation();
   initNavbarStateManager();
+  initCursorEffects();
 
   const lenis = initSmoothScroll();
   setOverlayScroller(lenis);
@@ -270,7 +271,9 @@ function bootstrap() {
       // Capture route-owned decorative timelines as well as explicit triggers.
       initCursorEffects();
       initScrollProgress();
-      const context = gsap.context(() => initPageAnimations(sceneController, lenis));
+      const context = gsap.context(() =>
+        initPageAnimations(sceneController, lenis),
+      );
       trackDisposer(() => context.revert());
     },
   });
@@ -281,12 +284,24 @@ function bootstrap() {
     { path: navigationNodes.home.route, page: HomePage, scene: "home" },
     { path: navigationNodes.about.route, page: AboutPage, scene: "about" },
     { path: navigationNodes.value.route, page: ValuePage, scene: "value" },
-    { path: navigationNodes.experience.route, page: ExperiencePage, scene: "experience" },
-    { path: navigationNodes.feedback.route, page: FeedbackPage, scene: "feedback" },
+    {
+      path: navigationNodes.experience.route,
+      page: ExperiencePage,
+      scene: "experience",
+    },
+    {
+      path: navigationNodes.feedback.route,
+      page: FeedbackPage,
+      scene: "feedback",
+    },
     { path: navigationNodes.work.route, page: WorkPage, scene: "work" },
     { path: "/team", page: TeamPage, scene: "team" },
     { path: "/company", page: CompanyPage, scene: "company" },
-    { path: navigationNodes.contact.route, page: ContactPage, scene: "contact" },
+    {
+      path: navigationNodes.contact.route,
+      page: ContactPage,
+      scene: "contact",
+    },
   ]);
 
   threeScene?.worldScene?.setDestinationSelectHandler?.((nodeId) => {

@@ -1,25 +1,28 @@
-// Custom cursor styles
+// Custom cursor styles - Ensure pointer is always visible everywhere
+html,
 body {
-  cursor: none;
+  cursor: default;
+}
+
+button,
+a,
+[role="button"],
+.magnetic,
+.character-nav__trigger,
+.nav-pill__item,
+.destination-hero__action,
+.js-work-card,
+.js-gallery-card {
+  cursor: pointer;
 }
 
 .no-custom-cursor body,
 html.no-custom-cursor body {
-  cursor: auto;
+  cursor: default;
 }
 
 .cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  width: 8px;
-  height: 8px;
-  background: var(--cyan);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: difference;
+  display: none; // Native arrow is always visible and provides 0-latency precision
 }
 
 .cursor-ring {
@@ -30,9 +33,10 @@ html.no-custom-cursor body {
   z-index: 9998;
   width: 36px;
   height: 36px;
-  border: 1.5px solid var(--cursor-ring, rgba(255, 255, 255, 0.5));
+  border: 1.5px solid var(--cursor-ring, rgba(0, 229, 255, 0.6));
   border-radius: 50%;
-  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+  transition: opacity 0.2s ease, border-color 0.2s ease;
 }
 
 .cursor-particle {
