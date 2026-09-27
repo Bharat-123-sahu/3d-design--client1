@@ -62,20 +62,7 @@ body:has(.character-nav) .footer { padding-bottom: 160px; }
 .feedback-reaction { min-height: 3em; padding-top: 18px; font-size: 14px; color: var(--muted); }
 .feedback-status { margin-top: 20px; max-width: 650px; line-height: 1.6; }
 
-.video-reveal {
-  padding-block: 40px 80px;
-  &__heading { position: relative; z-index: 1; max-width: 70%; }
-  &__heading h2 { font-size: clamp(2.1rem, 5vw, 4.5rem); letter-spacing: -.05em; line-height: 1.05; margin-block: 18px; }
-  &__heading > p:last-child { font-size: 14px; color: var(--muted); }
-  &__rig { position: relative; padding-top: 130px; padding-inline: 6%; padding-bottom: 50px; overflow: clip; }
-  &__rope { position: absolute; right: calc(7.32% + 12px); top: 0; width: 22%; height: 132px; transform-origin: top right; overflow: visible; }
-  &__rope path { stroke: #c4b79a; stroke-width: 2.5; fill: none; vector-effect: non-scaling-stroke; }
-  &__card { position: relative; margin: 0; border-radius: 18px; border: 1px solid #bca88466; background: #19171e; transform-origin: 85% 0; box-shadow: 0 24px 50px #0003; }
-  &__card img, &__card video { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 18px 18px 0 0; }
-  &__card video { background: #09090c; }
-  &__card figcaption { padding: 18px 22px; color: #d4c8b9; font-size: 13px; }
-  &__clip { position: absolute; top: -10px; right: 14%; width: 24px; height: 20px; border: 3px solid #d8c3a2; border-radius: 50%; z-index: 1; }
-}
+
 
 @media (max-width: 600px) {
   .character-nav { width: 112px; right: max(10px, env(safe-area-inset-right)); bottom: max(10px, env(safe-area-inset-bottom)); }
@@ -86,11 +73,7 @@ body:has(.character-nav) .footer { padding-bottom: 160px; }
   .feedback-option { min-height: 134px; gap: 18px; }
   .feedback-form__actions { align-items: flex-start; flex-direction: column; gap: 14px; }
   .feedback-experience { padding-bottom: 180px; }
-  .video-reveal { padding-block: 20px 35px; }
-  .video-reveal__rig { padding: 90px 2% 25px; }
-  .video-reveal__rope { height: 92px; right: calc(4.44% + 12px); }
-  .video-reveal__heading { max-width: 90%; }
-  .video-reveal__card figcaption { padding: 14px; font-size: 12px; }
+
 }
 @media (max-height: 550px) {
   .character-nav__destinations { right: calc(100% + 8px); bottom: 0; max-height: calc(100dvh - 24px); width: min(280px, calc(100vw - 152px)); }
