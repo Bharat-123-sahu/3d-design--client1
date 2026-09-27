@@ -17,6 +17,6 @@ void main() {
   vec3 surface = jellySurface(p, 0.007 + aMark.w + lift);
   vec3 n = normalize(normalMatrix * jellyNormal(p));
   vShade = 0.72 + 0.28 * max(dot(n, normalize(vec3(-0.4, 0.7, 1.0))), 0.0);
-  vUv = (vec2(mod(aMark.x, 5.0), 3.0 - floor(aMark.x / 5.0)) + uv) / vec2(5.0, 4.0);
+  vUv = (vec2(mod(aMark.x, 8.0), 7.0 - floor(aMark.x / 8.0)) + uv) / vec2(8.0, 8.0);
   gl_Position = projectionMatrix * modelViewMatrix * vec4(surface, 1.0);
 }
