@@ -1,13 +1,13 @@
 // Dynamically load all SVGs in the stickers folder.
 // Vite resolves the ?url query to the deployed asset path.
-const modules = import.meta.glob("/public/assets/stickers/*.svg", {
+const modules = import.meta.glob("/public/assets/stickers/**/*.[sS][vV][gG]", {
   query: "?url",
   import: "default",
   eager: true,
 });
 
-const entries = Object.entries(modules).map(([path, url]) => {
-  const id = path.split("/").pop().replace(".svg", "");
+const entries = Object.entries(modules).sort(([a], [b]) => a.localeCompare(b)).map(([path, url]) => {
+  const id = path.replace('/public/assets/stickers/', '').replace(/\.svg$/i, '');
   // Clean up ID into a readable label if it doesn't match a known basic label.
   const label = id
     .replace(/^\d+_/, "")

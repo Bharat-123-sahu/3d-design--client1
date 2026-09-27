@@ -48,7 +48,7 @@ export function mountDestinationHero(root, destination, controller) {
       const pending = controller.attachSticker(id, hit);
       describe();
       if (hover) controller.previewSticker(controller.hitBall(hover.x, hover.y));
-      if (await pending && alive) status.textContent = `${stickerLibrary[id].label} attached. ${stickerLibrary[controller.currentSticker()].label} ready.`;
+      if (await pending && alive) status.textContent = `${stickerLibrary[id].label} attached.`;
     } catch {
       if (alive) status.textContent = 'Artwork could not load. Try again.';
     }
@@ -57,7 +57,7 @@ export function mountDestinationHero(root, destination, controller) {
     if (!active()) return;
     const center = controller.ballCenter();
     const hit = center && controller.hitBall(center.x, center.y);
-    if (hit) attach(hit);
+    if (hit) { controller.targetSticker(center.x, center.y); attach(hit); }
   });
   const blocked = target => target.closest('a,button,input,textarea,select,label,h1,h2,h3,p,li,nav,.character-nav,.jelly-controls,[role="dialog"],.work-card,.gallery-card,.service-row,.work-cinematic');
   listen(document, 'pointerdown', event => {
@@ -68,7 +68,10 @@ export function mountDestinationHero(root, destination, controller) {
     const start = down; down = null;
     if (!active() || !start || event.pointerId !== start.id || blocked(event.target) || Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10 || Math.abs(scrollY - start.scroll) > 8) return;
     const hit = controller.hitBall(event.clientX, event.clientY);
-    if (hit) attach(hit);
+    if (hit) {
+      if (!controller.currentSticker()) controller.targetSticker(event.clientX, event.clientY);
+      attach(hit);
+    }
   }, { passive: true });
   const clearHover = () => { hover = previous = null; controller.previewSticker(null); };
   listen(document, 'pointermove', event => {
@@ -79,7 +82,7 @@ export function mountDestinationHero(root, destination, controller) {
     previous = { x: event.clientX, y: event.clientY, time: now };
     hover = { x: event.clientX, y: event.clientY };
     const hit = controller.hitBall(event.clientX, event.clientY);
-    controller.previewSticker(hit);
+    controller.targetSticker(event.clientX, event.clientY);
     if (hit) controller.impactBall(hit, Math.min(0.2, 0.015 + speed * 0.05));
   }, { passive: true });
   listen(document.documentElement, 'pointerleave', clearHover);

@@ -2,8 +2,9 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import vertexShader from '../shaders/liquid/jellyVertex.glsl';
 import fragmentShader from '../shaders/liquid/jellyFragment.glsl';
-import { stickerLibrary, stickerCategories } from '../data/stickerData.js';
+import { stickerLibrary } from '../data/stickerData.js';
 import { SurfaceStickers } from './SurfaceStickers.js';
+import { StickerField } from './StickerField.js';
 
 /** Persistent gel sphere; the CPU surface and shared GPU displacement agree. */
 export class LiquidBlob {
@@ -25,11 +26,11 @@ export class LiquidBlob {
     this.mesh = new THREE.Mesh(this.geometry, new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms: this.uniforms }));
     this.group.add(this.mesh);
     this.surfaceStickers = new SurfaceStickers(this.mesh, this.uniforms);
+    this.stickerField = new StickerField(this);
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
     this.scratch = new THREE.Vector3();
     this.stickers = [];
-    this.sequence = new Map();
     this.scroll = this.focus = this.spring = this.velocity = this.time = 0;
     this.reveal = { value: 0 };
     this.layout = { x: 0, y: 0, z: 4, scale: 0.7 };
@@ -52,6 +53,7 @@ export class LiquidBlob {
   }
 
   hide(immediate = false) {
+    this.stickerField.hide();
     this.preview(null);
     gsap.to(this.reveal, { value: 0, duration: immediate || this.reduced ? 0 : 0.45, overwrite: true,
       onComplete: () => { this.group.visible = false; } });
@@ -93,29 +95,24 @@ export class LiquidBlob {
   }
 
   currentSticker() {
-    const sequence = stickerCategories[this.config?.stickerCategory] || stickerCategories.home;
-    return sequence[(this.sequence.get(this.destination) || 0) % sequence.length];
+    return this.stickerField.target?.id;
   }
 
   preview(hit) {
-    if (!hit || !this.config) { this.surfaceStickers.showPreview(null, null); return; }
-    const { center, tangent } = this.surfaceFrame(hit);
-    this.surfaceStickers.showPreview(this.currentSticker(), center, tangent);
+    this.surfaceStickers.showPreview(null, null);
+    if (!hit) { this.stickerField.pointer = null; this.stickerField.clearTarget(); }
   }
 
   async addSticker(id, hit) {
     if (!stickerLibrary[id] || !hit || !this.config) return false;
-    const destination = this.destination;
+    const target = this.stickerField.target;
+    if (target?.id !== id) return false;
     const { center, tangent } = this.surfaceFrame(hit);
-    // Reserve the next curated mark synchronously: rapid input is never dropped.
-    this.sequence.set(destination, (this.sequence.get(destination) || 0) + 1);
-    this.impact(hit, 0.85);
-    this.preview(null);
-    await this.surfaceStickers.load(id);
-    if (this.destroyed) return false;
-    // Surface-local capture stays correct even if navigation occurred while loading.
-    const index = this.surfaceStickers.add(id, center, tangent, this.reduced);
-    this.stickers.push({ id, center, tangent, index });
+    // Reserve the exact highlighted record synchronously, even during rapid input.
+    const attached = await this.stickerField.fly(target, center, tangent);
+    if (!attached || this.destroyed) return false;
+    this.impact({ point: this.mesh.localToWorld(center.clone()) }, 0.85);
+    this.stickers.push({ id, center, tangent, index: attached.index, record: attached });
     return true;
   }
 
@@ -163,6 +160,8 @@ export class LiquidBlob {
     this.uniforms.uReduced.value = this.reduced ? 1 : 0;
     this.uniforms.uFocus.value = p;
     this.surfaceStickers.update(delta);
+    this.group.updateMatrixWorld(true);
+    this.stickerField.update(delta, camera);
     postProcessing.setJellyFocus((x + 1) / 2, (y + 1) / 2, scale / halfHeight / 2 * 1.08, p * (mobile ? this.config.scroll.mobileBlur : this.config.scroll.blur));
   }
 
@@ -170,6 +169,7 @@ export class LiquidBlob {
     this.destroyed = true;
     this.hide(true);
     gsap.killTweensOf(this.reveal);
+    this.stickerField.destroy();
     this.surfaceStickers.destroy();
     for (const key of ['uColorA', 'uColorB', 'uGlow', 'uBase']) gsap.killTweensOf(this.uniforms[key].value);
     gsap.killTweensOf(this.uniforms.uLight);

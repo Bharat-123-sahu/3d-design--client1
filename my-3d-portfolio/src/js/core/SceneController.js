@@ -54,6 +54,7 @@ export class SceneController {
   attachSticker(id, hit) { return this.threeScene?.liquidBlob?.addSticker(id, hit); }
   previewSticker(hit) { this.threeScene?.liquidBlob?.preview(hit); }
   currentSticker() { return this.threeScene?.liquidBlob?.currentSticker(); }
+  targetSticker(x, y) { return this.threeScene?.liquidBlob?.stickerField.select(x, y); }
 
   setState(state) {
     this.currentState = state;

@@ -1,0 +1,1286 @@
+{
+  "assets": [
+    {
+      "id": "01_blink_orbit_eye",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 23779,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/01_blink_orbit_eye.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "01_blinking_eyes_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 23890,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/01_blinking_eyes_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "02_dancing_chicken_leg_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 24391,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/02_dancing_chicken_leg_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "02_flying_rocket_badge",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 24295,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/02_flying_rocket_badge.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "03_bouncing_football_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 16001,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/03_bouncing_football_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "03_fire_flame_badge",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 23727,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/03_fire_flame_badge.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "04_flying_rocket_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 24384,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/04_flying_rocket_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "04_ufo_hover_badge",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 24016,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/04_ufo_hover_badge.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "05_dancing_banana_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 24983,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/05_dancing_banana_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "05_lightning_pulse_badge",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 24262,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/05_lightning_pulse_badge.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "06_floating_ghost_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 24018,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/06_floating_ghost_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "06_peace_hand_wiggle_badge",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 26003,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/06_peace_hand_wiggle_badge.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "07_pizza_spin_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 21800,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/07_pizza_spin_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "07_smiley_planet_float_badge",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 23902,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/07_smiley_planet_float_badge.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "08_peace_hand_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 25993,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/08_peace_hand_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "08_pizza_spin_badge",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 21843,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/08_pizza_spin_badge.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "09_fire_flame_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 23917,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/09_fire_flame_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "09_football_bounce_badge",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 15961,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/09_football_bounce_badge.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "10_robot_hover_badge",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 23910,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/10_robot_hover_badge.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "10_ufo_glossy",
+      "animated": true,
+      "complex": true,
+      "visiblePixels": 23776,
+      "status": "ready",
+      "src": "http://127.0.0.1:5175/public/assets/stickers/10_ufo_glossy.svg",
+      "nativeAnimationChanges": true
+    },
+    {
+      "id": "arrow",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 16668,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M13%2039h40V19l30%2029-30%2030V58H13Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M13%2039h40V19l30%2029-30%2030V58H13Z'/%3e%3c/g%3e%3cg%20fill='%23b6ff83'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M13%2039h40V19l30%2029-30%2030V58H13Z'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "chart",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 17688,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3crect%20x='17'%20y='53'%20width='14'%20height='28'%20rx='4'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3crect%20x='17'%20y='53'%20width='14'%20height='28'%20rx='4'/%3e%3c/g%3e%3cg%20fill='%23a8f581'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3crect%20x='17'%20y='53'%20width='14'%20height='28'%20rx='4'/%3e%3crect%20x='41'%20y='39'%20width='14'%20height='42'%20rx='4'/%3e%3crect%20x='65'%20y='24'%20width='14'%20height='57'%20rx='4'/%3e%3cpath%20d='m14%2039%2025-18%2018%203L77%209'%20fill='none'%20stroke='%23ffd38d'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "cloud",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 27659,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M25%2073C-4%2070%204%2036%2028%2037%2036%207%2072%2014%2073%2040c25-3%2030%2033%200%2033Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M25%2073C-4%2070%204%2036%2028%2037%2036%207%2072%2014%2073%2040c25-3%2030%2033%200%2033Z'/%3e%3c/g%3e%3cg%20fill='%23b2d9ff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M25%2073C-4%2070%204%2036%2028%2037%2036%207%2072%2014%2073%2040c25-3%2030%2033%200%2033Z'/%3e%3cpath%20d='M35%2054h26'%20fill='none'%20stroke='%23609bad'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "code",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 34610,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3crect%20x='9'%20y='18'%20width='78'%20height='61'%20rx='16'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3crect%20x='9'%20y='18'%20width='78'%20height='61'%20rx='16'/%3e%3c/g%3e%3cg%20fill='%23c2acff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3crect%20x='9'%20y='18'%20width='78'%20height='61'%20rx='16'/%3e%3cpath%20d='m33%2036-14%2013%2014%2013m30-26%2014%2013-14%2013M54%2031%2042%2067'%20fill='none'%20stroke='%23302a4f'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "crown",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 24247,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M17%2070%2012%2026l22%2016%2014-27%2016%2027%2020-16-5%2044Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M17%2070%2012%2026l22%2016%2014-27%2016%2027%2020-16-5%2044Z'/%3e%3c/g%3e%3cg%20fill='%23ffd86a'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M17%2070%2012%2026l22%2016%2014-27%2016%2027%2020-16-5%2044Z'/%3e%3cpath%20d='M21%2081h55M33%2059h30'%20fill='none'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "database",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 28138,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M20%2026v46c0%2018%2056%2018%2056%200V26Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M20%2026v46c0%2018%2056%2018%2056%200V26Z'/%3e%3c/g%3e%3cg%20fill='%2392f4d9'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M20%2026v46c0%2018%2056%2018%2056%200V26Z'/%3e%3cellipse%20cx='48'%20cy='26'%20rx='28'%20ry='13'/%3e%3cpath%20d='M20%2048c0%2018%2056%2018%2056%200M20%2066c0%2018%2056%2018%2056%200'%20fill='none'%20stroke='%23417e78'%20stroke-width='3'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "diamond",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 23368,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='m12%2036%2018-21h36l18%2021-36%2047Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='m12%2036%2018-21h36l18%2021-36%2047Z'/%3e%3c/g%3e%3cg%20fill='%2386eeff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='m12%2036%2018-21h36l18%2021-36%2047Z'/%3e%3cpath%20d='M12%2036h72M30%2015l7%2021%2011%2047%2011-47%207-21M37%2036l11-21%2011%2021'%20fill='none'%20stroke='%23496994'%20stroke-width='3'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "fire",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 23879,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M48%2010q8%2024%2023%2029c25%2032%203%2048-23%2047C17%2087%205%2057%2028%2038l4%2015q17-13%2016-43Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M48%2010q8%2024%2023%2029c25%2032%203%2048-23%2047C17%2087%205%2057%2028%2038l4%2015q17-13%2016-43Z'/%3e%3c/g%3e%3cg%20fill='%23ff8958'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M48%2010q8%2024%2023%2029c25%2032%203%2048-23%2047C17%2087%205%2057%2028%2038l4%2015q17-13%2016-43Z'/%3e%3cpath%20d='M48%2051q-23%2024%200%2028%2020-2%200-28Z'%20fill='%23fff0ad'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "flower",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 24098,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M48%2031C23-5%207%2029%2030%2045%200%2057%2029%2088%2043%2067%2055%2099%2085%2075%2066%2055%2099%2040%2067%2012%2054%2032Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M48%2031C23-5%207%2029%2030%2045%200%2057%2029%2088%2043%2067%2055%2099%2085%2075%2066%2055%2099%2040%2067%2012%2054%2032Z'/%3e%3c/g%3e%3cg%20fill='%23ff92cf'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M48%2031C23-5%207%2029%2030%2045%200%2057%2029%2088%2043%2067%2055%2099%2085%2075%2066%2055%2099%2040%2067%2012%2054%2032Z'/%3e%3ccircle%20cx='48'%20cy='48'%20r='12'%20fill='%23ffe29c'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "game",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 24628,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M28%2028h40q13%200%2016%2022l3%2017q1%2016-13%209L62%2064H34L20%2077Q5%2080%2010%2063l4-20q3-15%2014-15Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M28%2028h40q13%200%2016%2022l3%2017q1%2016-13%209L62%2064H34L20%2077Q5%2080%2010%2063l4-20q3-15%2014-15Z'/%3e%3c/g%3e%3cg%20fill='%239af5cc'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M28%2028h40q13%200%2016%2022l3%2017q1%2016-13%209L62%2064H34L20%2077Q5%2080%2010%2063l4-20q3-15%2014-15Z'/%3e%3cpath%20d='M24%2046h17m-9-8v17'%20fill='none'%20stroke='%2333324c'/%3e%3ccircle%20cx='65'%20cy='43'%20r='4'%20fill='%23ff839f'/%3e%3ccircle%20cx='74'%20cy='53'%20r='4'%20fill='%23ffdc99'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "gear",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 28937,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='m39%209%2018%200%203%2014%2010%206%2013-4%209%2016-11%2010v11l9%209-10%2015-14-6-10%205-3%2010H36l-4-14-9-5-13%204-8-16%2011-9V43L3%2034l10-15%2014%206%2010-5Z'%20transform='translate(7%201)%20scale(.85)'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='m39%209%2018%200%203%2014%2010%206%2013-4%209%2016-11%2010v11l9%209-10%2015-14-6-10%205-3%2010H36l-4-14-9-5-13%204-8-16%2011-9V43L3%2034l10-15%2014%206%2010-5Z'%20transform='translate(7%201)%20scale(.85)'/%3e%3c/g%3e%3cg%20fill='%238ce8ef'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='m39%209%2018%200%203%2014%2010%206%2013-4%209%2016-11%2010v11l9%209-10%2015-14-6-10%205-3%2010H36l-4-14-9-5-13%204-8-16%2011-9V43L3%2034l10-15%2014%206%2010-5Z'%20transform='translate(7%201)%20scale(.85)'/%3e%3ccircle%20cx='48'%20cy='48'%20r='13'%20fill='%2326394d'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "heart",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 24898,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M48%2080%2017%2049C-4%2022%2030%205%2048%2029%2068%204%20101%2024%2079%2049Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M48%2080%2017%2049C-4%2022%2030%205%2048%2029%2068%204%20101%2024%2079%2049Z'/%3e%3c/g%3e%3cg%20fill='%23ff73a9'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M48%2080%2017%2049C-4%2022%2030%205%2048%2029%2068%204%20101%2024%2079%2049Z'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "lightning",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 15112,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M51%208%2020%2053h25l-3%2035%2034-50H51Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M51%208%2020%2053h25l-3%2035%2034-50H51Z'/%3e%3c/g%3e%3cg%20fill='%23e4ff65'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M51%208%2020%2053h25l-3%2035%2034-50H51Z'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "paw",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 22796,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M31%2053q17-23%2034%200c31%2038-10%2018-17%2019-10%201-46%2017-17-19Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M31%2053q17-23%2034%200c31%2038-10%2018-17%2019-10%201-46%2017-17-19Z'/%3e%3c/g%3e%3cg%20fill='%23ffb8d7'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M31%2053q17-23%2034%200c31%2038-10%2018-17%2019-10%201-46%2017-17-19Z'/%3e%3cellipse%20cx='23'%20cy='39'%20rx='8'%20ry='12'/%3e%3cellipse%20cx='39'%20cy='23'%20rx='8'%20ry='12'/%3e%3cellipse%20cx='59'%20cy='23'%20rx='8'%20ry='12'/%3e%3cellipse%20cx='75'%20cy='40'%20rx='8'%20ry='12'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "planet",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 20838,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3ccircle%20cx='48'%20cy='48'%20r='27'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3ccircle%20cx='48'%20cy='48'%20r='27'/%3e%3c/g%3e%3cg%20fill='%23aaa0ff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3ccircle%20cx='48'%20cy='48'%20r='27'/%3e%3cellipse%20cx='48'%20cy='50'%20rx='43'%20ry='12'%20transform='rotate(-28%2048%2050)'%20fill='none'%20stroke='%23ffcf95'/%3e%3cpath%20d='m64%2014%202-6m13%2013%206-2'%20fill='none'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "rocket",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 17479,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M37%2065%2025%2071l1-22%2013-9M57%2057l-2%2018%2018-10%201-17'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M37%2065%2025%2071l1-22%2013-9M57%2057l-2%2018%2018-10%201-17'/%3e%3c/g%3e%3cg%20fill='%23b39aff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M37%2065%2025%2071l1-22%2013-9M57%2057l-2%2018%2018-10%201-17'/%3e%3cpath%20d='M32%2057Q36%2017%2081%2012q2%2041-36%2053Z'/%3e%3ccircle%20cx='59'%20cy='35'%20r='9'%20fill='%2325263e'/%3e%3cpath%20d='m28%2065-9%2016%2017-8'%20fill='%23ffc781'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "smile",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 28025,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3ccircle%20cx='48'%20cy='48'%20r='34'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3ccircle%20cx='48'%20cy='48'%20r='34'/%3e%3c/g%3e%3cg%20fill='%23e4ff76'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3ccircle%20cx='48'%20cy='48'%20r='34'/%3e%3cpath%20d='M29%2054q19%2023%2038%200M34%2034v7m28-7v7'%20fill='none'%20stroke='%2329223d'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "spark",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 25764,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='m48%208%206%2026%2024-14-14%2024%2026%206-26%206%2014%2024-24-14-6%2026-6-26-24%2014%2014-24-26-6%2026-6-14-24%2024%2014Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='m48%208%206%2026%2024-14-14%2024%2026%206-26%206%2014%2024-24-14-6%2026-6-26-24%2014%2014-24-26-6%2026-6-14-24%2024%2014Z'/%3e%3c/g%3e%3cg%20fill='%23ffb45f'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='m48%208%206%2026%2024-14-14%2024%2026%206-26%206%2014%2024-24-14-6%2026-6-26-24%2014%2014-24-26-6%2026-6-14-24%2024%2014Z'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "sparkle",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 19436,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M48%208%2058%2037%2087%2048%2058%2058%2048%2087%2037%2058%208%2048%2037%2037Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M48%208%2058%2037%2087%2048%2058%2058%2048%2087%2037%2058%208%2048%2037%2037Z'/%3e%3c/g%3e%3cg%20fill='%23c5adff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M48%208%2058%2037%2087%2048%2058%2058%2048%2087%2037%2058%208%2048%2037%2037Z'/%3e%3cpath%20d='m76%209%203%2010%2010%203-10%203-3%2010-3-10-10-3%2010-3Z'/%3e%3c/g%3e%3c/svg%3e"
+    },
+    {
+      "id": "star",
+      "animated": false,
+      "complex": false,
+      "visiblePixels": 19515,
+      "status": "ready",
+      "src": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='m48%2013%2010%2023%2025%203-19%2018%205%2025-21-13-22%2013%205-25L12%2039l26-3Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='m48%2013%2010%2023%2025%203-19%2018%205%2025-21-13-22%2013%205-25L12%2039l26-3Z'/%3e%3c/g%3e%3cg%20fill='%23ffe167'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='m48%2013%2010%2023%2025%203-19%2018%205%2025-21-13-22%2013%205-25L12%2039l26-3Z'/%3e%3c/g%3e%3c/svg%3e"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "01_blink_orbit_eye",
+      "slot": 0,
+      "state": "ATTACHING",
+      "start": [
+        0,
+        1.1068216294690225,
+        0.2954049637553027
+      ],
+      "transform": "translate(670px, 60.522px) rotate(8.0653deg) scale(0.91044)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/01_blink_orbit_eye.svg",
+      "moving": true,
+      "attached": {
+        "id": "01_blink_orbit_eye",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 0,
+        "expectedTile": 0,
+        "parent": true,
+        "error": 2.816334860756943e-8
+      }
+    },
+    {
+      "id": "01_blinking_eyes_glossy",
+      "slot": 1,
+      "state": "ATTACHING",
+      "start": [
+        0.44343209134102013,
+        1.1245845351162977,
+        -0.7567645135992551
+      ],
+      "transform": "translate(756.639px, 53.0784px) rotate(-2.5051deg) scale(0.761568)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/01_blinking_eyes_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "01_blinking_eyes_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 1,
+        "expectedTile": 1,
+        "parent": true,
+        "error": 1.9275611708305228e-8
+      }
+    },
+    {
+      "id": "chart",
+      "slot": 21,
+      "state": "ATTACHING",
+      "start": [
+        0,
+        -1.7319661812145524,
+        1.1728484688756806
+      ],
+      "transform": "translate(670px, 757.167px) rotate(12.0604deg) scale(0.940713)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3crect%20x='17'%20y='53'%20width='14'%20height='28'%20rx='4'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3crect%20x='17'%20y='53'%20width='14'%20height='28'%20rx='4'/%3e%3c/g%3e%3cg%20fill='%23a8f581'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3crect%20x='17'%20y='53'%20width='14'%20height='28'%20rx='4'/%3e%3crect%20x='41'%20y='39'%20width='14'%20height='42'%20rx='4'/%3e%3crect%20x='65'%20y='24'%20width='14'%20height='57'%20rx='4'/%3e%3cpath%20d='m14%2039%2025-18%2018%203L77%209'%20fill='none'%20stroke='%23ffd38d'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "chart",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 21,
+        "expectedTile": 21,
+        "parent": true,
+        "error": 2.699121498483898e-8
+      }
+    },
+    {
+      "id": "02_flying_rocket_badge",
+      "slot": 3,
+      "state": "ATTACHING",
+      "start": [
+        0.97528679972,
+        0.9046024797806356,
+        0.35790906456807736
+      ],
+      "transform": "translate(898.664px, 110.147px) rotate(12.4369deg) scale(0.940681)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/02_flying_rocket_badge.svg",
+      "moving": true,
+      "attached": {
+        "id": "02_flying_rocket_badge",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 3,
+        "expectedTile": 3,
+        "parent": true,
+        "error": 9.669750306100903e-9
+      }
+    },
+    {
+      "id": "star",
+      "slot": 39,
+      "state": "ATTACHING",
+      "start": [
+        -0.9698498534220689,
+        0.908796203202225,
+        0.35661282278322215
+      ],
+      "transform": "translate(442.611px, 109.118px) rotate(8.09714deg) scale(0.940745)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='m48%2013%2010%2023%2025%203-19%2018%205%2025-21-13-22%2013%205-25L12%2039l26-3Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='m48%2013%2010%2023%2025%203-19%2018%205%2025-21-13-22%2013%205-25L12%2039l26-3Z'/%3e%3c/g%3e%3cg%20fill='%23ffe167'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='m48%2013%2010%2023%2025%203-19%2018%205%2025-21-13-22%2013%205-25L12%2039l26-3Z'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "star",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 39,
+        "expectedTile": 39,
+        "parent": true,
+        "error": 3.4696547791036473e-8
+      }
+    },
+    {
+      "id": "10_robot_hover_badge",
+      "slot": 18,
+      "state": "ATTACHING",
+      "start": [
+        0.9593416099233768,
+        -1.4172623082208868,
+        1.075576362677638
+      ],
+      "transform": "translate(894.925px, 679.938px) rotate(7.90279deg) scale(0.940709)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/10_robot_hover_badge.svg",
+      "moving": true,
+      "attached": {
+        "id": "10_robot_hover_badge",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 18,
+        "expectedTile": 18,
+        "parent": true,
+        "error": 2.367748781364254e-8
+      }
+    },
+    {
+      "id": "crown",
+      "slot": 24,
+      "state": "ATTACHING",
+      "start": [
+        -0.959341609923376,
+        -1.4459843772991465,
+        1.0844540931200095
+      ],
+      "transform": "translate(445.075px, 686.986px) rotate(9.72256deg) scale(0.940762)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M17%2070%2012%2026l22%2016%2014-27%2016%2027%2020-16-5%2044Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M17%2070%2012%2026l22%2016%2014-27%2016%2027%2020-16-5%2044Z'/%3e%3c/g%3e%3cg%20fill='%23ffd86a'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M17%2070%2012%2026l22%2016%2014-27%2016%2027%2020-16-5%2044Z'/%3e%3cpath%20d='M21%2081h55M33%2059h30'%20fill='none'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "crown",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 24,
+        "expectedTile": 24,
+        "parent": true,
+        "error": 1.319213541117567e-8
+      }
+    },
+    {
+      "id": "cloud",
+      "slot": 22,
+      "state": "ATTACHING",
+      "start": [
+        -0.4404863662035597,
+        -2.2969194307480345,
+        0.3007912576679015
+      ],
+      "transform": "translate(583.937px, 752.783px) rotate(-12.7005deg) scale(0.761542)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M25%2073C-4%2070%204%2036%2028%2037%2036%207%2072%2014%2073%2040c25-3%2030%2033%200%2033Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M25%2073C-4%2070%204%2036%2028%2037%2036%207%2072%2014%2073%2040c25-3%2030%2033%200%2033Z'/%3e%3c/g%3e%3cg%20fill='%23b2d9ff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M25%2073C-4%2070%204%2036%2028%2037%2036%207%2072%2014%2073%2040c25-3%2030%2033%200%2033Z'/%3e%3cpath%20d='M35%2054h26'%20fill='none'%20stroke='%23609bad'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "cloud",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 22,
+        "expectedTile": 22,
+        "parent": true,
+        "error": 1.7885449327488142e-8
+      }
+    },
+    {
+      "id": "10_ufo_glossy",
+      "slot": 19,
+      "state": "ATTACHING",
+      "start": [
+        0.8711329948679407,
+        -2.252085670387947,
+        0.28693354992023856
+      ],
+      "transform": "translate(840.203px, 743.614px) rotate(-1.566deg) scale(0.761522)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/10_ufo_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "10_ufo_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 19,
+        "expectedTile": 19,
+        "parent": true,
+        "error": 2.8684755662190628e-8
+      }
+    },
+    {
+      "id": "02_dancing_chicken_leg_glossy",
+      "slot": 2,
+      "state": "ATTACHING",
+      "start": [
+        1.1202350316381582,
+        1.1631349210954542,
+        -1.8153592121473041
+      ],
+      "transform": "translate(857.528px, 43.9634px) matrix(0.582795, 0.0382571, -0.0382511, 0.582744, 0, 0)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/02_dancing_chicken_leg_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "02_dancing_chicken_leg_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 2,
+        "expectedTile": 2,
+        "parent": true,
+        "error": 3.5181821800590445e-8
+      }
+    },
+    {
+      "id": "arrow",
+      "slot": 20,
+      "state": "ATTACHING",
+      "start": [
+        0.5664442298561146,
+        -3.0560470052422577,
+        -0.5112484349156485
+      ],
+      "transform": "translate(764.795px, 782.891px) matrix(0.581931, -0.0640853, 0.0640882, 0.581906, 0, 0)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M13%2039h40V19l30%2029-30%2030V58H13Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M13%2039h40V19l30%2029-30%2030V58H13Z'/%3e%3c/g%3e%3cg%20fill='%23b6ff83'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M13%2039h40V19l30%2029-30%2030V58H13Z'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "arrow",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 20,
+        "expectedTile": 20,
+        "parent": true,
+        "error": 2.4207315614958884e-8
+      }
+    },
+    {
+      "id": "code",
+      "slot": 23,
+      "state": "ATTACHING",
+      "start": [
+        -1.1202350316381586,
+        -3.0349436531787006,
+        -0.5177712891898381
+      ],
+      "transform": "translate(482.394px, 779.988px) rotate(8.03859deg) scale(0.58236)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3crect%20x='9'%20y='18'%20width='78'%20height='61'%20rx='16'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3crect%20x='9'%20y='18'%20width='78'%20height='61'%20rx='16'/%3e%3c/g%3e%3cg%20fill='%23c2acff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3crect%20x='9'%20y='18'%20width='78'%20height='61'%20rx='16'/%3e%3cpath%20d='m33%2036-14%2013%2014%2013m30-26%2014%2013-14%2013M54%2031%2042%2067'%20fill='none'%20stroke='%23302a4f'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "code",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 23,
+        "expectedTile": 23,
+        "parent": true,
+        "error": 1.3241353547473556e-8
+      }
+    },
+    {
+      "id": "03_bouncing_football_glossy",
+      "slot": 4,
+      "state": "ATTACHING",
+      "start": [
+        1.6648620002376828,
+        0.8818635466469271,
+        -0.6817416626178137
+      ],
+      "transform": "translate(995.284px, 102.715px) rotate(-11.1432deg) scale(0.761557)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/03_bouncing_football_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "03_bouncing_football_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 4,
+        "expectedTile": 4,
+        "parent": true,
+        "error": 1.8991512127742106e-8
+      }
+    },
+    {
+      "id": "database",
+      "slot": 25,
+      "state": "ATTACHING",
+      "start": [
+        -1.664862000237683,
+        -1.9964336824383337,
+        0.2079138445539943
+      ],
+      "transform": "translate(344.716px, 691.333px) rotate(-8.32383deg) scale(0.761555)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M20%2026v46c0%2018%2056%2018%2056%200V26Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M20%2026v46c0%2018%2056%2018%2056%200V26Z'/%3e%3c/g%3e%3cg%20fill='%2392f4d9'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M20%2026v46c0%2018%2056%2018%2056%200V26Z'/%3e%3cellipse%20cx='48'%20cy='26'%20rx='28'%20ry='13'/%3e%3cpath%20d='M20%2048c0%2018%2056%2018%2056%200M20%2066c0%2018%2056%2018%2056%200'%20fill='none'%20stroke='%23417e78'%20stroke-width='3'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "database",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 25,
+        "expectedTile": 25,
+        "parent": true,
+        "error": 1.2600402048825242e-8
+      }
+    },
+    {
+      "id": "smile",
+      "slot": 36,
+      "state": "ATTACHING",
+      "start": [
+        -1.7286738484486976,
+        0.5078455041045478,
+        0.48054303886795857
+      ],
+      "transform": "translate(264.699px, 207.512px) rotate(7.03735deg) scale(0.940728)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3ccircle%20cx='48'%20cy='48'%20r='34'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3ccircle%20cx='48'%20cy='48'%20r='34'/%3e%3c/g%3e%3cg%20fill='%23e4ff76'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3ccircle%20cx='48'%20cy='48'%20r='34'/%3e%3cpath%20d='M29%2054q19%2023%2038%200M34%2034v7m28-7v7'%20fill='none'%20stroke='%2329223d'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "smile",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 36,
+        "expectedTile": 36,
+        "parent": true,
+        "error": 1.1812732323529442e-8
+      }
+    },
+    {
+      "id": "04_flying_rocket_glossy",
+      "slot": 6,
+      "state": "ATTACHING",
+      "start": [
+        1.7286738484486983,
+        0.5386043716491049,
+        0.4710357525360047
+      ],
+      "transform": "translate(1075.3px, 199.964px) rotate(-8.65102deg) scale(0.940736)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/04_flying_rocket_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "04_flying_rocket_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 6,
+        "expectedTile": 6,
+        "parent": true,
+        "error": 1.4620150895058653e-8
+      }
+    },
+    {
+      "id": "fire",
+      "slot": 27,
+      "state": "ATTACHING",
+      "start": [
+        -1.7286738484486976,
+        -1.067095492909549,
+        0.9673429833995888
+      ],
+      "transform": "translate(264.699px, 594.006px) rotate(-8.34288deg) scale(0.940729)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M48%2010q8%2024%2023%2029c25%2032%203%2048-23%2047C17%2087%205%2057%2028%2038l4%2015q17-13%2016-43Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M48%2010q8%2024%2023%2029c25%2032%203%2048-23%2047C17%2087%205%2057%2028%2038l4%2015q17-13%2016-43Z'/%3e%3c/g%3e%3cg%20fill='%23ff8958'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M48%2010q8%2024%2023%2029c25%2032%203%2048-23%2047C17%2087%205%2057%2028%2038l4%2015q17-13%2016-43Z'/%3e%3cpath%20d='M48%2051q-23%2024%200%2028%2020-2%200-28Z'%20fill='%23fff0ad'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "fire",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 27,
+        "expectedTile": 27,
+        "parent": true,
+        "error": 2.687250355682198e-8
+      }
+    },
+    {
+      "id": "08_pizza_spin_badge",
+      "slot": 15,
+      "state": "ATTACHING",
+      "start": [
+        1.7286738484486983,
+        -1.088444694910544,
+        0.9739418276544409
+      ],
+      "transform": "translate(1075.3px, 599.245px) rotate(4.97508deg) scale(0.940738)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/08_pizza_spin_badge.svg",
+      "moving": true,
+      "attached": {
+        "id": "08_pizza_spin_badge",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 15,
+        "expectedTile": 15,
+        "parent": true,
+        "error": 8.936160351311054e-9
+      }
+    },
+    {
+      "id": "spark",
+      "slot": 37,
+      "state": "ATTACHING",
+      "start": [
+        -2.0102137825607826,
+        0.7242640443508648,
+        -0.633029089180849
+      ],
+      "transform": "translate(277.385px, 134.77px) matrix(0.762607, -0.0112438, 0.0112466, 0.762572, 0, 0)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='m48%208%206%2026%2024-14-14%2024%2026%206-26%206%2014%2024-24-14-6%2026-6-26-24%2014%2014-24-26-6%2026-6-14-24%2024%2014Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='m48%208%206%2026%2024-14-14%2024%2026%206-26%206%2014%2024-24-14-6%2026-6-26-24%2014%2014-24-26-6%2026-6-14-24%2024%2014Z'/%3e%3c/g%3e%3cg%20fill='%23ffb45f'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='m48%208%206%2026%2024-14-14%2024%2026%206-26%206%2014%2024-24-14-6%2026-6-26-24%2014%2014-24-26-6%2026-6-14-24%2024%2014Z'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "spark",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 37,
+        "expectedTile": 37,
+        "parent": true,
+        "error": 3.2055930864223994e-8
+      }
+    },
+    {
+      "id": "09_fire_flame_glossy",
+      "slot": 16,
+      "state": "ATTACHING",
+      "start": [
+        2.010213782560784,
+        -1.8223542180128434,
+        0.15410746464066083
+      ],
+      "transform": "translate(1062.76px, 655.733px) rotate(0.0497728deg) scale(0.761554)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/09_fire_flame_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "09_fire_flame_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 16,
+        "expectedTile": 16,
+        "parent": true,
+        "error": 2.1683952617841193e-8
+      }
+    },
+    {
+      "id": "sparkle",
+      "slot": 38,
+      "state": "ATTACHING",
+      "start": [
+        -2.140932264644801,
+        0.9525997612369783,
+        -1.7502847081910478
+      ],
+      "transform": "translate(311.458px, 81.0219px) rotate(-2.04499deg) scale(0.582372)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M48%208%2058%2037%2087%2048%2058%2058%2048%2087%2037%2058%208%2048%2037%2037Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M48%208%2058%2037%2087%2048%2058%2058%2048%2087%2037%2058%208%2048%2037%2037Z'/%3e%3c/g%3e%3cg%20fill='%23c5adff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M48%208%2058%2037%2087%2048%2058%2058%2048%2087%2037%2058%208%2048%2037%2037Z'/%3e%3cpath%20d='m76%209%203%2010%2010%203-10%203-3%2010-3-10-10-3%2010-3Z'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "sparkle",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 38,
+        "expectedTile": 38,
+        "parent": true,
+        "error": 1.276561672744038e-8
+      }
+    },
+    {
+      "id": "09_football_bounce_badge",
+      "slot": 17,
+      "state": "ATTACHING",
+      "start": [
+        2.1409322646448024,
+        -2.755521876788424,
+        -0.6041380200741058
+      ],
+      "transform": "translate(1028.54px, 731.009px) rotate(-1.99843deg) scale(0.58238)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/09_football_bounce_badge.svg",
+      "moving": true,
+      "attached": {
+        "id": "09_football_bounce_badge",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 17,
+        "expectedTile": 17,
+        "parent": true,
+        "error": 1.9686014310373468e-8
+      }
+    },
+    {
+      "id": "05_lightning_pulse_badge",
+      "slot": 9,
+      "state": "ATTACHING",
+      "start": [
+        2.155621030495306,
+        0.008938104520489265,
+        0.6347507805575763
+      ],
+      "transform": "translate(1040.97px, 257.027px) matrix(1.31625, 0.114074, -0.113737, 1.31638, 0, 0)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/05_lightning_pulse_badge.svg",
+      "moving": true,
+      "attached": {
+        "id": "05_lightning_pulse_badge",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 9,
+        "expectedTile": 9,
+        "parent": true,
+        "error": 9.123973645049428e-9
+      }
+    },
+    {
+      "id": "paw",
+      "slot": 33,
+      "state": "ATTACHING",
+      "start": [
+        -2.155621030495306,
+        0.02494778860299096,
+        0.6298023327502582
+      ],
+      "transform": "translate(164.956px, 325.542px) matrix(0.936017, -0.104782, 0.104783, 0.935982, 0, 0)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M31%2053q17-23%2034%200c31%2038-10%2018-17%2019-10%201-46%2017-17-19Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M31%2053q17-23%2034%200c31%2038-10%2018-17%2019-10%201-46%2017-17-19Z'/%3e%3c/g%3e%3cg%20fill='%23ffb8d7'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M31%2053q17-23%2034%200c31%2038-10%2018-17%2019-10%201-46%2017-17-19Z'/%3e%3cellipse%20cx='23'%20cy='39'%20rx='8'%20ry='12'/%3e%3cellipse%20cx='39'%20cy='23'%20rx='8'%20ry='12'/%3e%3cellipse%20cx='59'%20cy='23'%20rx='8'%20ry='12'/%3e%3cellipse%20cx='75'%20cy='40'%20rx='8'%20ry='12'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "paw",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 33,
+        "expectedTile": 33,
+        "parent": true,
+        "error": 2.6930499792397046e-8
+      }
+    },
+    {
+      "id": "07_pizza_spin_glossy",
+      "slot": 12,
+      "state": "ATTACHING",
+      "start": [
+        2.155621030495306,
+        -0.54587045682736,
+        0.8062370631560025
+      ],
+      "transform": "translate(1175.4px, 466.096px) rotate(-7.93644deg) scale(0.940765)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/07_pizza_spin_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "07_pizza_spin_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 12,
+        "expectedTile": 12,
+        "parent": true,
+        "error": 1.3934123786806276e-8
+      }
+    },
+    {
+      "id": "gear",
+      "slot": 30,
+      "state": "ATTACHING",
+      "start": [
+        -2.155621030495306,
+        -0.5468384867535061,
+        0.8065362724059026
+      ],
+      "transform": "translate(164.597px, 466.334px) rotate(-5.22995deg) scale(0.940763)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='m39%209%2018%200%203%2014%2010%206%2013-4%209%2016-11%2010v11l9%209-10%2015-14-6-10%205-3%2010H36l-4-14-9-5-13%204-8-16%2011-9V43L3%2034l10-15%2014%206%2010-5Z'%20transform='translate(7%201)%20scale(.85)'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='m39%209%2018%200%203%2014%2010%206%2013-4%209%2016-11%2010v11l9%209-10%2015-14-6-10%205-3%2010H36l-4-14-9-5-13%204-8-16%2011-9V43L3%2034l10-15%2014%206%2010-5Z'%20transform='translate(7%201)%20scale(.85)'/%3e%3c/g%3e%3cg%20fill='%238ce8ef'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='m39%209%2018%200%203%2014%2010%206%2013-4%209%2016-11%2010v11l9%209-10%2015-14-6-10%205-3%2010H36l-4-14-9-5-13%204-8-16%2011-9V43L3%2034l10-15%2014%206%2010-5Z'%20transform='translate(7%201)%20scale(.85)'/%3e%3ccircle%20cx='48'%20cy='48'%20r='13'%20fill='%2326394d'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "gear",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 30,
+        "expectedTile": 30,
+        "parent": true,
+        "error": 5.6975103862386646e-9
+      }
+    },
+    {
+      "id": "03_fire_flame_badge",
+      "slot": 5,
+      "state": "ATTACHING",
+      "start": [
+        2.5850380063354397,
+        0.7371078360170944,
+        -1.6836781131230838
+      ],
+      "transform": "translate(1102.92px, 118.795px) rotate(3.77105deg) scale(0.582382)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/03_fire_flame_badge.svg",
+      "moving": true,
+      "attached": {
+        "id": "03_fire_flame_badge",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 5,
+        "expectedTile": 5,
+        "parent": true,
+        "error": 2.4348128668379026e-8
+      }
+    },
+    {
+      "id": "04_ufo_hover_badge",
+      "slot": 7,
+      "state": "ATTACHING",
+      "start": [
+        2.559491296932246,
+        0.2881773654668507,
+        -0.4982386611621532
+      ],
+      "transform": "translate(1169.78px, 223.791px) matrix(0.749834, -0.143045, 0.143046, 0.749788, 0, 0)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/04_ufo_hover_badge.svg",
+      "moving": true,
+      "attached": {
+        "id": "04_ufo_hover_badge",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 7,
+        "expectedTile": 7,
+        "parent": true,
+        "error": 5.9829280797845925e-9
+      }
+    },
+    {
+      "id": "diamond",
+      "slot": 26,
+      "state": "ATTACHING",
+      "start": [
+        -2.5850380063354375,
+        -2.550280201338757,
+        -0.6675763561221846
+      ],
+      "transform": "translate(237.22px, 694.707px) matrix(0.577236, 0.0868839, -0.0868838, 0.577217, 0, 0)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='m12%2036%2018-21h36l18%2021-36%2047Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='m12%2036%2018-21h36l18%2021-36%2047Z'/%3e%3c/g%3e%3cg%20fill='%2386eeff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='m12%2036%2018-21h36l18%2021-36%2047Z'/%3e%3cpath%20d='M12%2036h72M30%2015l7%2021%2011%2047%2011-47%207-21M37%2036l11-21%2011%2021'%20fill='none'%20stroke='%23496994'%20stroke-width='3'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "diamond",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 26,
+        "expectedTile": 26,
+        "parent": true,
+        "error": 2.8942179654885845e-8
+      }
+    },
+    {
+      "id": "flower",
+      "slot": 28,
+      "state": "ATTACHING",
+      "start": [
+        -2.5594912969322468,
+        -1.4668254845396194,
+        0.04421676520348239
+      ],
+      "transform": "translate(170.007px, 582.869px) matrix(0.75193, -0.124335, 0.124335, 0.751931, 0, 0)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M48%2031C23-5%207%2029%2030%2045%200%2057%2029%2088%2043%2067%2055%2099%2085%2075%2066%2055%2099%2040%2067%2012%2054%2032Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M48%2031C23-5%207%2029%2030%2045%200%2057%2029%2088%2043%2067%2055%2099%2085%2075%2066%2055%2099%2040%2067%2012%2054%2032Z'/%3e%3c/g%3e%3cg%20fill='%23ff92cf'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M48%2031C23-5%207%2029%2030%2045%200%2057%2029%2088%2043%2067%2055%2099%2085%2075%2066%2055%2099%2040%2067%2012%2054%2032Z'/%3e%3ccircle%20cx='48'%20cy='48'%20r='12'%20fill='%23ffe29c'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "flower",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 28,
+        "expectedTile": 28,
+        "parent": true,
+        "error": 1.942033999274167e-8
+      }
+    },
+    {
+      "id": "planet",
+      "slot": 34,
+      "state": "ATTACHING",
+      "start": [
+        -2.751147076963319,
+        0.09016111498031143,
+        -0.43703363828449593
+      ],
+      "transform": "translate(132.476px, 264.62px) rotate(15.9594deg) scale(0.7616)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3ccircle%20cx='48'%20cy='48'%20r='27'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3ccircle%20cx='48'%20cy='48'%20r='27'/%3e%3c/g%3e%3cg%20fill='%23aaa0ff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3ccircle%20cx='48'%20cy='48'%20r='27'/%3e%3cellipse%20cx='48'%20cy='50'%20rx='43'%20ry='12'%20transform='rotate(-28%2048%2050)'%20fill='none'%20stroke='%23ffcf95'/%3e%3cpath%20d='m64%2014%202-6m13%2013%206-2'%20fill='none'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "planet",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 34,
+        "expectedTile": 34,
+        "parent": true,
+        "error": 3.6228063408495398e-9
+      }
+    },
+    {
+      "id": "07_smiley_planet_float_badge",
+      "slot": 13,
+      "state": "ATTACHING",
+      "start": [
+        2.7511470769633184,
+        -1.1760021248474903,
+        -0.04567409142862999
+      ],
+      "transform": "translate(1207.36px, 523.282px) matrix(0.733726, 0.207446, -0.207447, 0.733706, 0, 0)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/07_smiley_planet_float_badge.svg",
+      "moving": true,
+      "attached": {
+        "id": "07_smiley_planet_float_badge",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 13,
+        "expectedTile": 13,
+        "parent": true,
+        "error": 1.382376735016133e-8
+      }
+    },
+    {
+      "id": "06_floating_ghost_glossy",
+      "slot": 10,
+      "state": "ATTACHING",
+      "start": [
+        2.9471819521685965,
+        -0.4133345957898289,
+        -0.2814076913191803
+      ],
+      "transform": "translate(1245.56px, 367.252px) matrix(0.750985, 0.135413, -0.135413, 0.750993, 0, 0)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/06_floating_ghost_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "06_floating_ghost_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 10,
+        "expectedTile": 10,
+        "parent": true,
+        "error": 4.957333147729732e-9
+      }
+    },
+    {
+      "id": "heart",
+      "slot": 31,
+      "state": "ATTACHING",
+      "start": [
+        -2.947181952168597,
+        -0.6766793929861994,
+        -0.20001020854939267
+      ],
+      "transform": "translate(98.6048px, 415.716px) matrix(0.767773, 0.166143, -0.166129, 0.767745, 0, 0)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M48%2080%2017%2049C-4%2022%2030%205%2048%2029%2068%204%20101%2024%2079%2049Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M48%2080%2017%2049C-4%2022%2030%205%2048%2029%2068%204%20101%2024%2079%2049Z'/%3e%3c/g%3e%3cg%20fill='%23ff73a9'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M48%2080%2017%2049C-4%2022%2030%205%2048%2029%2068%204%20101%2024%2079%2049Z'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "heart",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 31,
+        "expectedTile": 31,
+        "parent": true,
+        "error": 1.3352725965331085e-8
+      }
+    },
+    {
+      "id": "rocket",
+      "slot": 35,
+      "state": "ATTACHING",
+      "start": [
+        -3.291382407609465,
+        0.24353789944226567,
+        -1.531120132727228
+      ],
+      "transform": "translate(122.026px, 202.197px) matrix(0.597711, -0.109594, 0.10961, 0.597704, 0, 0)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M37%2065%2025%2071l1-22%2013-9M57%2057l-2%2018%2018-10%201-17'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M37%2065%2025%2071l1-22%2013-9M57%2057l-2%2018%2018-10%201-17'/%3e%3c/g%3e%3cg%20fill='%23b39aff'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M37%2065%2025%2071l1-22%2013-9M57%2057l-2%2018%2018-10%201-17'/%3e%3cpath%20d='M32%2057Q36%2017%2081%2012q2%2041-36%2053Z'/%3e%3ccircle%20cx='59'%20cy='35'%20r='9'%20fill='%2325263e'/%3e%3cpath%20d='m28%2065-9%2016%2017-8'%20fill='%23ffc781'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "rocket",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 35,
+        "expectedTile": 35,
+        "parent": true,
+        "error": 5.810290431517941e-9
+      }
+    },
+    {
+      "id": "08_peace_hand_glossy",
+      "slot": 14,
+      "state": "ATTACHING",
+      "start": [
+        3.291382407609462,
+        -1.9870251474606435,
+        -0.8416733727754195
+      ],
+      "transform": "translate(1221.12px, 596.154px) matrix(0.573833, -0.103456, 0.103456, 0.573838, 0, 0)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/08_peace_hand_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "08_peace_hand_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 14,
+        "expectedTile": 14,
+        "parent": true,
+        "error": 2.8792985513144362e-8
+      }
+    },
+    {
+      "id": "05_dancing_banana_glossy",
+      "slot": 8,
+      "state": "ATTACHING",
+      "start": [
+        3.537842500467376,
+        -0.08191255810076159,
+        -1.4305263549412013
+      ],
+      "transform": "translate(1237.51px, 242.337px) matrix(0.7416, 0.07407, -0.0738321, 0.741806, 0, 0)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/05_dancing_banana_glossy.svg",
+      "moving": true,
+      "attached": {
+        "id": "05_dancing_banana_glossy",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 8,
+        "expectedTile": 8,
+        "parent": true,
+        "error": 2.5484614067920242e-8
+      }
+    },
+    {
+      "id": "game",
+      "slot": 29,
+      "state": "ATTACHING",
+      "start": [
+        -3.537842500467377,
+        -1.7018834607789126,
+        -0.9298080759315912
+      ],
+      "transform": "translate(573.222px, 388.598px) matrix(1.70823, 0.00317506, 0.0010781, 1.71148, 0, 0)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M28%2028h40q13%200%2016%2022l3%2017q1%2016-13%209L62%2064H34L20%2077Q5%2080%2010%2063l4-20q3-15%2014-15Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M28%2028h40q13%200%2016%2022l3%2017q1%2016-13%209L62%2064H34L20%2077Q5%2080%2010%2063l4-20q3-15%2014-15Z'/%3e%3c/g%3e%3cg%20fill='%239af5cc'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M28%2028h40q13%200%2016%2022l3%2017q1%2016-13%209L62%2064H34L20%2077Q5%2080%2010%2063l4-20q3-15%2014-15Z'/%3e%3cpath%20d='M24%2046h17m-9-8v17'%20fill='none'%20stroke='%2333324c'/%3e%3ccircle%20cx='65'%20cy='43'%20r='4'%20fill='%23ff839f'/%3e%3ccircle%20cx='74'%20cy='53'%20r='4'%20fill='%23ffdc99'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "game",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 29,
+        "expectedTile": 29,
+        "parent": true,
+        "error": 6.583645814490239e-9
+      }
+    },
+    {
+      "id": "lightning",
+      "slot": 32,
+      "state": "ATTACHING",
+      "start": [
+        -3.7899338985908724,
+        -0.6593695364722718,
+        -1.252039652535462
+      ],
+      "transform": "translate(35.9479px, 362.858px) matrix(0.586631, -0.0195672, 0.0195695, 0.586644, 0, 0)",
+      "source": "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='256'%20height='256'%20viewBox='0%200%2096%2096'%3e%3cg%20fill='%23070612'%20stroke='%23070612'%20stroke-width='9'%20stroke-linejoin='round'%20transform='translate(0%202)'%3e%3cpath%20d='M51%208%2020%2053h25l-3%2035%2034-50H51Z'/%3e%3c/g%3e%3cg%20fill='%23fff9ee'%20stroke='%23fff9ee'%20stroke-width='8'%20stroke-linejoin='round'%3e%3cpath%20d='M51%208%2020%2053h25l-3%2035%2034-50H51Z'/%3e%3c/g%3e%3cg%20fill='%23e4ff65'%20stroke='%23211d32'%20stroke-width='3.5'%20stroke-linejoin='round'%20stroke-linecap='round'%3e%3cpath%20d='M51%208%2020%2053h25l-3%2035%2034-50H51Z'/%3e%3c/g%3e%3c/svg%3e",
+      "moving": true,
+      "attached": {
+        "id": "lightning",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 32,
+        "expectedTile": 32,
+        "parent": true,
+        "error": 9.611301993639637e-9
+      }
+    },
+    {
+      "id": "06_peace_hand_wiggle_badge",
+      "slot": 11,
+      "state": "ATTACHING",
+      "start": [
+        3.7899338985908724,
+        -0.9914348093606915,
+        -1.1494012954608595
+      ],
+      "transform": "translate(1304.7px, 421.787px) rotate(-0.409356deg) scale(0.58236)",
+      "source": "http://127.0.0.1:5175/public/assets/stickers/06_peace_hand_wiggle_badge.svg",
+      "moving": true,
+      "attached": {
+        "id": "06_peace_hand_wiggle_badge",
+        "sameRecord": true,
+        "state": "ATTACHED",
+        "elementRemoved": true,
+        "tile": 11,
+        "expectedTile": 11,
+        "parent": true,
+        "error": 1.2608133916965078e-8
+      }
+    }
+  ],
+  "checks": [
+    "All assets parse, decode, rasterize with nontransparent pixels, enter field and float",
+    "Every animated SVG changes pixels in native browser presentation",
+    "Every SVG completed the real pointer/click pipeline with exact record identity and local surface anchor",
+    {
+      "retained110": {
+        "count": 110,
+        "instances": 110,
+        "capacity": 128,
+        "anchor": [
+          -0.6912981341824406,
+          -0.061198474608156216,
+          0.7199733581053617
+        ]
+      }
+    },
+    "Attachments survive navigation and scrolling; mobile overflow, touch, keyboard and reduced-motion placement pass; one field after re-entry"
+  ],
+  "errors": [],
+  "failedRequests": []
+}
