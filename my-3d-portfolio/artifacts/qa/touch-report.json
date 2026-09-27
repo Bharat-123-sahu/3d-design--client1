@@ -1,0 +1,69 @@
+{
+  "checks": [
+    "touch-only direct Work > Services > About > Contact > Work > Feedback",
+    {
+      "width": 320,
+      "scroll": 320,
+      "canvas": {
+        "width": 168,
+        "height": 183
+      },
+      "main": {
+        "width": 432,
+        "height": 1139
+      }
+    },
+    {
+      "width": 360,
+      "scroll": 360,
+      "canvas": {
+        "width": 168,
+        "height": 183
+      },
+      "main": {
+        "width": 486,
+        "height": 1139
+      }
+    },
+    {
+      "width": 390,
+      "scroll": 390,
+      "canvas": {
+        "width": 168,
+        "height": 183
+      },
+      "main": {
+        "width": 526,
+        "height": 1139
+      }
+    },
+    {
+      "width": 414,
+      "scroll": 414,
+      "canvas": {
+        "width": 168,
+        "height": 183
+      },
+      "main": {
+        "width": 558,
+        "height": 1139
+      }
+    },
+    {
+      "width": 430,
+      "scroll": 430,
+      "canvas": {
+        "width": 168,
+        "height": 183
+      },
+      "main": {
+        "width": 580,
+        "height": 1139
+      }
+    },
+    "landscape destinations fit",
+    "Back during travel reconciles URL and visible Home",
+    "legacy /value direct URL resolves Services"
+  ],
+  "errors": []
+}

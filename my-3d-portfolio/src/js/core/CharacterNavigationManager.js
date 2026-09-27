@@ -1,596 +1,162 @@
-import { getViewportProfile } from "../utils/responsive.js";
 import * as THREE from "three";
 import gsap from "gsap";
-import {
-  navigationNodes,
-  getPath,
-  WALK_SPEED,
-  CAMERA_LERP,
-} from "../data/navigationData.js";
+import { navigationNodes, getPath, CAMERA_LERP } from "../data/navigationData.js";
+import { characterConfig } from "../data/experienceConfig.js";
+import { getViewportProfile } from "../utils/responsive.js";
+import { CharacterModel } from "../three/CharacterModel.js";
 
-/* ── Navigation States ────────────────────────────────────────────── */
-export const NAV_STATE = {
-  IDLE: "idle",
-  ROTATING: "rotating",
-  WALKING: "walking",
-  ARRIVING: "arriving",
-  AT_DESTINATION: "at_destination",
-};
-
-/* ── Synthetic Character ──────────────────────────────────────────── */
-
-function buildCharacter(scene) {
-  const group = new THREE.Group();
-
-  const bodyMat = new THREE.MeshStandardMaterial({
-    color: "#e0e8ff",
-    emissive: "#aabbff",
-    emissiveIntensity: 0.35,
-    roughness: 0.5,
-    metalness: 0.2,
-  });
-  const redMat = new THREE.MeshStandardMaterial({
-    color: "#ff2200",
-    emissive: "#ff2200",
-    emissiveIntensity: 1.8,
-    roughness: 0.2,
-    metalness: 0.5,
-  });
-
-  // Head
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12), bodyMat);
-  head.position.y = 0.82;
-
-  // Torso
-  const torso = new THREE.Mesh(
-    new THREE.CapsuleGeometry(0.11, 0.3, 6, 8),
-    bodyMat,
-  );
-  torso.position.y = 0.52;
-
-  // Arms
-  const armGeo = new THREE.CapsuleGeometry(0.045, 0.28, 4, 6);
-  const armL = new THREE.Mesh(armGeo, bodyMat);
-  armL.position.set(-0.18, 0.5, 0);
-  armL.rotation.z = 0.2;
-  const armR = new THREE.Mesh(armGeo, bodyMat);
-  armR.position.set(0.18, 0.5, 0);
-  armR.rotation.z = -0.2;
-
-  // Legs
-  const legGeo = new THREE.CapsuleGeometry(0.055, 0.28, 4, 6);
-  const legL = new THREE.Mesh(legGeo, bodyMat);
-  legL.position.set(-0.08, 0.15, 0);
-  const legR = new THREE.Mesh(legGeo, bodyMat);
-  legR.position.set(0.08, 0.15, 0);
-
-  // Red energy core glow
-  const core = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), redMat);
-  core.position.y = 0.52;
-
-  group.add(head, torso, armL, armR, legL, legR, core);
-
-  // Shadow plane
-  const shadowGeo = new THREE.CircleGeometry(0.18, 16);
-  const shadowMat = new THREE.MeshBasicMaterial({
-    color: "#000000",
-    transparent: true,
-    opacity: 0.4,
-    depthWrite: false,
-  });
-  const shadow = new THREE.Mesh(shadowGeo, shadowMat);
-  shadow.rotation.x = -Math.PI / 2;
-  shadow.position.y = -0.005;
-  group.add(shadow);
-
-  scene.add(group);
-
-  return {
-    group,
-    head,
-    torso,
-    armL,
-    armR,
-    legL,
-    legR,
-    core,
-    shadow,
-    bodyMat,
-    redMat,
-  };
-}
-
-/* ── CharacterNavigationManager ──────────────────────────────────── */
+export const NAV_STATE = Object.freeze({ IDLE: "idle", OPENING_NAV: "opening_nav", SELECTING: "selecting", MOVING: "moving", ARRIVING: "arriving", SETTLING: "settling" });
+const allowed = { idle: ["opening_nav", "moving"], opening_nav: ["selecting", "idle", "moving"], selecting: ["idle", "moving"], moving: ["arriving"], arriving: ["settling"], settling: ["idle"] };
 
 export class CharacterNavigationManager {
   constructor(scene, camera, worldScene) {
     this.scene = scene;
     this.camera = camera;
     this.worldScene = worldScene;
-
-    // State
+    this.model = new CharacterModel();
+    this.character = { group: this.model.root };
+    scene.add(this.model.root);
+    this.model.root.visible = false;
     this.currentNode = null;
     this.targetNode = null;
-    this.isMoving = false;
-    this.isLocked = true; // Locked until introComplete
     this.navState = NAV_STATE.IDLE;
-
-    // Path walking
-    this.currentPath = null;
-    this.pathProgress = 0;
-    this.pathLength = 0;
-    this.walkDir = new THREE.Vector3();
-    this.targetRotY = 0;
-
-    // Camera targets
-    this._camTargetPos = new THREE.Vector3(0, 1.2, 5.5);
-    this._camTargetLook = new THREE.Vector3(0, -0.5, 0);
-    this._camCurrentLook = new THREE.Vector3(0, -0.5, 0);
-    this._responsiveCamera = new THREE.Vector3();
+    this.isLocked = true;
+    this.isMoving = false;
     this.profile = getViewportProfile();
-
-    // Walk animation time
-    this._walkTime = 0;
-    this._sitProgress = 0;
-    this._isSitting = false;
-    this._lookAngle = 0;
-
-    // Build character
-    this.character = buildCharacter(scene);
-
-    // Hide until intro completes
-    this.character.group.visible = false;
-
-    // Pending navigation queue (only one item max)
-    this._pendingNode = null;
-
-    // Optional status UI is intentionally disabled. The visible character and
-    // red path are the travel indicator.
-    this._travelEl = null;
+    this.look = new THREE.Vector3(0, -0.5, 0);
+    this.cameraTarget = new THREE.Vector3();
+    this.cameraLook = new THREE.Vector3();
+    this.point = new THREE.Vector3();
+    this.tangent = new THREE.Vector3();
+    this.followOffset = new THREE.Vector3(0, 1.5, 4.5);
+    this.travelSpeed = 0;
+    this.applyVisualScale();
   }
 
-  /* ── Travel Indicator UI ──────────────────────────────────────── */
-
-  _createTravelIndicator() {
-    const el = document.createElement("div");
-    el.className = "travel-indicator";
-    el.setAttribute("aria-live", "polite");
-    el.setAttribute("aria-label", "Navigation status");
-    el.innerHTML = `<span class="travel-indicator__dot"></span><span class="travel-indicator__text"></span>`;
-    document.body.appendChild(el);
-    this._travelEl = el;
+  setState(state) {
+    if (state === this.navState) return;
+    if (!allowed[this.navState]?.includes(state)) throw new Error(`Invalid character transition: ${this.navState} -> ${state}`);
+    this.navState = state;
+    window.dispatchEvent(new CustomEvent("characterStateChanged", { detail: { state } }));
   }
 
-  _showTravelIndicator(label) {
-    if (!this._travelEl) return;
-    this._travelEl.querySelector(".travel-indicator__text").textContent =
-      label;
-    gsap.to(this._travelEl, {
-      opacity: 1,
-      y: 0,
-      duration: 0.35,
-      ease: "power2.out",
-    });
-    this._travelEl.classList.add("is-active");
-  }
-
-  _hideTravelIndicator() {
-    if (!this._travelEl) return;
-    gsap.to(this._travelEl, {
-      opacity: 0,
-      y: -8,
-      duration: 0.35,
-      ease: "power2.in",
-      onComplete: () => this._travelEl.classList.remove("is-active"),
-    });
-  }
-
-  /* ── Public API ────────────────────────────────────────────────── */
-
-  /**
-   * Unlock navigation after intro complete.
-   * Places character at the world start point and waits for user selection.
-   */
   unlock() {
     this.isLocked = false;
-    this.character.group.visible = true;
-
-    // Place character slightly below home (approach from contact side).
-    const homeNode = navigationNodes.home;
-    this.character.group.position.set(
-      homeNode.position.x,
-      homeNode.position.y,
-      homeNode.position.z + 2.2,
-    );
-    this.character.group.scale.setScalar(0);
-    this.currentNode = null;
-
-    gsap.to(this.character.group.scale, {
-      x: 1,
-      y: 1,
-      z: 1,
-      duration: 1.0,
-      ease: "back.out(1.5)",
-    });
+    this.model.root.visible = true;
+    this.model.root.position.fromArray(characterConfig.waiting.position);
+    this.model.root.rotation.y = characterConfig.waiting.rotation;
+    this.model.setState("idle");
+    this.applyVisualScale();
   }
 
-  /**
-   * Navigate to a destination node.
-   * Returns false if already moving (navigation locked).
-   */
-  navigate(nodeId) {
-    if (!navigationNodes[nodeId]) {
-      console.warn(`[CharacterNav] Unknown node: ${nodeId}`);
-      return false;
-    }
-
-    if (this.isLocked) {
-      this._pendingNode = nodeId;
-      return false;
-    }
-
-    if (this.isMoving) {
-      // Queue the next destination — will execute after arrival
-      this._pendingNode = nodeId;
-      return false;
-    }
-
-    if (this.currentNode === nodeId) {
-      // Already at destination — fire arrival event
-      this._onArrival(nodeId);
-      return true;
-    }
-
-    this._startNavigation(nodeId);
+  async navigate(nodeId, { immediate = false } = {}) {
+    const node = navigationNodes[nodeId];
+    if (!node || this.isLocked || this.isMoving) return false;
+    if (this.currentNode === nodeId) return true;
+    this.isMoving = true;
+    this.targetNode = nodeId;
+    this.model.reactionUntil = 0;
+    this.setState(NAV_STATE.MOVING);
+    const from = this.currentNode || "home";
+    window.dispatchEvent(new CustomEvent("characterNavigating", { detail: { from, to: nodeId } }));
+    this.worldScene?.highlightActivePath(from, nodeId);
+    const waypoints = getPath(from, nodeId).map(p => p.clone());
+    waypoints[0] = this.model.root.position.clone();
+    if (waypoints.length < 2) waypoints.push(node.position.clone());
+    const curve = new THREE.CatmullRomCurve3(waypoints, false, "centripetal");
+    const motion = { phase: 0 };
+    const timing = characterConfig.travel;
+    const length = curve.getLength();
+    const allowRun = length >= timing.runDistance;
+    const peakSpeed = allowRun ? timing.runSpeed : timing.walkSpeed;
+    const duration = THREE.MathUtils.clamp(length * Math.PI / (2 * peakSpeed), timing.min, timing.max);
+    this.travelDuration = duration;
+    const fast = immediate || this.profile.reduced;
+    this.model.setState(this.model.restState === "sit" ? "stand" : "look");
+    this.timeline = gsap.timeline();
+    this.timeline.to({}, { duration: fast ? 0 : timing.turn });
+    this.timeline.call(() => this.model.setState("turn"));
+    curve.getTangentAt(0, this.tangent);
+    const facing = Math.atan2(this.tangent.x, this.tangent.z);
+    const currentFacing = this.model.root.rotation.y;
+    this.timeline.to(this.model.root.rotation, { y: currentFacing + Math.atan2(Math.sin(facing - currentFacing), Math.cos(facing - currentFacing)), duration: fast ? 0 : timing.turn, ease: "power2.out" });
+    this.timeline.call(() => { this.lastTravelUpdate = performance.now(); this.model.setLocomotion(0, allowRun); });
+    // Integrating a sine velocity profile yields a bounded curved journey with
+    // zero speed at both endpoints. Gait selection uses actual path velocity.
+    this.timeline.to(motion, { phase: 1, duration: fast ? 0 : duration, ease: "none", onUpdate: () => {
+      const progress = 0.5 - 0.5 * Math.cos(Math.PI * motion.phase);
+      this.travelSpeed = fast ? 0 : length * Math.PI / (2 * duration) * Math.sin(Math.PI * motion.phase);
+      curve.getPointAt(progress, this.point);
+      // A small forward look smooths heading changes at bends without cutting
+      // corners or moving the character off the path.
+      curve.getTangentAt(Math.min(1, progress + 0.012), this.tangent);
+      this.model.root.position.copy(this.point);
+      const target = Math.atan2(this.tangent.x, this.tangent.z);
+      const now = performance.now();
+      const delta = Math.min(0.1, Math.max(0, (now - this.lastTravelUpdate) / 1000));
+      this.lastTravelUpdate = now;
+      const rotation = this.model.root.rotation;
+      rotation.y += Math.atan2(Math.sin(target - rotation.y), Math.cos(target - rotation.y)) * (1 - Math.exp(-timing.turnResponse * delta));
+      this.model.setLocomotion(this.travelSpeed, allowRun);
+      if (motion.phase >= 0.8 && this.navState === NAV_STATE.MOVING) this.setState(NAV_STATE.ARRIVING);
+    } });
+    this.timeline.call(() => {
+      if (this.navState === NAV_STATE.MOVING) this.setState(NAV_STATE.ARRIVING);
+      this.travelSpeed = 0;
+      this.model.setState("stop");
+    });
+    // Turn along the shortest arc; never spin through a full circle on arrival.
+    this.timeline.call(() => {
+      const rotation = this.model.root.rotation;
+      rotation.y = node.rotation + Math.atan2(Math.sin(rotation.y - node.rotation), Math.cos(rotation.y - node.rotation));
+    });
+    this.timeline.to(this.model.root.rotation, { y: node.rotation, duration: fast ? 0 : timing.settle, ease: "power2.out" });
+    this.timeline.call(() => { this.setState(NAV_STATE.SETTLING); this.model.setState(node.action); });
+    this.timeline.to({}, { duration: fast ? 0 : timing.settle });
+    await this.timeline;
+    this.model.root.position.copy(node.position);
+    this.applyVisualScale(node);
+    this.currentNode = nodeId;
+    this.targetNode = null;
+    this.isMoving = false;
+    this.setState(NAV_STATE.IDLE);
+    window.dispatchEvent(new CustomEvent("characterArrived", { detail: { node: nodeId } }));
     return true;
   }
 
-  _startNavigation(nodeId) {
-    const fromId = this.currentNode || "home";
-    const toNode = navigationNodes[nodeId];
-
-    if (!toNode) return;
-
-    this.isMoving = true;
-    this.targetNode = nodeId;
-    this.navState = NAV_STATE.ROTATING;
-
-    const waypoints = getPath(fromId, nodeId).map((point) => point.clone());
-    const currentPos = this.character.group.position.clone();
-    if (!waypoints.length || currentPos.distanceTo(waypoints[0]) > 0.05) {
-      waypoints.unshift(currentPos);
-    }
-
-    // Build CatmullRomCurve
-    this.currentPath = new THREE.CatmullRomCurve3(
-      waypoints,
-      false,
-      "catmullrom",
-      0.5,
-    );
-    this.pathProgress = 0;
-    this.pathLength = this.currentPath.getLength();
-
-    // Dispatch navigation start event
-    window.dispatchEvent(
-      new CustomEvent("characterNavigating", {
-        detail: { from: fromId, to: nodeId },
-      }),
-    );
-
-    // Highlight active path
-    this.worldScene?.highlightActivePath?.(fromId, nodeId);
-
-    // Set nav state to walking
-    this.navState = NAV_STATE.WALKING;
-    this._isSitting = false;
-    this._walkTime = 0;
+  react(state) { if (!this.isMoving) this.model.react(state); }
+  applyVisualScale(node = navigationNodes[this.targetNode || this.currentNode]) {
+    const settings = characterConfig.visualScale;
+    const scale = this.profile.width <= settings.mobileMax ? settings.mobile : this.profile.width <= settings.tabletMax ? settings.tablet : settings.desktop;
+    this.model.root.scale.setScalar(scale * (node?.scale ?? 1));
   }
-
-  /* ── Per-frame Update ─────────────────────────────────────────── */
-
+  handleResize(profile = getViewportProfile()) {
+    this.profile = profile;
+    this.applyVisualScale();
+    if (profile.reduced && this.isMoving) this.timeline?.progress(1);
+  }
   update(delta) {
-    const char = this.character;
-    const elapsed = (this._walkTime += delta);
-
-    if (this.navState === NAV_STATE.WALKING && this.currentPath) {
-      this._updateWalking(delta, char, elapsed);
-    }
-
-    if (
-      this.navState === NAV_STATE.IDLE ||
-      this.navState === NAV_STATE.AT_DESTINATION
-    ) {
-      if (!this.profile.reduced) this._updateIdleAnimation(delta, char, elapsed);
-    }
-
-    // Camera follow
-    this._updateCamera(delta);
-
-    // Red core pulsation
-    char.core.material.emissiveIntensity = 1.5 + 0.7 * Math.sin(elapsed * 3.5);
-  }
-
-  _updateWalking(delta, char, elapsed) {
-    if (!this.currentPath || this.pathLength <= 0) return;
-
-    const speed = WALK_SPEED * delta;
-    this.pathProgress = Math.min(this.pathProgress + speed, this.pathLength);
-
-    const t = this.pathProgress / this.pathLength;
-    const pt = this.currentPath.getPoint(t);
-    const tangent = this.currentPath.getTangent(t);
-
-    // Move character
-    char.group.position.set(pt.x, pt.y, pt.z);
-
-    // Rotate toward movement direction
-    if (tangent.lengthSq() > 0.001) {
-      this.targetRotY = Math.atan2(tangent.x, tangent.z);
-    }
-    const rotDiff = this.targetRotY - char.group.rotation.y;
-    char.group.rotation.y += rotDiff * 0.12;
-
-    // Walk animation — bob limbs
-    const walkFreq = 8;
-    const swing = 0.35;
-    char.legL.rotation.x = Math.sin(elapsed * walkFreq) * swing;
-    char.legR.rotation.x = -Math.sin(elapsed * walkFreq) * swing;
-    char.armL.rotation.x = -Math.sin(elapsed * walkFreq) * swing * 0.7;
-    char.armR.rotation.x = Math.sin(elapsed * walkFreq) * swing * 0.7;
-    char.group.position.y =
-      pt.y + 0.04 * Math.abs(Math.sin(elapsed * walkFreq));
-
-    // Update camera target to follow character
-    this._camTargetPos.set(
-      char.group.position.x * 0.4,
-      navigationNodes[this.targetNode]?.cameraPosition.y ?? 1.2,
-      char.group.position.z + 4.5,
-    );
-    this._camTargetLook
-      .copy(char.group.position)
-      .add(new THREE.Vector3(0, 0.3, 0));
-
-    // Arrival check
-    if (t >= 0.99) {
-      this._handleArrival();
-    }
-  }
-
-  _handleArrival() {
-    const nodeId = this.targetNode;
-    const node = navigationNodes[nodeId];
-    if (!node) return;
-
-    this.navState = NAV_STATE.ARRIVING;
-    this.isMoving = false;
-
-    // Snap character to exact destination
-    gsap.to(this.character.group.position, {
-      x: node.position.x,
-      y: node.position.y,
-      z: node.position.z,
-      duration: 0.5,
-      ease: "power2.out",
-    });
-
-    // Reset limb animation
-    gsap.to(this.character.legL.rotation, { x: 0, duration: 0.4 });
-    gsap.to(this.character.legR.rotation, { x: 0, duration: 0.4 });
-    gsap.to(this.character.armL.rotation, { x: 0, duration: 0.4 });
-    gsap.to(this.character.armR.rotation, { x: 0, duration: 0.4 });
-
-    // Move camera to destination framing
-    this._camTargetPos.copy(node.cameraPosition);
-    this._camTargetLook.copy(node.cameraLookAt);
-
-    // Destination-specific action after brief pause
-    const delay = node.action === "sit" ? 600 : 450;
-
-    setTimeout(() => {
-      this._performDestinationAction(nodeId, node);
-    }, delay);
-  }
-
-  _performDestinationAction(nodeId, node) {
-    this.navState = NAV_STATE.AT_DESTINATION;
-    this.currentNode = nodeId;
-    this.targetNode = null;
-    this.currentPath = null;
-    this.pathProgress = 0;
-
-    // Face the destination object (rotate toward it)
-    const toSign = new THREE.Vector3().subVectors(
-      node.signPosition,
-      node.position,
-    );
-    const targetFaceRot = Math.atan2(toSign.x, toSign.z);
-    gsap.to(this.character.group.rotation, {
-      y: targetFaceRot,
-      duration: 0.6,
-      ease: "power2.out",
-    });
-
-    // Perform action
-    switch (node.action) {
-      case "sit":
-        this._doSit();
-        break;
-      case "look":
-        this._doLook();
-        break;
-      case "inspect":
-        this._doInspect();
-        break;
-      case "interact":
-        this._doInteract();
-        break;
-      default:
-        this._doIdle();
-    }
-
-    // Highlight active node
-    this.worldScene?.setActiveNode?.(nodeId);
-
-    // Fire arrival event
-    this._onArrival(nodeId);
-  }
-
-  _onArrival(nodeId) {
-    window.dispatchEvent(
-      new CustomEvent("characterArrived", {
-        detail: { node: nodeId },
-      }),
-    );
-
-    // Handle pending navigation
-    if (this._pendingNode && this._pendingNode !== nodeId) {
-      const next = this._pendingNode;
-      this._pendingNode = null;
-      setTimeout(() => this.navigate(next), 200);
-    }
-  }
-
-  /* ── Destination Actions ──────────────────────────────────────── */
-
-  _doIdle() {
-    this._isSitting = false;
-    this._currentAction = "idle";
-  }
-
-  _doSit() {
-    this._isSitting = true;
-    this._currentAction = "sit";
-    // Compress legs (sitting posture)
-    gsap.to(this.character.legL.rotation, {
-      x: -1.2,
-      duration: 0.6,
-      ease: "power2.out",
-    });
-    gsap.to(this.character.legR.rotation, {
-      x: -1.2,
-      duration: 0.6,
-      ease: "power2.out",
-    });
-    gsap.to(this.character.torso.rotation, { x: -0.1, duration: 0.6 });
-    gsap.to(this.character.group.position, {
-      y: this.character.group.position.y - 0.28,
-      duration: 0.6,
-      ease: "power2.out",
-    });
-  }
-
-  _doLook() {
-    this._currentAction = "look";
-    this._isSitting = false;
-    // Tilt head slightly upward to "look at display"
-    gsap.to(this.character.head.rotation, {
-      x: -0.18,
-      duration: 0.7,
-      ease: "power2.out",
-    });
-  }
-
-  _doInspect() {
-    this._currentAction = "inspect";
-    this._isSitting = false;
-    // Lean forward slightly
-    gsap.to(this.character.torso.rotation, {
-      x: 0.15,
-      duration: 0.6,
-      ease: "power2.out",
-    });
-  }
-
-  _doInteract() {
-    this._currentAction = "interact";
-    this._isSitting = false;
-    // Arm extend forward
-    gsap.to(this.character.armR.rotation, {
-      x: -0.7,
-      duration: 0.6,
-      ease: "power2.out",
-    });
-  }
-
-  /* ── Idle Animation ───────────────────────────────────────────── */
-
-  _updateIdleAnimation(delta, char, elapsed) {
-    if (this._isSitting) {
-      // Subtle breathing
-      char.torso.scale.y = 1 + 0.015 * Math.sin(elapsed * 1.8);
+    if (this.isLocked) return;
+    this.model.update(delta, this.profile.reduced);
+    const node = navigationNodes[this.targetNode || this.currentNode || "home"];
+    if (!this.currentNode && !this.targetNode) {
+      this.cameraLook.fromArray(characterConfig.waiting.lookAt);
+      this.cameraTarget.fromArray(characterConfig.waiting.camera);
+    } else if (this.isMoving) {
+      this.cameraLook.copy(this.model.root.position);
+      this.cameraLook.y += 0.6;
+      this.cameraTarget.copy(this.cameraLook).add(this.followOffset);
     } else {
-      // Subtle sway
-      char.group.rotation.z = 0.015 * Math.sin(elapsed * 1.4);
-      char.torso.scale.y = 1 + 0.012 * Math.sin(elapsed * 2.2);
+      this.cameraLook.copy(node.cameraLookAt);
+      this.cameraTarget.copy(node.cameraPosition);
     }
+    const fit = Math.max(1, this.profile.cameraDistance * 0.8);
+    this.cameraTarget.sub(this.cameraLook).multiplyScalar(fit).add(this.cameraLook);
+    const damping = this.profile.reduced ? 1 : 1 - Math.pow(1 - CAMERA_LERP, delta * 60);
+    this.camera.position.lerp(this.cameraTarget, damping);
+    this.look.lerp(this.cameraLook, damping);
+    this.camera.lookAt(this.look);
   }
-
-  /* ── Camera Follow ────────────────────────────────────────────── */
-
-  handleResize(profile = getViewportProfile()) { this.profile = profile; }
-
-  _updateCamera(delta) {
-    // Preserve each destination's direction, expanding the view for portrait screens.
-    const overview = !this.currentNode && !this.isMoving && !this.targetNode;
-    const fit = overview ? Math.max(1.6, this.profile.cameraDistance * 1.35) : Math.max(1, this.profile.cameraDistance * 0.8);
-    this._responsiveCamera.copy(this._camTargetPos).sub(this._camTargetLook).multiplyScalar(fit).add(this._camTargetLook);
-    const damping = 1 - Math.pow(1 - CAMERA_LERP, delta * 60);
-    this.camera.position.lerp(this._responsiveCamera, damping);
-    this._camCurrentLook.lerp(this._camTargetLook, damping);
-    this.camera.lookAt(this._camCurrentLook);
-  }
-
-  /**
-   * Stand up from sitting before leaving (called by Router before navigate).
-   * Returns a promise that resolves after stand animation.
-   */
-  standUp() {
-    if (!this._isSitting) return Promise.resolve();
-    return new Promise((resolve) => {
-      this._isSitting = false;
-      gsap.to(this.character.legL.rotation, {
-        x: 0,
-        duration: 0.55,
-        ease: "power2.out",
-      });
-      gsap.to(this.character.legR.rotation, {
-        x: 0,
-        duration: 0.55,
-        ease: "power2.out",
-      });
-      gsap.to(this.character.torso.rotation, { x: 0, duration: 0.55 });
-      gsap.to(this.character.head.rotation, { x: 0, duration: 0.4 });
-      gsap.to(this.character.armR.rotation, { x: 0, duration: 0.4 });
-      gsap.to(this.character.group.position, {
-        y: this.character.group.position.y + 0.28,
-        duration: 0.55,
-        ease: "power2.out",
-        onComplete: resolve,
-      });
-    });
-  }
-
-  setTheme(theme) {
-    const dark = theme === "dark";
-    const bodyColor = dark ? "#e0e8ff" : "#334466";
-    const emColor = dark ? "#aabbff" : "#6688cc";
-    gsap.to(this.character.bodyMat.color, {
-      r: new THREE.Color(bodyColor).r,
-      g: new THREE.Color(bodyColor).g,
-      b: new THREE.Color(bodyColor).b,
-      duration: 0.8,
-    });
-    gsap.to(this.character.bodyMat.emissive, {
-      r: new THREE.Color(emColor).r,
-      g: new THREE.Color(emColor).g,
-      b: new THREE.Color(emColor).b,
-      duration: 0.8,
-    });
-  }
-
-  destroy() {
-    this._travelEl?.remove();
-    this.scene.remove(this.character.group);
-  }
+  setTheme() { /* Pip retains a consistent fur palette under the scene lighting. */ }
+  destroy() { this.timeline?.kill(); this.model.dispose(); }
 }

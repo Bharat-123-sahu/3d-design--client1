@@ -13,6 +13,14 @@ export class TransitionManager {
     this.isTransitioning = false;
   }
 
+  // Router delegates its existing content visibility transitions here, sharing
+  // the same lock as section navigation and avoiding a second transition overlay.
+  exitContent(content, animate) { return content.hideAll({ clear: true, animate }); }
+  enterContent(content, scene, animate) {
+    this.options.sceneController?.setDestination(scene);
+    return content.show(scene, { animate });
+  }
+
   async goTo(target) {
     if (this.isTransitioning || !target) return;
 

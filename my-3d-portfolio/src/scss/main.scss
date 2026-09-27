@@ -7,6 +7,8 @@
 @use "components/decorations";
 @use "components/glitch";
 @use "components/thunder-intro";
+@use "components/character-experience";
+@use "components/destination-hero";
 
 :root {
   color-scheme: dark;
@@ -2099,3 +2101,4 @@ body.is-navigating .navbar__link.is-active {
 }
   
 @include responsive.site;
+@include destination-hero.styles;

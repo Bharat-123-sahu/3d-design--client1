@@ -1,6 +1,7 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { createRouteTrigger, prefersReducedMotion, trackAnimation } from "../utils/animationRegistry.js";
+import { navigationNodes } from "../data/navigationData.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,6 +16,19 @@ const sectionStates = [
 ];
 
 export function initThreeScrollAnimations(threeScene, sceneController = null) {
+  const ball = navigationNodes[sceneController?.destination]?.ball;
+  const hero = document.querySelector('.destination-hero');
+  if (ball && hero) {
+    createRouteTrigger({
+      id: 'route:destination-jelly', trigger: hero, start: 'top top',
+      end: () => `+=${hero.offsetHeight * ball.scroll.distance}`,
+      onUpdate: trigger => sceneController.setDestinationScroll(trigger.progress),
+      onRefresh: trigger => sceneController.setDestinationScroll(trigger.progress),
+    });
+    // The existing reveal animations bring content forward. Destination color
+    // and bloom remain owned by SceneController, including after the hero exits.
+    return;
+  }
   if (!threeScene?.liquidBackground || prefersReducedMotion()) {
     return;
   }
@@ -33,8 +47,8 @@ export function initThreeScrollAnimations(threeScene, sceneController = null) {
       trigger: target,
       start: "top 62%",
       end: "bottom 38%",
-      onEnter: () => sceneController?.setState(state),
-      onEnterBack: () => sceneController?.setState(state),
+      onEnter: () => sceneController?.setSectionState(state),
+      onEnterBack: () => sceneController?.setSectionState(state),
     });
 
     trackAnimation(
@@ -114,4 +128,3 @@ function pulseChromatic(threeScene) {
     onUpdate: () => threeScene.postProcessing.setChromaticOffset(proxy.val),
   });
 }
-

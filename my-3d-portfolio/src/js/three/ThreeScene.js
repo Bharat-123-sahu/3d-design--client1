@@ -1,4 +1,5 @@
 import { getViewportProfile, onViewportChange } from "../utils/responsive.js";
+import { characterConfig } from "../data/experienceConfig.js";
 import * as THREE from "three";
 import { WorldScene } from "./WorldScene.js";
 import gsap from "gsap";
@@ -12,6 +13,7 @@ import liquidVertex from "../shaders/liquid/liquidVertex.glsl";
 import liquidFragment from "../shaders/liquid/liquidFragment.glsl";
 
 import { MorphBlob } from "../effects/MorphBlob.js";
+import { LiquidBlob } from "../effects/LiquidBlob.js";
 import { PlasmaRings } from "../effects/PlasmaRings.js";
 import { FlowRibbon } from "../effects/FlowRibbon.js";
 import { GlassCards } from "../effects/GlassCards.js";
@@ -64,6 +66,23 @@ class LiquidBackground {
   destroy() {
     this.mesh.geometry.dispose();
     this.material.dispose();
+  }
+
+  frameDestination(camera, active) {
+    if (active) {
+      // Cover destination camera angles while keeping the existing background.
+      camera.updateMatrixWorld();
+      const height = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 18;
+      this.mesh.position.set(0, 0, -18).applyMatrix4(camera.matrixWorld);
+      this.mesh.quaternion.copy(camera.quaternion);
+      this.mesh.scale.set(height * camera.aspect / 18 * 1.25, height / 14 * 1.25, 1);
+    } else if (this.destinationFramed) {
+      this.mesh.position.set(0, 0, -5);
+      this.mesh.quaternion.identity();
+      const height = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * (camera.position.z + 5);
+      this.mesh.scale.set(Math.max(1, height * camera.aspect / 18), Math.max(1, height / 14), 1);
+    }
+    this.destinationFramed = active;
   }
 }
 
@@ -145,6 +164,7 @@ export class ThreeScene {
     );
 
     this.liquidBackground = new LiquidBackground(this.scene);
+    this.liquidBlob = new LiquidBlob(this.scene);
     this.particles = this.createParticleField();
     this.stars = createStarField(this.scene);
     this.createLights();
@@ -335,6 +355,121 @@ export class ThreeScene {
     return field;
   }
 
+  setCharacterPresentation(content) {
+    this.container.style.pointerEvents = content ? "none" : "auto";
+    if (this.characterContentMode === content) return;
+    this.characterContentMode = content;
+    this.characterPresentationTween?.kill();
+    this.characterPresence ||= { opacity: 1 };
+    const model = this.navManager?.model;
+    if (!content) {
+      this.characterPresence.opacity = 1;
+      model?.setPresentationOpacity(1);
+      model?.root.traverse(object => object.layers.enable(0));
+      this.worldScene?.setContentMode(false);
+      return;
+    }
+    this.characterPresentationTween = gsap.to(this.characterPresence, {
+      opacity: 0,
+      duration: this.profile.reduced ? 0.5 : characterConfig.arrivalFade,
+      ease: "power2.inOut",
+      onComplete: () => {
+        model?.root.traverse(object => object.layers.disable(0));
+        this.worldScene?.setContentMode(true);
+      },
+    });
+  }
+
+  attachCharacterView(container) {
+    this.characterViewport = container;
+    // Reuse the existing WebGL renderer and scene. This canvas is only a 2D
+    // presentation surface for a small crop rendered before the main composer.
+    this.characterCanvas = document.createElement("canvas");
+    this.characterContext = this.characterCanvas.getContext("2d", { alpha: true });
+    this.characterCamera = new THREE.PerspectiveCamera(38, 1, 0.1, 30);
+    this.characterCamera.layers.set(1);
+    this.characterLook = new THREE.Vector3();
+    this.characterOffset = new THREE.Vector3(0.75, 0.4, 2.65);
+    this.characterRenderState = { viewport: new THREE.Vector4(), scissor: new THREE.Vector4(), color: new THREE.Color() };
+    this.lights.key.layers.enable(1);
+    this.lights.ambient.layers.enable(1);
+    container.append(this.characterCanvas);
+    this.characterResizeObserver = new ResizeObserver(() => this.resizeCharacterView());
+    this.characterResizeObserver.observe(container);
+    this.resizeCharacterView();
+    this.characterContextLost = event => { event.preventDefault(); this.characterContextPaused = true; container.closest("button").classList.add("has-context-loss"); };
+    this.characterContextRestored = () => { this.characterContextPaused = false; container.closest("button").classList.remove("has-context-loss"); this.resizeCharacterView(); };
+    this.renderer.domElement.addEventListener("webglcontextlost", this.characterContextLost);
+    this.renderer.domElement.addEventListener("webglcontextrestored", this.characterContextRestored);
+  }
+
+  resizeCharacterView() {
+    if (!this.characterCanvas) return;
+    const width = Math.max(1, this.characterViewport.clientWidth);
+    const height = Math.max(1, this.characterViewport.clientHeight);
+    const dpr = Math.min(this.renderer.getPixelRatio(), characterConfig.view.dpr);
+    this.characterPixelWidth = Math.floor(width * dpr);
+    this.characterPixelHeight = Math.floor(height * dpr);
+    this.characterCamera.aspect = width / height;
+    this.characterCamera.updateProjectionMatrix();
+  }
+
+  renderCharacterView() {
+    if (!this.characterContext || this.characterContextPaused) return;
+    this.characterLook.copy(this.navManager.character.group.position);
+    this.characterLook.y += 0.72 * this.navManager.model.root.scale.x;
+    const targetFraming = this.navManager.model.restState === "sit" ? 1 : 0;
+    if (this.companionStudioVisible !== Boolean(targetFraming)) {
+      this.companionStudioVisible = Boolean(targetFraming);
+      for (const key of ["about", "studioDesk", "studioBase"]) {
+        this.worldScene.markers[key]?.traverse(object => targetFraming ? object.layers.enable(1) : object.layers.disable(1));
+      }
+    }
+    this.characterFraming = this.profile.reduced ? targetFraming : (this.characterFraming || 0) + (targetFraming - (this.characterFraming || 0)) * 0.12;
+    this.characterLook.x -= this.characterFraming * 0.3;
+    this.characterLook.y += this.characterFraming * 0.05;
+    this.characterCamera.position.copy(this.characterLook).addScaledVector(this.characterOffset, 1 + this.characterFraming * 0.28);
+    this.characterCamera.lookAt(this.characterLook);
+
+    const renderer = this.renderer;
+    const saved = this.characterRenderState;
+    renderer.getViewport(saved.viewport);
+    renderer.getScissor(saved.scissor);
+    renderer.getClearColor(saved.color);
+    const alpha = renderer.getClearAlpha();
+    const scissorTest = renderer.getScissorTest();
+    const renderTarget = renderer.getRenderTarget();
+    const fog = this.scene.fog;
+    const width = this.characterViewport.clientWidth;
+    const height = this.characterViewport.clientHeight;
+    renderer.setRenderTarget(null);
+    renderer.setViewport(0, 0, width, height);
+    renderer.setScissor(0, 0, width, height);
+    renderer.setScissorTest(true);
+    renderer.setClearColor(0x000000, 0);
+    this.scene.fog = null;
+    renderer.clear();
+    // The companion camera always presents the same model at full opacity.
+    this.navManager.model.setPresentationOpacity(1);
+    renderer.render(this.scene, this.characterCamera);
+    const pixelRatio = renderer.getPixelRatio();
+    const sourceWidth = Math.floor(width * pixelRatio);
+    const sourceHeight = Math.floor(height * pixelRatio);
+    // Resize and repaint atomically: assigning canvas dimensions clears its bitmap.
+    // Keep the previous frame visible until the replacement frame is ready.
+    if (this.characterCanvas.width !== this.characterPixelWidth) this.characterCanvas.width = this.characterPixelWidth;
+    if (this.characterCanvas.height !== this.characterPixelHeight) this.characterCanvas.height = this.characterPixelHeight;
+    this.characterContext.clearRect(0, 0, this.characterCanvas.width, this.characterCanvas.height);
+    this.characterContext.drawImage(renderer.domElement, 0, renderer.domElement.height - sourceHeight, sourceWidth, sourceHeight, 0, 0, this.characterCanvas.width, this.characterCanvas.height);
+    this.navManager.model.setPresentationOpacity(this.navManager.model.root.layers.isEnabled(0) ? (this.characterPresence?.opacity ?? 1) : 1);
+    this.scene.fog = fog;
+    renderer.setRenderTarget(renderTarget);
+    renderer.setViewport(saved.viewport);
+    renderer.setScissor(saved.scissor);
+    renderer.setScissorTest(scissorTest);
+    renderer.setClearColor(saved.color, alpha);
+  }
+
   handleResize = () => {
     if (!this.container) {
       return;
@@ -353,6 +488,7 @@ export class ThreeScene {
     this.particles.geometry.setDrawRange(0, this.profile.lowPower ? 420 : 1400);
     this.stars.geometry.setDrawRange(0, this.profile.lowPower ? 540 : 1800);
     this.navManager?.handleResize?.(this.profile);
+    this.resizeCharacterView();
     if (!this.navManager) this.camera.position.z = 6 * this.profile.cameraDistance;
     const planeHeight = 2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)) * (this.camera.position.z + 5);
     this.liquidBackground.mesh.scale.set(Math.max(1, planeHeight * this.camera.aspect / 18), Math.max(1, planeHeight / 14), 1);
@@ -409,20 +545,32 @@ export class ThreeScene {
     // Navigation world + character
     this.worldScene?.update?.(delta, elapsed);
     this.navManager?.update?.(delta);
+    this.liquidBlob.update(delta, this.camera, this.profile, this.postProcessing);
+    this.liquidBackground.frameDestination(this.camera, this.liquidBlob.group.visible);
 
     this.postProcessing.update(elapsed);
-    this.postProcessing.composer.render();
+    if (!this.characterContextPaused) {
+      this.renderCharacterView();
+      this.postProcessing.composer.render();
+    }
   };
 
   destroy() {
     this.isDestroyed = true;
+    this.characterPresentationTween?.kill();
     cancelAnimationFrame(this.frameId);
     this.unsubscribeViewport?.();
+    this.characterResizeObserver?.disconnect();
+    this.characterNavigation?.destroy();
+    this.renderer.domElement.removeEventListener("webglcontextlost", this.characterContextLost);
+    this.renderer.domElement.removeEventListener("webglcontextrestored", this.characterContextRestored);
+    this.characterCanvas?.remove();
     this.postProcessing?.destroy?.();
     this.worldScene?.destroy?.();
     this.navManager?.destroy?.();
 
     this.liquidBackground?.destroy?.();
+    this.liquidBlob?.destroy?.();
     this.particles?.geometry?.dispose?.();
     this.particles?.material?.dispose?.();
     this.stars?.geometry?.dispose?.();

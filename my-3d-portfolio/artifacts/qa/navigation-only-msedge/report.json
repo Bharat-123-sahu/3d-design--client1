@@ -1,0 +1,341 @@
+{
+  "browser": "msedge",
+  "checks": [
+    {
+      "name": "waits ten seconds after Start without automatic destination",
+      "result": {
+        "scale": 0.7,
+        "node": null,
+        "state": "idle",
+        "position": [
+          0,
+          -1.6,
+          0
+        ],
+        "visiblePixels": 3713,
+        "contexts": 1,
+        "secondRenderer": false,
+        "hit": {
+          "width": 168,
+          "height": 210
+        },
+        "overflow": false
+      }
+    },
+    {
+      "name": "world character itself opens destinations",
+      "result": {
+        "x": 720,
+        "y": 537.573452430704
+      }
+    },
+    {
+      "name": "first selection Work; slower accelerated curved travel",
+      "result": {
+        "state": {
+          "scale": 0.7,
+          "node": "work",
+          "state": "idle",
+          "position": [
+            3.5,
+            -1.6,
+            -0.5
+          ],
+          "visiblePixels": 3739,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        "durationMs": 3616.3000000002794,
+        "peakSpeed": 1.8499277085666332,
+        "firstSpeed": 0.07659698792365677,
+        "lastSpeed": 0.07959327869203812,
+        "poses": [
+          "look",
+          "turn",
+          "walk",
+          "stop"
+        ]
+      }
+    },
+    {
+      "name": "Work > Services > About > Contact > Work without hamburger",
+      "result": [
+        {
+          "scale": 0.7,
+          "node": "value",
+          "state": "idle",
+          "position": [
+            0,
+            -1.6,
+            -3.5
+          ],
+          "visiblePixels": 3760,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "scale": 0.7,
+          "node": "about",
+          "state": "idle",
+          "position": [
+            -3.5,
+            -1.6,
+            -0.5
+          ],
+          "visiblePixels": 10631,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "scale": 0.7,
+          "node": "contact",
+          "state": "idle",
+          "position": [
+            0,
+            -1.6,
+            3.5
+          ],
+          "visiblePixels": 3641,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "scale": 0.7,
+          "node": "work",
+          "state": "idle",
+          "position": [
+            3.5,
+            -1.6,
+            -0.5
+          ],
+          "visiblePixels": 3551,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "name": "long journey starts walking, runs at speed, returns to walking before stop",
+      "result": [
+        "look",
+        "turn",
+        "walk",
+        "run",
+        "walk",
+        "stop",
+        "sit"
+      ]
+    },
+    {
+      "name": "rapid clicks cannot start competing travel",
+      "result": {
+        "scale": 0.7,
+        "node": "value",
+        "state": "idle",
+        "position": [
+          0,
+          -1.6,
+          -3.5
+        ],
+        "visiblePixels": 3807,
+        "contexts": 1,
+        "secondRenderer": false,
+        "hit": {
+          "width": 168,
+          "height": 210
+        },
+        "overflow": false
+      }
+    },
+    {
+      "name": "resize preserves model, hit area, single renderer and no overflow",
+      "result": [
+        {
+          "width": 1920,
+          "scale": 0.7,
+          "node": "value",
+          "state": "idle",
+          "position": [
+            0,
+            -1.6,
+            -3.5
+          ],
+          "visiblePixels": 3806,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "width": 1440,
+          "scale": 0.7,
+          "node": "value",
+          "state": "opening_nav",
+          "position": [
+            0,
+            -1.6,
+            -3.5
+          ],
+          "visiblePixels": 3763,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "width": 1280,
+          "scale": 0.7,
+          "node": "value",
+          "state": "selecting",
+          "position": [
+            0,
+            -1.6,
+            -3.5
+          ],
+          "visiblePixels": 3749,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "width": 1024,
+          "scale": 0.76,
+          "node": "value",
+          "state": "selecting",
+          "position": [
+            0,
+            -1.6,
+            -3.5
+          ],
+          "visiblePixels": 4422,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "width": 768,
+          "scale": 0.76,
+          "node": "value",
+          "state": "selecting",
+          "position": [
+            0,
+            -1.6,
+            -3.5
+          ],
+          "visiblePixels": 4434,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "width": 390,
+          "scale": 0.64,
+          "node": "value",
+          "state": "selecting",
+          "position": [
+            0,
+            -1.6,
+            -3.5
+          ],
+          "visiblePixels": 1512,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 112,
+            "height": 154
+          },
+          "overflow": false
+        },
+        {
+          "width": 360,
+          "scale": 0.64,
+          "node": "value",
+          "state": "selecting",
+          "position": [
+            0,
+            -1.6,
+            -3.5
+          ],
+          "visiblePixels": 1507,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 112,
+            "height": 154
+          },
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "name": "keyboard destinations remain available after arrival",
+      "result": true
+    },
+    {
+      "name": "reduced motion and navigation remain usable",
+      "result": {
+        "scale": 0.64,
+        "node": "experience",
+        "state": "idle",
+        "position": [
+          -3.5,
+          -1.6,
+          3
+        ],
+        "visiblePixels": 1520,
+        "contexts": 1,
+        "secondRenderer": false,
+        "hit": {
+          "width": 112,
+          "height": 154
+        },
+        "overflow": false
+      }
+    }
+  ],
+  "errors": [],
+  "failedRequests": []
+}

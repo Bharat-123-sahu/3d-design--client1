@@ -1,0 +1,146 @@
+{
+  "browser": "chrome",
+  "checks": [
+    {
+      "name": "waits ten seconds after Start without automatic destination",
+      "result": {
+        "scale": 0.7,
+        "node": null,
+        "state": "idle",
+        "position": [
+          0,
+          -1.6,
+          0
+        ],
+        "visiblePixels": 3717,
+        "contexts": 1,
+        "secondRenderer": false,
+        "hit": {
+          "width": 168,
+          "height": 210
+        },
+        "overflow": false
+      }
+    },
+    {
+      "name": "world character itself opens destinations",
+      "result": {
+        "x": 720,
+        "y": 537.5734524306857
+      }
+    },
+    {
+      "name": "first selection Work; slower accelerated curved travel",
+      "result": {
+        "state": {
+          "scale": 0.7,
+          "node": "work",
+          "state": "idle",
+          "position": [
+            3.5,
+            -1.6,
+            -0.5
+          ],
+          "visiblePixels": 3724,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        "durationMs": 3633.9000000003725,
+        "peakSpeed": 1.8499277085666332,
+        "firstSpeed": 0.07659698792365677,
+        "lastSpeed": 0.05459530891746593,
+        "poses": [
+          "look",
+          "turn",
+          "walk",
+          "stop"
+        ]
+      }
+    },
+    {
+      "name": "Work > Services > About > Contact > Work without hamburger",
+      "result": [
+        {
+          "scale": 0.7,
+          "node": "value",
+          "state": "idle",
+          "position": [
+            0,
+            -1.6,
+            -3.5
+          ],
+          "visiblePixels": 3775,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "scale": 0.7,
+          "node": "about",
+          "state": "idle",
+          "position": [
+            -3.5,
+            -1.6,
+            -0.5
+          ],
+          "visiblePixels": 10702,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "scale": 0.7,
+          "node": "contact",
+          "state": "idle",
+          "position": [
+            0,
+            -1.6,
+            3.5
+          ],
+          "visiblePixels": 3637,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        },
+        {
+          "scale": 0.7,
+          "node": "work",
+          "state": "idle",
+          "position": [
+            3.5,
+            -1.6,
+            -0.5
+          ],
+          "visiblePixels": 3574,
+          "contexts": 1,
+          "secondRenderer": false,
+          "hit": {
+            "width": 168,
+            "height": 210
+          },
+          "overflow": false
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "failedRequests": [],
+  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(frames.some(f=>f.world&&f.opacity>0.1&&f.opacity<0.9))\n\n    at file:///D:/New%20folder/my-3d-portfolio/scripts/qa-arrival.mjs:53:59\n    at async check (file:///D:/New%20folder/my-3d-portfolio/scripts/qa-arrival.mjs:34:44)\n    at async file:///D:/New%20folder/my-3d-portfolio/scripts/qa-arrival.mjs:51:2"
+}

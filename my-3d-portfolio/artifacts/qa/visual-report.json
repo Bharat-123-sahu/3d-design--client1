@@ -1,0 +1,53 @@
+{
+  "layouts": [
+    {
+      "id": "home",
+      "width": 390,
+      "scroll": 390,
+      "heading": 358
+    },
+    {
+      "id": "work",
+      "width": 390,
+      "scroll": 390,
+      "heading": 358
+    },
+    {
+      "id": "value",
+      "width": 390,
+      "scroll": 390,
+      "heading": 358
+    },
+    {
+      "id": "about",
+      "width": 390,
+      "scroll": 390,
+      "heading": 358
+    },
+    {
+      "id": "experience",
+      "width": 390,
+      "scroll": 390,
+      "heading": 358
+    },
+    {
+      "id": "contact",
+      "width": 390,
+      "scroll": 390,
+      "heading": 358
+    },
+    {
+      "id": "feedback",
+      "width": 390,
+      "scroll": 390,
+      "heading": 358
+    }
+  ],
+  "errors": [],
+  "checks": [
+    "7 route/viewport combinations with reduced motion for layout isolation",
+    "keyboard Enter, arrows, Escape and focus return",
+    "mobile poster maintains 16:9 aspect",
+    "companion WebGL context loss and restoration"
+  ]
+}
