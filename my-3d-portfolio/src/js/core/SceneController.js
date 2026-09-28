@@ -32,22 +32,14 @@ export class SceneController {
   }
 
   setDestinationScroll(progress) {
-    if (
-      this.threeScene?.liquidBlob &&
-      navigationNodes[this.destination]?.ball
-    ) {
+    if (this.threeScene?.liquidBlob && navigationNodes[this.destination]?.ball) {
       this.threeScene.liquidBlob.scroll = Math.max(0, Math.min(1, progress));
     }
   }
 
   hitBall(x, y) {
     const scene = this.threeScene;
-    return scene?.liquidBlob?.hitTest(
-      x,
-      y,
-      scene.camera,
-      scene.container.getBoundingClientRect(),
-    );
+    return scene?.liquidBlob?.hitTest(x, y, scene.camera, scene.container.getBoundingClientRect());
   }
 
   ballCenter() {
@@ -55,30 +47,13 @@ export class SceneController {
     if (!scene?.liquidBlob.group.visible) return null;
     const point = scene.liquidBlob.group.position.clone().project(scene.camera);
     const rect = scene.container.getBoundingClientRect();
-    return {
-      x: rect.left + ((point.x + 1) * rect.width) / 2,
-      y: rect.top + ((1 - point.y) * rect.height) / 2,
-    };
+    return { x: rect.left + (point.x + 1) * rect.width / 2, y: rect.top + (1 - point.y) * rect.height / 2 };
   }
 
-  impactBall(hit, strength) {
-    this.threeScene?.liquidBlob?.impact(hit, strength);
-  }
-  triggerClickImpact(hit, strength = 1) {
-    this.threeScene?.liquidBlob?.triggerImpact(hit, strength);
-  }
-  attachSticker(id, hit) {
-    return this.threeScene?.liquidBlob?.addSticker(id, hit);
-  }
-  previewSticker(hit) {
-    this.threeScene?.liquidBlob?.preview(hit);
-  }
-  currentSticker() {
-    return this.threeScene?.liquidBlob?.currentSticker();
-  }
-  targetSticker(x, y) {
-    return this.threeScene?.liquidBlob?.stickerField.select(x, y);
-  }
+  impactBall(hit, strength) { this.threeScene?.liquidBlob?.impact(hit, strength); }
+  attachSticker(id, hit) { return this.threeScene?.liquidBlob?.addSticker(id, hit); }
+  previewSticker(hit) { this.threeScene?.liquidBlob?.preview(hit); }
+  currentSticker() { return this.threeScene?.liquidBlob?.currentSticker(); }
 
   setState(state) {
     this.currentState = state;
@@ -105,28 +80,14 @@ export class SceneController {
         this.threeScene.liquidBlob.configure(destination.ball, state);
         this.threeScene.postProcessing.setBloomStrength(0.25);
         const color = new THREE.Color(destination.ball.atmosphere);
-        gsap.to(
-          this.threeScene.liquidBackground.material.uniforms.uColorB.value,
-          {
-            r: color.r,
-            g: color.g,
-            b: color.b,
-            duration: 0.7,
-            overwrite: true,
-          },
-        );
-        this.threeScene.worldScene?.setActiveNode(
-          environment?.marker ?? destination.id,
-        );
+        gsap.to(this.threeScene.liquidBackground.material.uniforms.uColorB.value, { r: color.r, g: color.g, b: color.b, duration: 0.7, overwrite: true });
+        this.threeScene.worldScene?.setActiveNode(environment?.marker ?? destination.id);
         return;
       }
       this.threeScene.liquidBlob?.hide();
       this._showOnly(environment?.effect ?? null);
-      if (environment?.bloom != null)
-        this.threeScene.postProcessing?.setBloomStrength?.(environment.bloom);
-      this.threeScene.worldScene?.setActiveNode(
-        environment?.marker ?? destination.id,
-      );
+      if (environment?.bloom != null) this.threeScene.postProcessing?.setBloomStrength?.(environment.bloom);
+      this.threeScene.worldScene?.setActiveNode(environment?.marker ?? destination.id);
       return;
     }
     if (state === "waiting") {
@@ -179,11 +140,10 @@ export class SceneController {
       effect.visibilityDelay?.kill();
       if (object) {
         gsap.killTweensOf(object.scale);
-        object.traverse((child) => {
+        object.traverse(child => {
           if (child.material) {
             gsap.killTweensOf(child.material);
-            if (child.material.uniforms?.uOpacity)
-              gsap.killTweensOf(child.material.uniforms.uOpacity);
+            if (child.material.uniforms?.uOpacity) gsap.killTweensOf(child.material.uniforms.uOpacity);
           }
         });
       }
@@ -192,9 +152,7 @@ export class SceneController {
         effect.show?.();
       } else {
         effect.hide?.();
-        effect.visibilityDelay = gsap.delayedCall(1.5, () => {
-          if (object) object.visible = false;
-        });
+        effect.visibilityDelay = gsap.delayedCall(1.5, () => { if (object) object.visible = false; });
       }
     }
 

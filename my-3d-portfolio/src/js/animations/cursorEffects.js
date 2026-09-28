@@ -14,7 +14,6 @@ export function initCursorEffects() {
   label.className = "cursor-label";
   ring.append(label);
   document.body.append(dot, ring);
-  gsap.set([dot, ring], { xPercent: -50, yPercent: -50 });
   let enabled = false,
     magnet = null;
   const moveDotX = gsap.quickTo(dot, "x", { duration: 0.12 }),

@@ -2,7 +2,6 @@ import * as THREE from "three";
 import gsap from "gsap";
 import { characterConfig } from "../data/experienceConfig.js";
 import { navigationNodes } from "../data/navigationData.js";
-import { ModelLoader } from "./ModelLoader.js";
 
 /* ── Helpers ──────────────────────────────────────────────────────── */
 
@@ -91,8 +90,7 @@ function buildPathSegment(points, scene) {
 }
 
 function createAllPaths(scene) {
-  const { home, about, work, value, contact, experience, feedback } =
-    navigationNodes;
+  const { home, about, work, value, contact } = navigationNodes;
 
   const segments = [
     // Home ↔ About
@@ -126,28 +124,6 @@ function createAllPaths(scene) {
       new THREE.Vector3(1.5, -1.6, -1.2),
       work.position,
     ],
-    // Home ↔ Experience
-    [
-      home.position,
-      new THREE.Vector3(-1.2, -1.6, 2.0),
-      new THREE.Vector3(-2.4, -1.6, 2.6),
-      experience.position,
-    ],
-    // Home ↔ Feedback
-    [
-      home.position,
-      new THREE.Vector3(1.2, -1.6, 2.0),
-      new THREE.Vector3(2.4, -1.6, 2.6),
-      feedback.position,
-    ],
-    // Experience ↔ Contact
-    [experience.position, new THREE.Vector3(-1.8, -1.6, 3.3), contact.position],
-    // Feedback ↔ Contact
-    [feedback.position, new THREE.Vector3(1.8, -1.6, 3.3), contact.position],
-    // About ↔ Experience
-    [about.position, new THREE.Vector3(-3.5, -1.6, 1.2), experience.position],
-    // Work ↔ Feedback
-    [work.position, new THREE.Vector3(3.5, -1.6, 1.2), feedback.position],
   ];
 
   return segments.map((pts) => buildPathSegment(pts, scene));
@@ -187,10 +163,7 @@ function createHouseMarker(scene, pos) {
 
 function createChairMarker(scene, pos) {
   const group = new THREE.Group();
-  const red = new THREE.MeshStandardMaterial({
-    color: "#897695",
-    roughness: 0.85,
-  });
+  const red = new THREE.MeshStandardMaterial({ color: "#897695", roughness: 0.85 });
   const dark = new THREE.MeshStandardMaterial({
     color: "#534757",
     roughness: 0.7,
@@ -308,10 +281,7 @@ function createBoardMarker(scene, pos) {
 
 function createDeskMarker(scene, pos) {
   const group = new THREE.Group();
-  const red = new THREE.MeshStandardMaterial({
-    color: "#f0dcca",
-    roughness: 0.8,
-  });
+  const red = new THREE.MeshStandardMaterial({ color: "#f0dcca", roughness: 0.8 });
   const dark = new THREE.MeshStandardMaterial({
     color: "#987d6a",
     roughness: 0.7,
@@ -322,11 +292,7 @@ function createDeskMarker(scene, pos) {
   top.position.y = characterConfig.studio.deskHeight - 0.03;
 
   // Legs
-  const legGeo = new THREE.BoxGeometry(
-    0.05,
-    characterConfig.studio.deskHeight - 0.06,
-    0.05,
-  );
+  const legGeo = new THREE.BoxGeometry(0.05, characterConfig.studio.deskHeight - 0.06, 0.05);
   [
     [0.45, (characterConfig.studio.deskHeight - 0.06) / 2, 0.22],
     [-0.45, (characterConfig.studio.deskHeight - 0.06) / 2, 0.22],
@@ -434,52 +400,17 @@ function createPathParticles(scene, pathSegments) {
   return { points, geo, particleData, pathSegments };
 }
 
-/* ── Ambient Colored Point Lights at Nodes ────────────────────────── */
-
-const nodeColorMap = {
-  home: "#ff3322",
-  about: "#e54b99",
-  work: "#ff6600",
-  value: "#00e5ff",
-  services: "#00e5ff",
-  experience: "#7055ff",
-  feedback: "#ffaa33",
-  contact: "#ff8844",
-};
+/* ── Ambient Red Point Lights at Nodes ────────────────────────────── */
 
 function createNodeLights(scene) {
   const lights = {};
   for (const [id, node] of Object.entries(navigationNodes)) {
-    const color = nodeColorMap[id] || "#ff2200";
-    const light = new THREE.PointLight(color, 0.0, 4.2);
+    const light = new THREE.PointLight("#ff2200", 0.0, 3.5);
     light.position.set(node.position.x, node.position.y + 1.2, node.position.z);
     scene.add(light);
     lights[id] = light;
   }
   return lights;
-}
-
-function createGroundPadPlaceholder(scene, pos, color) {
-  const group = new THREE.Group();
-  const pad = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.4, 1.45, 0.04, 32),
-    new THREE.MeshStandardMaterial({
-      color: "#0c0e17",
-      roughness: 0.85,
-      metalness: 0.2,
-    }),
-  );
-  pad.position.y = 0.02;
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(1.35, 0.015, 8, 32),
-    makeEmissiveMat(color, 1.2),
-  );
-  ring.rotation.x = Math.PI / 2;
-  ring.position.y = 0.042;
-  group.add(pad, ring);
-  group.position.copy(pos);
-  scene.add(group);
-  return group;
 }
 
 /* ── WorldScene Class ─────────────────────────────────────────────── */
@@ -515,80 +446,35 @@ export class WorldScene {
     this.pathSegments = createAllPaths(this.scene);
 
     // Destination markers
-    const { home, about, work, value, contact, experience, feedback } =
-      navigationNodes;
+    const { home, about, work, value, contact } = navigationNodes;
     this.markers.home = createHouseMarker(this.scene, home.position);
     this.markers.about = createChairMarker(this.scene, about.position);
     this.markers.work = createMonitorMarker(this.scene, work.position);
+    this.markers.value = createBoardMarker(this.scene, value.position);
     this.markers.contact = createDeskMarker(this.scene, contact.position);
-
-    // Initial placeholders for environments (replaced immediately upon GLB load)
-    this.markers.value = createGroundPadPlaceholder(
-      this.scene,
-      new THREE.Vector3(0, -1.6, -4.35),
-      "#00e5ff",
-    );
-    this.markers.experience = createGroundPadPlaceholder(
-      this.scene,
-      new THREE.Vector3(-3.5, -1.6, 2.15),
-      "#7055ff",
-    );
-    this.markers.feedback = createGroundPadPlaceholder(
-      this.scene,
-      new THREE.Vector3(3.5, -1.6, 2.15),
-      "#ffaa33",
-    );
-    this.markers.services = this.markers.value;
 
     // Keep walk endpoints clear. Only the chair shares a seating anchor.
     for (const [id, marker] of Object.entries(this.markers)) {
-      if (
-        id !== "about" &&
-        id !== "value" &&
-        id !== "experience" &&
-        id !== "feedback" &&
-        id !== "services"
-      ) {
-        marker.position.z -= 0.85;
-      }
+      if (id !== "about") marker.position.z -= 0.85;
     }
-    this.markers.about.traverse((object) => object.layers.enable(1));
-    const studioDesk = createDeskMarker(
-      this.scene,
-      about.position.clone().add(new THREE.Vector3(-0.9, 0, -0.15)),
-    );
+    this.markers.about.traverse(object => object.layers.enable(1));
+    const studioDesk = createDeskMarker(this.scene, about.position.clone().add(new THREE.Vector3(-0.9, 0, -0.15)));
     studioDesk.scale.setScalar(0.9);
-    studioDesk.traverse((object) => object.layers.enable(1));
+    studioDesk.traverse(object => object.layers.enable(1));
     this.markers.studioDesk = studioDesk;
-    const studioBase = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.05, 1.1, 0.05, 48),
-      new THREE.MeshStandardMaterial({ color: "#534c5d", roughness: 0.95 }),
-    );
-    studioBase.position
-      .copy(about.position)
-      .add(new THREE.Vector3(-0.35, -0.027, 0));
+    const studioBase = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.1, 0.05, 48), new THREE.MeshStandardMaterial({ color: "#534c5d", roughness: 0.95 }));
+    studioBase.position.copy(about.position).add(new THREE.Vector3(-0.35, -0.027, 0));
     studioBase.layers.enable(1);
     this.scene.add(studioBase);
     this.markers.studioBase = studioBase;
     // Soft contact patches ground the furniture without a second shadow pass.
     for (const marker of [this.markers.about, studioDesk]) {
-      const shadow = new THREE.Mesh(
-        new THREE.CircleGeometry(0.44, 24),
-        new THREE.MeshBasicMaterial({
-          color: "#17131d",
-          transparent: true,
-          opacity: 0.22,
-          depthWrite: false,
-        }),
-      );
+      const shadow = new THREE.Mesh(new THREE.CircleGeometry(0.44, 24), new THREE.MeshBasicMaterial({ color: "#17131d", transparent: true, opacity: 0.22, depthWrite: false }));
       shadow.rotation.x = -Math.PI / 2;
       shadow.position.y = 0.001;
       shadow.layers.enable(1);
       marker.add(shadow);
     }
-
-    // Load rich 3D destination environments asynchronously
-    this._loadDestinationEnvironments();
 
     // Destination signs
     for (const [id, node] of Object.entries(navigationNodes)) {
@@ -625,76 +511,6 @@ export class WorldScene {
     if (!object.children?.length) {
       this.interactiveObjects.push(object);
     }
-  }
-
-  _loadDestinationEnvironments() {
-    const loader = new ModelLoader();
-    const envConfigs = [
-      {
-        id: "value",
-        path: "/models/services-environment.glb",
-        position: new THREE.Vector3(0, -1.6, -4.35),
-        rotation: 0,
-        scale: 1.0,
-      },
-      {
-        id: "experience",
-        path: "/models/experience-environment.glb",
-        position: new THREE.Vector3(-3.5, -1.6, 2.15),
-        rotation: 0,
-        scale: 1.0,
-      },
-      {
-        id: "feedback",
-        path: "/models/feedback-environment.glb",
-        position: new THREE.Vector3(3.5, -1.6, 2.15),
-        rotation: 0,
-        scale: 1.0,
-      },
-    ];
-
-    envConfigs.forEach(async (cfg) => {
-      try {
-        const gltf = await loader.load(cfg.path);
-        const model = gltf.scene;
-        model.name = `${cfg.id}Environment`;
-        model.position.copy(cfg.position);
-        model.rotation.y = cfg.rotation;
-        model.scale.setScalar(cfg.scale);
-
-        const parts = {};
-        model.traverse((child) => {
-          if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            child.layers.enable(0);
-            child.layers.enable(1);
-          }
-          if (child.name) {
-            parts[child.name] = child;
-          }
-        });
-        model.userData.parts = parts;
-
-        // Replace placeholder
-        const placeholder = this.markers[cfg.id];
-        if (placeholder) {
-          this.scene.remove(placeholder);
-          const idx = this.interactiveObjects.indexOf(placeholder);
-          if (idx !== -1) this.interactiveObjects.splice(idx, 1);
-        }
-
-        this.markers[cfg.id] = model;
-        if (cfg.id === "value") {
-          this.markers.services = model;
-        }
-        this.scene.add(model);
-        this._registerInteractive(model, cfg.id);
-        model.visible = this.isActive;
-      } catch (err) {
-        console.warn(`[WorldScene] Failed to load ${cfg.id} environment:`, err);
-      }
-    });
   }
 
   _bindPointerEvents() {
@@ -745,19 +561,8 @@ export class WorldScene {
   }
 
   setContentMode(content) {
-    const roots = [
-      this.ground,
-      ...Object.values(this.markers),
-      ...Object.values(this.signs),
-      ...Object.values(this.nodeLights),
-      ...this.pathSegments.map((segment) => segment.group),
-      this.pathParticles.points,
-    ];
-    roots.forEach((root) =>
-      root.traverse((object) =>
-        content ? object.layers.disable(0) : object.layers.enable(0),
-      ),
-    );
+    const roots = [this.ground, ...Object.values(this.markers), ...Object.values(this.signs), ...Object.values(this.nodeLights), ...this.pathSegments.map(segment => segment.group), this.pathParticles.points];
+    roots.forEach(root => root.traverse(object => content ? object.layers.disable(0) : object.layers.enable(0)));
   }
 
   _setVisibility(visible) {
@@ -771,9 +576,7 @@ export class WorldScene {
       sign.material.opacity = visible ? 0.92 : 0;
     }
     this.ground.visible = visible;
-    Object.values(this.markers).forEach((marker) => {
-      marker.visible = visible;
-    });
+    Object.values(this.markers).forEach(marker => { marker.visible = visible; });
   }
 
   /**
@@ -798,9 +601,7 @@ export class WorldScene {
         gsap.to(sign.material, { opacity: 0.92, duration: 1.0, delay: 0.5 });
       }
       this.ground.visible = true;
-      Object.values(this.markers).forEach((marker) => {
-        marker.visible = true;
-      });
+      Object.values(this.markers).forEach(marker => { marker.visible = true; });
       gsap.fromTo(
         this.ground.material,
         { opacity: 0 },
@@ -818,12 +619,7 @@ export class WorldScene {
 
     for (const [id, light] of Object.entries(this.nodeLights)) {
       const target = id === nodeId ? 2.8 : 0.0;
-      gsap.to(light, {
-        intensity: target,
-        duration: 0.8,
-        ease: "power2.out",
-        overwrite: "auto",
-      });
+      gsap.to(light, { intensity: target, duration: 0.8, ease: "power2.out", overwrite: "auto" });
     }
 
     // Brighten active sign
@@ -893,10 +689,7 @@ export class WorldScene {
     // Subtle sign bob
     for (const sign of Object.values(this.signs)) {
       const node = navigationNodes[sign.userData.navNode];
-      if (node)
-        sign.position.y =
-          node.signPosition.y +
-          Math.sin(elapsed * 1.2 + sign.position.x) * 0.015;
+      if (node) sign.position.y = node.signPosition.y + Math.sin(elapsed * 1.2 + sign.position.x) * 0.015;
     }
 
     // Flicker path glow
@@ -908,84 +701,26 @@ export class WorldScene {
       );
     });
 
-    // Live kinetics for loaded destination environments
-    const valParts = this.markers.value?.userData?.parts;
-    if (valParts) {
-      if (valParts.HoloTile01)
-        valParts.HoloTile01.position.y = 1.45 + Math.sin(elapsed * 2.0) * 0.025;
-      if (valParts.HoloTile02)
-        valParts.HoloTile02.position.y = 1.48 + Math.cos(elapsed * 2.2) * 0.025;
-      if (valParts.MainDisplayScreen?.material) {
-        valParts.MainDisplayScreen.material.emissiveIntensity =
-          0.9 + Math.sin(elapsed * 1.5) * 0.2;
-      }
-    }
-    const expParts = this.markers.experience?.userData?.parts;
-    if (expParts) {
-      if (expParts.GyroRing01) expParts.GyroRing01.rotation.z += delta * 0.4;
-      if (expParts.GyroRing02) expParts.GyroRing02.rotation.y += delta * 0.35;
-      if (expParts.ProgressCore)
-        expParts.ProgressCore.rotation.y -= delta * 0.5;
-      if (expParts.Crystal01)
-        expParts.Crystal01.position.y = 1.1 + Math.sin(elapsed * 2.0) * 0.03;
-      if (expParts.Crystal02)
-        expParts.Crystal02.position.y = 1.25 + Math.cos(elapsed * 2.3) * 0.03;
-    }
-    const fbParts = this.markers.feedback?.userData?.parts;
-    if (fbParts) {
-      if (fbParts.HeartReaction)
-        fbParts.HeartReaction.position.y =
-          1.25 + Math.sin(elapsed * 2.4) * 0.03;
-      if (fbParts.StarReaction) {
-        fbParts.StarReaction.position.y = 1.48 + Math.cos(elapsed * 2.2) * 0.03;
-        fbParts.StarReaction.rotation.y += delta * 0.5;
-      }
-      if (fbParts.BubbleReaction)
-        fbParts.BubbleReaction.position.y =
-          1.32 + Math.sin(elapsed * 2.1 + 1) * 0.03;
-      if (fbParts.Spark01) fbParts.Spark01.rotation.y += delta * 1.5;
-      if (fbParts.Spark02) fbParts.Spark02.rotation.y -= delta * 1.2;
-    }
-
     // Furniture stays grounded and aligned with the character seating anchor.
   }
 
   destroy() {
     clearTimeout(this.activationTimer);
-    const geometries = new Set(),
-      materials = new Set();
-    const roots = [
-      this.ground,
-      ...Object.values(this.markers),
-      ...Object.values(this.signs),
-      ...Object.values(this.nodeLights),
-      ...this.pathSegments.map((segment) => segment.group),
-      this.pathParticles.points,
-    ];
-    roots.forEach((root) => {
-      root.traverse((object) => {
+    const geometries = new Set(), materials = new Set();
+    const roots = [this.ground, ...Object.values(this.markers), ...Object.values(this.signs), ...Object.values(this.nodeLights), ...this.pathSegments.map(segment => segment.group), this.pathParticles.points];
+    roots.forEach(root => {
+      root.traverse(object => {
         gsap.killTweensOf(object);
         if (object.geometry) geometries.add(object.geometry);
-        for (const material of [object.material].flat().filter(Boolean))
-          materials.add(material);
+        for (const material of [object.material].flat().filter(Boolean)) materials.add(material);
       });
       root.removeFromParent();
     });
-    geometries.forEach((geometry) => geometry.dispose());
-    materials.forEach((material) => {
-      gsap.killTweensOf(material);
-      material.map?.dispose();
-      material.dispose();
-    });
+    geometries.forEach(geometry => geometry.dispose());
+    materials.forEach(material => { gsap.killTweensOf(material); material.map?.dispose(); material.dispose(); });
     if (this.container) {
-      this.container.removeEventListener(
-        "pointermove",
-        this._handlePointerMove,
-      );
-      this.container.removeEventListener(
-        "pointerleave",
-        this._handlePointerLeave,
-      );
+      this.container.removeEventListener("pointermove", this._handlePointerMove);
+      this.container.removeEventListener("pointerleave", this._handlePointerLeave);
       this.container.removeEventListener("click", this._handleClick);
       this.container.style.cursor = "";
     }

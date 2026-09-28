@@ -4,10 +4,8 @@ attribute vec3 aTangent;
 attribute vec4 aMark; // atlas tile, birth time, footprint, surface layer
 uniform float uClock;
 uniform float uPreview;
-uniform float uAtlasGrid;
 varying vec2 vUv;
 varying float vShade;
-varying vec2 vLocalUv;
 void main() {
   float age = max(0.0, (uClock - aMark.y) / 0.42);
   float t = min(age, 1.0) - 1.0;
@@ -19,7 +17,6 @@ void main() {
   vec3 surface = jellySurface(p, 0.007 + aMark.w + lift);
   vec3 n = normalize(normalMatrix * jellyNormal(p));
   vShade = 0.72 + 0.28 * max(dot(n, normalize(vec3(-0.4, 0.7, 1.0))), 0.0);
-  vLocalUv = uv;
-  vUv = (vec2(mod(aMark.x, uAtlasGrid), uAtlasGrid - 1.0 - floor(aMark.x / uAtlasGrid)) + uv) / uAtlasGrid;
+  vUv = (vec2(mod(aMark.x, 8.0), 7.0 - floor(aMark.x / 8.0)) + uv) / vec2(8.0, 8.0);
   gl_Position = projectionMatrix * modelViewMatrix * vec4(surface, 1.0);
 }

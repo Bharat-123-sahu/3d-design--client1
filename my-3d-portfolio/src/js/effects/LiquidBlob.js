@@ -1,11 +1,9 @@
-import * as THREE from "three";
-import gsap from "gsap";
-import vertexShader from "../shaders/liquid/jellyVertex.glsl";
-import fragmentShader from "../shaders/liquid/jellyFragment.glsl";
-import { stickerLibrary } from "../data/stickerData.js";
-import { SurfaceStickers } from "./SurfaceStickers.js";
-import { StickerField } from "./StickerField.js";
-import { ClickStarBurst } from "./ClickStarBurst.js";
+import * as THREE from 'three';
+import gsap from 'gsap';
+import vertexShader from '../shaders/liquid/jellyVertex.glsl';
+import fragmentShader from '../shaders/liquid/jellyFragment.glsl';
+import { stickerLibrary, stickerCategories } from '../data/stickerData.js';
+import { SurfaceStickers } from './SurfaceStickers.js';
 
 /** Persistent gel sphere; the CPU surface and shared GPU displacement agree. */
 export class LiquidBlob {
@@ -16,39 +14,22 @@ export class LiquidBlob {
     scene.add(this.group);
     this.geometry = new THREE.SphereGeometry(1, 80, 56);
     this.rest = this.geometry.attributes.position.array.slice();
-    this.geometry.setAttribute(
-      "aRest",
-      new THREE.BufferAttribute(this.rest, 3),
-    );
+    this.geometry.setAttribute('aRest', new THREE.BufferAttribute(this.rest, 3));
     this.impactNormal = new THREE.Vector3(0, 0, 1);
     this.uniforms = {
-      uColorA: { value: new THREE.Color() },
-      uColorB: { value: new THREE.Color() },
-      uGlow: { value: new THREE.Color() },
-      uBase: { value: new THREE.Color("#050612") },
-      uTime: { value: 0 },
-      uSpring: { value: 0 },
-      uReduced: { value: 0 },
-      uImpact: { value: this.impactNormal },
-      uLight: { value: 1 },
-      uFocus: { value: 0 },
+      uColorA: { value: new THREE.Color() }, uColorB: { value: new THREE.Color() },
+      uGlow: { value: new THREE.Color() }, uBase: { value: new THREE.Color('#050612') },
+      uTime: { value: 0 }, uSpring: { value: 0 }, uReduced: { value: 0 },
+      uImpact: { value: this.impactNormal }, uLight: { value: 1 }, uFocus: { value: 0 },
     };
-    this.mesh = new THREE.Mesh(
-      this.geometry,
-      new THREE.ShaderMaterial({
-        vertexShader,
-        fragmentShader,
-        uniforms: this.uniforms,
-      }),
-    );
+    this.mesh = new THREE.Mesh(this.geometry, new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms: this.uniforms }));
     this.group.add(this.mesh);
     this.surfaceStickers = new SurfaceStickers(this.mesh, this.uniforms);
-    this.stickerField = new StickerField(this);
-    this.clickStarBurst = new ClickStarBurst(this.scene);
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
     this.scratch = new THREE.Vector3();
     this.stickers = [];
+    this.sequence = new Map();
     this.scroll = this.focus = this.spring = this.velocity = this.time = 0;
     this.reveal = { value: 0 };
     this.layout = { x: 0, y: 0, z: 4, scale: 0.7 };
@@ -58,122 +39,42 @@ export class LiquidBlob {
     this.destination = id;
     this.config = config;
     this.scroll = 0;
-    this.reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!this.configured) this.mesh.rotation.set(...config.rotation);
     this.configured = true;
-    for (const [key, color] of Object.entries({
-      uColorA: config.colorA,
-      uColorB: config.colorB,
-      uGlow: config.glow,
-      uBase: config.base,
-    })) {
+    for (const [key, color] of Object.entries({ uColorA: config.colorA, uColorB: config.colorB, uGlow: config.glow, uBase: config.base })) {
       const target = new THREE.Color(color);
-      gsap.to(this.uniforms[key].value, {
-        r: target.r,
-        g: target.g,
-        b: target.b,
-        duration: this.reduced ? 0 : 0.9,
-        overwrite: true,
-      });
+      gsap.to(this.uniforms[key].value, { r: target.r, g: target.g, b: target.b, duration: this.reduced ? 0 : 0.9, overwrite: true });
     }
-    gsap.to(this.uniforms.uLight, {
-      value: config.environmentIntensity,
-      duration: 0.8,
-      overwrite: true,
-    });
+    gsap.to(this.uniforms.uLight, { value: config.environmentIntensity, duration: 0.8, overwrite: true });
     this.group.visible = true;
-    gsap.to(this.reveal, {
-      value: 1,
-      duration: this.reduced ? 0 : 0.8,
-      ease: "power3.out",
-      overwrite: true,
-    });
+    gsap.to(this.reveal, { value: 1, duration: this.reduced ? 0 : 0.8, ease: 'power3.out', overwrite: true });
   }
 
   hide(immediate = false) {
-    this.stickerField.hide();
     this.preview(null);
-    gsap.to(this.reveal, {
-      value: 0,
-      duration: immediate || this.reduced ? 0 : 0.45,
-      overwrite: true,
-      onComplete: () => {
-        this.group.visible = false;
-      },
-    });
+    gsap.to(this.reveal, { value: 0, duration: immediate || this.reduced ? 0 : 0.45, overwrite: true,
+      onComplete: () => { this.group.visible = false; } });
   }
 
   // The same expression lives in jellySurface.glsl. Never changes topology.
   deform(x, y, z, target, offset = 0) {
-    const dot =
-      x * this.impactNormal.x +
-      y * this.impactNormal.y +
-      z * this.impactNormal.z;
+    const dot = x * this.impactNormal.x + y * this.impactNormal.y + z * this.impactNormal.z;
     const dent = this.spring * (0.32 - Math.pow(Math.max(0, dot), 10) * 1.1);
-    const breath = this.reduced
-      ? 0
-      : Math.sin(x * 3 + y * 2 + this.time * 1.2) * 0.004;
+    const breath = this.reduced ? 0 : Math.sin(x * 3 + y * 2 + this.time * 1.2) * 0.004;
     const radius = 1 + dent + breath + offset;
-    return target.set(
-      x * radius * (1 + this.spring * 0.2),
-      y * radius * (1 - this.spring * 0.3),
-      z * radius,
-    );
+    return target.set(x * radius * (1 + this.spring * 0.2), y * radius * (1 - this.spring * 0.3), z * radius);
   }
 
   impact(hit, strength = 1) {
     if (!hit || this.reduced) return;
-    this.impactNormal
-      .copy(this.mesh.worldToLocal(hit.point.clone()))
-      .normalize();
-    this.velocity = THREE.MathUtils.clamp(
-      this.velocity + strength * 1.25,
-      -1.8,
-      1.8,
-    );
-  }
-
-  triggerImpact(hit, strength = 1) {
-    if (!hit) return;
-    this.impact(hit, strength);
-
-    let normal = null;
-    if (hit.face?.normal) {
-      normal = hit.face.normal
-        .clone()
-        .transformDirection(this.mesh.matrixWorld)
-        .normalize();
-    } else {
-      const ballWorldPos = new THREE.Vector3();
-      this.mesh.getWorldPosition(ballWorldPos);
-      normal = hit.point.clone().sub(ballWorldPos).normalize();
-    }
-
-    const colors =
-      this.config?.clickBurstColors ||
-      (this.config
-        ? [this.config.colorA, this.config.colorB, this.config.glow, "#ffffff"]
-        : null);
-
-    const lowPower =
-      this.reduced ||
-      (typeof window !== "undefined" && window.innerWidth <= 700);
-
-    this.clickStarBurst.trigger({
-      position: hit.point,
-      normal,
-      colors,
-      intensity: strength,
-      lowPower,
-    });
+    this.impactNormal.copy(this.mesh.worldToLocal(hit.point.clone())).normalize();
+    this.velocity = THREE.MathUtils.clamp(this.velocity + strength * 1.25, -1.8, 1.8);
   }
 
   hitTest(clientX, clientY, camera, rect) {
     if (!this.group.visible || this.reveal.value < 0.2) return null;
-    this.pointer.set(
-      ((clientX - rect.left) / rect.width) * 2 - 1,
-      (-(clientY - rect.top) / rect.height) * 2 + 1,
-    );
+    this.pointer.set((clientX - rect.left) / rect.width * 2 - 1, -(clientY - rect.top) / rect.height * 2 + 1);
     camera.updateMatrixWorld();
     this.group.updateMatrixWorld(true);
     this.raycaster.setFromCamera(this.pointer, camera);
@@ -184,9 +85,7 @@ export class LiquidBlob {
     const center = this.mesh.worldToLocal(hit.point.clone()).normalize();
     const normal = hit.face.normal.clone().normalize();
     // Align the sticker's up direction with the current camera view at placement.
-    const viewUp = new THREE.Vector3(0, 1, 0).applyQuaternion(
-      this.mesh.quaternion.clone().invert(),
-    );
+    const viewUp = new THREE.Vector3(0, 1, 0).applyQuaternion(this.mesh.quaternion.clone().invert());
     const tangent = viewUp.cross(normal).normalize();
     if (tangent.lengthSq() < 0.1) tangent.set(1, 0, 0);
     tangent.addScaledVector(center, -tangent.dot(center)).normalize();
@@ -194,50 +93,40 @@ export class LiquidBlob {
   }
 
   currentSticker() {
-    return this.stickerField.target?.id;
+    const sequence = stickerCategories[this.config?.stickerCategory] || stickerCategories.home;
+    return sequence[(this.sequence.get(this.destination) || 0) % sequence.length];
   }
 
   preview(hit) {
-    this.surfaceStickers.showPreview(null, null);
-    if (!hit) {
-      this.stickerField.pointer = null;
-      this.stickerField.clearTarget();
-    }
+    if (!hit || !this.config) { this.surfaceStickers.showPreview(null, null); return; }
+    const { center, tangent } = this.surfaceFrame(hit);
+    this.surfaceStickers.showPreview(this.currentSticker(), center, tangent);
   }
 
   async addSticker(id, hit) {
     if (!stickerLibrary[id] || !hit || !this.config) return false;
-    const target = this.stickerField.target;
-    if (target?.id !== id) return false;
+    const destination = this.destination;
     const { center, tangent } = this.surfaceFrame(hit);
-    // Reserve the exact highlighted record synchronously, even during rapid input.
-    const attached = await this.stickerField.fly(target, center, tangent);
-    if (!attached || this.destroyed) return false;
-    this.impact({ point: this.mesh.localToWorld(center.clone()) }, 0.85);
-    this.stickers.push({
-      id,
-      center,
-      tangent,
-      index: attached.index,
-      record: attached,
-    });
-    this.preview(hit);
+    // Reserve the next curated mark synchronously: rapid input is never dropped.
+    this.sequence.set(destination, (this.sequence.get(destination) || 0) + 1);
+    this.impact(hit, 0.85);
+    this.preview(null);
+    await this.surfaceStickers.load(id);
+    if (this.destroyed) return false;
+    // Surface-local capture stays correct even if navigation occurred while loading.
+    const index = this.surfaceStickers.add(id, center, tangent, this.reduced);
+    this.stickers.push({ id, center, tangent, index });
     return true;
   }
 
   update(delta, camera, profile, postProcessing) {
-    this.clickStarBurst.update(delta);
     if (!this.group.visible || !this.config) return;
     this.reduced = profile.reduced;
     this.time += this.reduced ? 0 : delta;
-    for (let remaining = Math.min(delta, 0.1); remaining > 0; ) {
+    for (let remaining = Math.min(delta, 0.1); remaining > 0;) {
       const dt = Math.min(remaining, 1 / 120);
       this.velocity += (-95 * this.spring - 9 * this.velocity) * dt;
-      this.spring = THREE.MathUtils.clamp(
-        this.spring + this.velocity * dt,
-        -0.085,
-        0.085,
-      );
+      this.spring = THREE.MathUtils.clamp(this.spring + this.velocity * dt, -0.085, 0.085);
       remaining -= dt;
     }
     if (this.reduced) this.spring = this.velocity = 0;
@@ -250,37 +139,21 @@ export class LiquidBlob {
       x: THREE.MathUtils.lerp(layout.position.x, layout.background.x, p),
       y: THREE.MathUtils.lerp(layout.position.y, layout.background.y, p),
       z: layout.position.z + p * this.config.scroll.depth,
-      scale:
-        layout.scale * THREE.MathUtils.lerp(1, this.config.scroll.scale, p),
+      scale: layout.scale * THREE.MathUtils.lerp(1, this.config.scroll.scale, p),
     };
-    for (const key of Object.keys(targets))
-      this.layout[key] += (targets[key] - this.layout[key]) * ease;
+    for (const key of Object.keys(targets)) this.layout[key] += (targets[key] - this.layout[key]) * ease;
     const { x, y, z: distance } = this.layout;
-    const halfHeight =
-      Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * distance;
+    const halfHeight = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * distance;
     const widthCap = halfHeight * camera.aspect * (mobile ? 0.81 : 0.72);
-    const scale =
-      Math.min(
-        halfHeight * this.layout.scale,
-        widthCap * THREE.MathUtils.lerp(1, this.config.scroll.scale, p),
-      ) * this.reveal.value;
+    const scale = Math.min(halfHeight * this.layout.scale, widthCap * THREE.MathUtils.lerp(1, this.config.scroll.scale, p)) * this.reveal.value;
     camera.updateMatrixWorld();
-    this.group.position
-      .set(x * halfHeight * camera.aspect, y * halfHeight, -distance)
-      .applyMatrix4(camera.matrixWorld);
+    this.group.position.set(x * halfHeight * camera.aspect, y * halfHeight, -distance).applyMatrix4(camera.matrixWorld);
     this.group.quaternion.copy(camera.quaternion);
     this.group.scale.setScalar(scale);
-    this.mesh.rotation.y += this.reduced
-      ? 0
-      : delta * this.config.rotationSpeed;
+    this.mesh.rotation.y += this.reduced ? 0 : delta * this.config.rotationSpeed;
     const position = this.geometry.attributes.position;
     for (let i = 0; i < position.count; i++) {
-      this.deform(
-        this.rest[i * 3],
-        this.rest[i * 3 + 1],
-        this.rest[i * 3 + 2],
-        this.scratch,
-      );
+      this.deform(this.rest[i * 3], this.rest[i * 3 + 1], this.rest[i * 3 + 2], this.scratch);
       position.setXYZ(i, this.scratch.x, this.scratch.y, this.scratch.z);
     }
     position.needsUpdate = true;
@@ -290,25 +163,15 @@ export class LiquidBlob {
     this.uniforms.uReduced.value = this.reduced ? 1 : 0;
     this.uniforms.uFocus.value = p;
     this.surfaceStickers.update(delta);
-    this.group.updateMatrixWorld(true);
-    this.stickerField.update(delta, camera);
-    postProcessing.setJellyFocus(
-      (x + 1) / 2,
-      (y + 1) / 2,
-      (scale / halfHeight / 2) * 1.08,
-      p * (mobile ? this.config.scroll.mobileBlur : this.config.scroll.blur),
-    );
+    postProcessing.setJellyFocus((x + 1) / 2, (y + 1) / 2, scale / halfHeight / 2 * 1.08, p * (mobile ? this.config.scroll.mobileBlur : this.config.scroll.blur));
   }
 
   destroy() {
     this.destroyed = true;
     this.hide(true);
     gsap.killTweensOf(this.reveal);
-    this.clickStarBurst.destroy();
-    this.stickerField.destroy();
     this.surfaceStickers.destroy();
-    for (const key of ["uColorA", "uColorB", "uGlow", "uBase"])
-      gsap.killTweensOf(this.uniforms[key].value);
+    for (const key of ['uColorA', 'uColorB', 'uGlow', 'uBase']) gsap.killTweensOf(this.uniforms[key].value);
     gsap.killTweensOf(this.uniforms.uLight);
     this.geometry.dispose();
     this.mesh.material.dispose();
