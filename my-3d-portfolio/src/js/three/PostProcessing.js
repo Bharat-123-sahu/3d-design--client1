@@ -93,47 +93,6 @@ const FilmGrainVignetteShader = {
   `,
 };
 
-<<<<<<< HEAD
-=======
-// Local depth blur in the existing composer. DOM content and the companion
-// presentation stay sharp; only the sphere's screen region is sampled.
-const JellyFocusShader = {
-  uniforms: {
-    tDiffuse: { value: null },
-    uCenter: { value: new THREE.Vector2(0.5, 0.5) },
-    uResolution: { value: new THREE.Vector2(1, 1) },
-    uRadius: { value: 0 },
-    uBlur: { value: 0 },
-  },
-  vertexShader: ChromaticAberrationShader.vertexShader,
-  fragmentShader: `
-    uniform sampler2D tDiffuse;
-    uniform vec2 uCenter;
-    uniform vec2 uResolution;
-    uniform float uRadius;
-    uniform float uBlur;
-    varying vec2 vUv;
-    void main() {
-      vec2 d = vUv - uCenter;
-      d.x *= uResolution.x / uResolution.y;
-      float mask = 1.0 - smoothstep(uRadius, uRadius + 0.04, length(d));
-      vec2 stepUV = vec2(uBlur) / uResolution;
-      vec4 sharp = texture2D(tDiffuse, vUv);
-      if (mask < 0.001) { gl_FragColor = sharp; return; }
-      vec4 color = sharp * 0.2;
-      color += texture2D(tDiffuse, vUv + vec2(stepUV.x, 0.0)) * 0.12;
-      color += texture2D(tDiffuse, vUv - vec2(stepUV.x, 0.0)) * 0.12;
-      color += texture2D(tDiffuse, vUv + vec2(0.0, stepUV.y)) * 0.12;
-      color += texture2D(tDiffuse, vUv - vec2(0.0, stepUV.y)) * 0.12;
-      color += texture2D(tDiffuse, vUv + stepUV) * 0.08;
-      color += texture2D(tDiffuse, vUv - stepUV) * 0.08;
-      color += texture2D(tDiffuse, vUv + vec2(stepUV.x, -stepUV.y)) * 0.08;
-      color += texture2D(tDiffuse, vUv + vec2(-stepUV.x, stepUV.y)) * 0.08;
-      gl_FragColor = mix(sharp, color, mask);
-    }`,
-};
-
->>>>>>> update
 export function createPostProcessing(renderer, scene, camera, width, height) {
   const composer = new EffectComposer(renderer);
 
@@ -163,48 +122,15 @@ export function createPostProcessing(renderer, scene, camera, width, height) {
     bloomPass,
     chromaticPass,
     filmGrainPass,
-<<<<<<< HEAD
-=======
-    jellyFocusPass,
-    setJellyFocus(x, y, radius, blur) {
-      if (
-        !Number.isFinite(x) ||
-        !Number.isFinite(y) ||
-        !Number.isFinite(radius) ||
-        !Number.isFinite(blur) ||
-        blur <= 0.05 ||
-        radius <= 0
-      ) {
-        jellyFocusPass.enabled = false;
-        return;
-      }
-      jellyFocusPass.enabled = true;
-      jellyFocusPass.uniforms.uCenter.value.set(x, y);
-      jellyFocusPass.uniforms.uRadius.value = radius;
-      jellyFocusPass.uniforms.uBlur.value = blur;
-    },
->>>>>>> update
 
     resize(width, height, profile) {
       composer.setPixelRatio(profile.dpr * (profile.lowPower ? 0.8 : 1));
       composer.setSize(width, height);
       chromaticPass.enabled = !profile.lowPower && !profile.reduced;
-      filmGrainPass.uniforms.uGrainIntensity.value = profile.reduced
-        ? 0
-        : profile.lowPower
-          ? 0.025
-          : 0.06;
+      filmGrainPass.uniforms.uGrainIntensity.value = profile.reduced ? 0 : profile.lowPower ? 0.025 : 0.06;
     },
     destroy() {
-<<<<<<< HEAD
       bloomPass.dispose(); chromaticPass.dispose(); filmGrainPass.dispose(); composer.dispose();
-=======
-      jellyFocusPass.dispose();
-      bloomPass.dispose();
-      chromaticPass.dispose();
-      filmGrainPass.dispose();
-      composer.dispose();
->>>>>>> update
     },
     /**
      * Update time-based uniforms each frame
@@ -218,18 +144,14 @@ export function createPostProcessing(renderer, scene, camera, width, height) {
      * Adjust bloom for different sections
      */
     setBloomStrength(strength) {
-      if (Number.isFinite(strength)) {
-        bloomPass.strength = strength;
-      }
+      bloomPass.strength = strength;
     },
 
     /**
      * Adjust chromatic aberration intensity
      */
     setChromaticOffset(offset) {
-      if (Number.isFinite(offset)) {
-        chromaticPass.uniforms.uOffset.value = offset;
-      }
+      chromaticPass.uniforms.uOffset.value = offset;
     },
   };
 }

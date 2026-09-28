@@ -534,25 +534,6 @@ export class WorldScene {
     this.onDestinationSelect = handler;
   }
 
-<<<<<<< HEAD
-=======
-  setContentMode(content) {
-    // Keep 3D world elements, paths, and destination markers active in the scene.
-    // Ensure layer 0 remains enabled across all states.
-    const roots = [
-      this.ground,
-      ...Object.values(this.markers),
-      ...Object.values(this.signs),
-      ...Object.values(this.nodeLights),
-      ...this.pathSegments.map((segment) => segment.group),
-      this.pathParticles.points,
-    ];
-    roots.forEach((root) =>
-      root?.traverse?.((object) => object.layers.enable(0)),
-    );
-  }
-
->>>>>>> update
   _setVisibility(visible) {
     const opacity = visible ? 1 : 0;
     for (const seg of this.pathSegments) {
