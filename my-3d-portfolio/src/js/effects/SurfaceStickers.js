@@ -12,7 +12,6 @@ export class SurfaceStickers {
     this.count = 0;
     this.clock = { value: 0 };
     this.canvas = document.createElement("canvas");
-    this.context = this.canvas.getContext("2d", { willReadFrequently: true });
     this.grid = Math.max(1, Math.ceil(Math.sqrt(this.ids.length)));
     this.tileSize = Math.min(256, Math.floor(4096 / this.grid));
     this.canvas.width = this.canvas.height = this.grid * this.tileSize;
@@ -143,7 +142,7 @@ export class SurfaceStickers {
       stage = "atlas rasterization";
       const tile = this.ids.indexOf(id),
         size = this.tileSize;
-      const context = this.context;
+      const context = this.canvas.getContext("2d");
       const fit =
         (size * (232 / 256)) /
         Math.max(image.naturalWidth, image.naturalHeight);

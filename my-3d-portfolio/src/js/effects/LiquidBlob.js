@@ -156,7 +156,7 @@ export class LiquidBlob {
         : null);
 
     const lowPower =
-      this.reduced || this.lowPower ||
+      this.reduced ||
       (typeof window !== "undefined" && window.innerWidth <= 700);
 
     this.clickStarBurst.trigger({
@@ -226,7 +226,6 @@ export class LiquidBlob {
   }
 
   update(delta, camera, profile, postProcessing) {
-    this.lowPower = profile.lowPower;
     this.clickStarBurst.update(delta);
     if (!this.group.visible || !this.config) return;
     this.reduced = profile.reduced;
@@ -292,7 +291,7 @@ export class LiquidBlob {
     this.uniforms.uFocus.value = p;
     this.surfaceStickers.update(delta);
     this.group.updateMatrixWorld(true);
-    this.stickerField.update(delta, camera, profile);
+    this.stickerField.update(delta, camera);
     postProcessing.setJellyFocus(
       (x + 1) / 2,
       (y + 1) / 2,

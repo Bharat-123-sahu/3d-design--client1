@@ -135,22 +135,25 @@ export function initVideoReveal() {
       });
 
       // Draw initial rope
-      const ropeFrame = requestAnimationFrame(() => updateRope(0));
+      requestAnimationFrame(() => updateRope(0));
+
+      const pinDistance = mobile
+        ? Math.round(window.innerHeight * 0.95)
+        : Math.round(window.innerHeight * 1.25);
 
       const tl = gsap.timeline({
-        onUpdate: () => updateRope(tl.progress()),
         scrollTrigger: {
           id: "route:home-video-reveal",
           trigger: section,
           start: "top top",
-          end: () => `+=${Math.round(window.innerHeight * (mobile ? 0.95 : 1.25))}`,
+          end: `+=${pinDistance}`,
           pin: true,
           pinSpacing: true,
           scrub: 0.85,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          onRefresh: self => updateRope(self.animation?.progress() || 0),
           onUpdate: (self) => {
+            updateRope(self.progress);
 
             if (video) {
               if (self.progress > 0.12 && video.paused) {
@@ -177,14 +180,13 @@ export function initVideoReveal() {
         },
         0,
       );
-      return () => cancelAnimationFrame(ropeFrame);
     },
   );
 
   // Resize listener to re-align rope geometry on viewport change
   const onResize = () => {
     const trigger = ScrollTrigger.getById("route:home-video-reveal");
-    const progress = trigger ? trigger.animation.progress() : 1;
+    const progress = trigger ? trigger.progress : 0;
     updateRope(progress);
   };
   window.addEventListener("resize", onResize, { passive: true, signal });

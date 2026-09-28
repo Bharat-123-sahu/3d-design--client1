@@ -25,12 +25,6 @@ html.no-custom-cursor body {
   display: none; // Native arrow is always visible and provides 0-latency precision
 }
 
-html.no-custom-cursor {
-  .cursor-dot, .cursor-ring, .cursor-particle, .cursor-sticker-preview {
-    display: none !important;
-  }
-}
-
 .cursor-ring {
   position: fixed;
   top: 0;
