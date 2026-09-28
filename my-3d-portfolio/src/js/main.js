@@ -207,10 +207,20 @@ function initThreeLayer(sceneController) {
   const canvas = document.getElementById("three-canvas");
   if (!canvas) return null;
 
-  const threeScene = new ThreeScene(canvas, (sceneInstance) => {
-    sceneController.attach(sceneInstance);
-    sceneController.refresh();
-  });
+  let threeScene;
+  try {
+    threeScene = new ThreeScene(canvas, (sceneInstance) => {
+      sceneController.attach(sceneInstance);
+      sceneController.refresh();
+    });
+  } catch (error) {
+    // Only renderer creation failures use the accessible content fallback.
+    if (!/Error creating WebGL context/i.test(error.message)) throw error;
+    console.warn("WebGL unavailable; displaying page content.", error.message);
+    canvas.hidden = true;
+    document.documentElement.classList.add("no-webgl");
+    return null;
+  }
 
   sceneController.attach(threeScene);
   return threeScene;
@@ -343,11 +353,17 @@ function bootstrap() {
         threeScene.characterNavigation = characterNavigation;
         threeScene.attachCharacterView(characterNavigation.viewport);
         characterNavigation.bindWorldCharacter(threeScene);
-        // Intro completion only unlocks the guide. Travel requires user input.
+        // Root entry keeps START -> world. Explicit URLs restore their destination.
+        if (window.location.pathname !== "/" || window.location.hash || window.history.state?.destination) {
+          router.navigateTo(window.location.pathname, false, { history: false });
+        }
         initNavPill();
       },
       { once: true },
     );
+  } else {
+    router.enterWorldMode();
+    router.navigateTo(window.location.pathname, false, { history: false });
   }
 }
 

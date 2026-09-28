@@ -45,6 +45,7 @@ export class Router {
   }
 
   start() {
+    window.history.scrollRestoration = "manual";
     this.currentPath = this._normalizePath(window.location.pathname);
     this.activePath = null;
     this._setAppState(APP_STATE.INTRO);
@@ -88,8 +89,11 @@ export class Router {
       this._setAppState(APP_STATE.DESTINATION);
       await this._swapContent(route, animate);
       this.currentPath = this.activePath = normPath;
-      if (history && this.pendingHistory === null && window.location.pathname !== normPath) window.history.pushState(null, "", normPath);
-      else if (this.pendingHistory === null && (!this.routes[requested] || window.location.pathname === "/value")) window.history.replaceState(null, "", normPath);
+      if (this.pendingHistory === null) {
+        const state = { ...window.history.state, destination: normPath };
+        if (history && window.location.pathname !== normPath) window.history.pushState(state, "", normPath);
+        else window.history.replaceState(state, "", normPath + window.location.search + window.location.hash);
+      }
       this._updateActiveLink(normPath);
       this._updateActivePill(normPath);
       const heading = this.root.querySelector("h1");
@@ -217,6 +221,7 @@ export class Router {
 
   _normalizePath(path) {
     const normalized = (path || "/").split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+    if (normalized === "/home") return "/";
     return normalized === "/value" ? "/services" : normalized;
   }
 }

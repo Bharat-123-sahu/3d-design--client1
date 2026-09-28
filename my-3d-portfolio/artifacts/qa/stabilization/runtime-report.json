@@ -1,0 +1,298 @@
+{
+  "checks": [
+    "All 40 original SVGs parsed, decoded and rasterized, including complex and animated artwork",
+    "Every SVG targeted by pointer, flown and attached exactly once",
+    "110 rapid attachments retain first anchor and grow the existing instanced geometry",
+    "Orb framing fits every requested phone/tablet/desktop width",
+    "Three Work timelines scrub forward/reverse, dispose on exit and recreate once",
+    "Video rope follows scrub/reverse and disposes on route exit",
+    "Shared WebGL context loss/restoration retains navigation"
+  ],
+  "assets": [
+    {
+      "id": "arrow",
+      "status": "ready",
+      "visiblePixels": 16697,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "chart",
+      "status": "ready",
+      "visiblePixels": 17656,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "cloud",
+      "status": "ready",
+      "visiblePixels": 27659,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "code",
+      "status": "ready",
+      "visiblePixels": 34610,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "crown",
+      "status": "ready",
+      "visiblePixels": 24247,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "database",
+      "status": "ready",
+      "visiblePixels": 28138,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "diamond",
+      "status": "ready",
+      "visiblePixels": 23368,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "fire",
+      "status": "ready",
+      "visiblePixels": 23879,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "flower",
+      "status": "ready",
+      "visiblePixels": 24098,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "game",
+      "status": "ready",
+      "visiblePixels": 24628,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "gear",
+      "status": "ready",
+      "visiblePixels": 28937,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "heart",
+      "status": "ready",
+      "visiblePixels": 24898,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "lightning",
+      "status": "ready",
+      "visiblePixels": 15112,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "paw",
+      "status": "ready",
+      "visiblePixels": 22796,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "planet",
+      "status": "ready",
+      "visiblePixels": 20838,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "rocket",
+      "status": "ready",
+      "visiblePixels": 17479,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "smile",
+      "status": "ready",
+      "visiblePixels": 28025,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "spark",
+      "status": "ready",
+      "visiblePixels": 25764,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "sparkle",
+      "status": "ready",
+      "visiblePixels": 19436,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "star",
+      "status": "ready",
+      "visiblePixels": 19515,
+      "animated": false,
+      "complex": false
+    },
+    {
+      "id": "01_blinking_eyes_glossy",
+      "status": "ready",
+      "visiblePixels": 23890,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "01_blink_orbit_eye",
+      "status": "ready",
+      "visiblePixels": 23779,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "02_dancing_chicken_leg_glossy",
+      "status": "ready",
+      "visiblePixels": 24391,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "02_flying_rocket_badge",
+      "status": "ready",
+      "visiblePixels": 24295,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "03_fire_flame_badge",
+      "status": "ready",
+      "visiblePixels": 23727,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "03_bouncing_football_glossy",
+      "status": "ready",
+      "visiblePixels": 16001,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "04_flying_rocket_glossy",
+      "status": "ready",
+      "visiblePixels": 24384,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "04_ufo_hover_badge",
+      "status": "ready",
+      "visiblePixels": 24016,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "05_dancing_banana_glossy",
+      "status": "ready",
+      "visiblePixels": 24983,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "05_lightning_pulse_badge",
+      "status": "ready",
+      "visiblePixels": 24262,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "06_floating_ghost_glossy",
+      "status": "ready",
+      "visiblePixels": 24018,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "06_peace_hand_wiggle_badge",
+      "status": "ready",
+      "visiblePixels": 26003,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "07_pizza_spin_glossy",
+      "status": "ready",
+      "visiblePixels": 21800,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "07_smiley_planet_float_badge",
+      "status": "ready",
+      "visiblePixels": 23902,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "08_pizza_spin_badge",
+      "status": "ready",
+      "visiblePixels": 21843,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "08_peace_hand_glossy",
+      "status": "ready",
+      "visiblePixels": 25993,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "09_fire_flame_glossy",
+      "status": "ready",
+      "visiblePixels": 23917,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "09_football_bounce_badge",
+      "status": "ready",
+      "visiblePixels": 15961,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "10_ufo_glossy",
+      "status": "ready",
+      "visiblePixels": 23776,
+      "animated": true,
+      "complex": true
+    },
+    {
+      "id": "10_robot_hover_badge",
+      "status": "ready",
+      "visiblePixels": 23910,
+      "animated": true,
+      "complex": true
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+  ],
+  "requests": []
+}

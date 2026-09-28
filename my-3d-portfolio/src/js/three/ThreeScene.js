@@ -151,10 +151,10 @@ export class ThreeScene {
     this.effectTime = 0;
     this.scene = new THREE.Scene();
     this.scene.fog = new THREE.FogExp2("#050505", 0.03);
-    this.interaction = new InteractionManager();
 
     this.camera = createCamera(this.container);
     this.renderer = createRenderer(this.container);
+    this.interaction = new InteractionManager();
     this.postProcessing = createPostProcessing(
       this.renderer,
       this.scene,
@@ -410,6 +410,8 @@ export class ThreeScene {
     const dpr = Math.min(this.renderer.getPixelRatio(), characterConfig.view.dpr);
     this.characterPixelWidth = Math.floor(width * dpr);
     this.characterPixelHeight = Math.floor(height * dpr);
+    this.characterViewWidth = width;
+    this.characterViewHeight = height;
     this.characterCamera.aspect = width / height;
     this.characterCamera.updateProjectionMatrix();
   }
@@ -440,8 +442,8 @@ export class ThreeScene {
     const scissorTest = renderer.getScissorTest();
     const renderTarget = renderer.getRenderTarget();
     const fog = this.scene.fog;
-    const width = this.characterViewport.clientWidth;
-    const height = this.characterViewport.clientHeight;
+    const width = this.characterViewWidth;
+    const height = this.characterViewHeight;
     renderer.setRenderTarget(null);
     renderer.setViewport(0, 0, width, height);
     renderer.setScissor(0, 0, width, height);

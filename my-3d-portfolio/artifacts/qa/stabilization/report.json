@@ -1,0 +1,823 @@
+{
+  "checks": [
+    "Production fallback and every public asset copied byte-for-byte",
+    "Fresh root START enters world; refresh after Home restores Home",
+    "Direct/new-tab + refresh /home",
+    "Direct/new-tab + refresh /work",
+    "Direct/new-tab + refresh /about",
+    "Direct/new-tab + refresh /services",
+    "Direct/new-tab + refresh /experience",
+    "Direct/new-tab + refresh /contact",
+    "Direct/new-tab + refresh /feedback",
+    "Direct/new-tab + refresh /team",
+    "Direct/new-tab + refresh /company",
+    "Direct/new-tab + refresh /value",
+    "Direct/new-tab + refresh /work/",
+    "Browser Back and Forward restore destination content",
+    "Direct hash deep link reaches Work grid",
+    "Seven destinations at 360px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 375px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 390px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 393px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 414px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 430px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 768px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 820px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 1024px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 1280px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 1440px: no document overflow or duplicated render surfaces",
+    "Seven destinations at 1920px: no document overflow or duplicated render surfaces",
+    "Real touch input attaches stickers; mobile background count bounded; cursor hidden",
+    "Normal-motion touch navigation and forward/reverse reveal with valid poster/rope",
+    "Landscape touch navigation menu fits viewport",
+    "WebGL unavailable: content and mobile navigation remain usable without uncaught errors"
+  ],
+  "layouts": [
+    {
+      "path": "/",
+      "width": 360,
+      "scrollWidth": 360,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 360,
+      "scrollWidth": 360,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 360,
+      "scrollWidth": 360,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 360,
+      "scrollWidth": 360,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 360,
+      "scrollWidth": 360,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 360,
+      "scrollWidth": 360,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 360,
+      "scrollWidth": 360,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 375,
+      "scrollWidth": 375,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 375,
+      "scrollWidth": 375,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 375,
+      "scrollWidth": 375,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 375,
+      "scrollWidth": 375,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 375,
+      "scrollWidth": 375,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 375,
+      "scrollWidth": 375,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 375,
+      "scrollWidth": 375,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 390,
+      "scrollWidth": 390,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 390,
+      "scrollWidth": 390,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 390,
+      "scrollWidth": 390,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 390,
+      "scrollWidth": 390,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 390,
+      "scrollWidth": 390,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 390,
+      "scrollWidth": 390,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 390,
+      "scrollWidth": 390,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 393,
+      "scrollWidth": 393,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 393,
+      "scrollWidth": 393,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 393,
+      "scrollWidth": 393,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 393,
+      "scrollWidth": 393,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 393,
+      "scrollWidth": 393,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 393,
+      "scrollWidth": 393,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 393,
+      "scrollWidth": 393,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 414,
+      "scrollWidth": 414,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 414,
+      "scrollWidth": 414,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 414,
+      "scrollWidth": 414,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 414,
+      "scrollWidth": 414,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 414,
+      "scrollWidth": 414,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 414,
+      "scrollWidth": 414,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 414,
+      "scrollWidth": 414,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 430,
+      "scrollWidth": 430,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 430,
+      "scrollWidth": 430,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 430,
+      "scrollWidth": 430,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 430,
+      "scrollWidth": 430,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 430,
+      "scrollWidth": 430,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 430,
+      "scrollWidth": 430,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 430,
+      "scrollWidth": 430,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 768,
+      "scrollWidth": 768,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 768,
+      "scrollWidth": 768,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 768,
+      "scrollWidth": 768,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 768,
+      "scrollWidth": 768,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 768,
+      "scrollWidth": 768,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 768,
+      "scrollWidth": 768,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 768,
+      "scrollWidth": 768,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 820,
+      "scrollWidth": 820,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 820,
+      "scrollWidth": 820,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 820,
+      "scrollWidth": 820,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 820,
+      "scrollWidth": 820,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 820,
+      "scrollWidth": 820,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 820,
+      "scrollWidth": 820,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 820,
+      "scrollWidth": 820,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    },
+    {
+      "path": "/",
+      "width": 1920,
+      "scrollWidth": 1920,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/work",
+      "width": 1920,
+      "scrollWidth": 1920,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/about",
+      "width": 1920,
+      "scrollWidth": 1920,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/services",
+      "width": 1920,
+      "scrollWidth": 1920,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/experience",
+      "width": 1920,
+      "scrollWidth": 1920,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/contact",
+      "width": 1920,
+      "scrollWidth": 1920,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 1
+    },
+    {
+      "path": "/feedback",
+      "width": 1920,
+      "scrollWidth": 1920,
+      "main": true,
+      "canvases": 1,
+      "fields": 1,
+      "controls": 0
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+  ],
+  "requests": []
+}
