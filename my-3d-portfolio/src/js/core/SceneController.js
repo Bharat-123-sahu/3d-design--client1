@@ -29,6 +29,64 @@ export class SceneController {
       return;
     }
 
+<<<<<<< HEAD
+=======
+    const destination = navigationNodes[state];
+    if (destination) {
+      const environment = destination.environment;
+      if (destination.ball) {
+        this._showOnly(null);
+        this.threeScene.liquidBlob.configure(destination.ball, state);
+        this.threeScene.postProcessing.setBloomStrength(0.25);
+        const color = new THREE.Color(destination.ball.atmosphere);
+        gsap.to(
+          this.threeScene.liquidBackground.material.uniforms.uColorB.value,
+          {
+            r: color.r,
+            g: color.g,
+            b: color.b,
+            duration: 0.7,
+            overwrite: true,
+          },
+        );
+        this.threeScene.worldScene?.setActiveNode(
+          environment?.marker ?? destination.id,
+        );
+        return;
+      }
+      this.threeScene.liquidBlob?.hide();
+      this._showOnly(environment?.effect ?? null);
+      if (environment?.bloom != null)
+        this.threeScene.postProcessing?.setBloomStrength?.(environment.bloom);
+      if (
+        destination.color &&
+        this.threeScene.liquidBackground?.material?.uniforms?.uColorB?.value
+      ) {
+        const color = new THREE.Color(destination.color);
+        gsap.to(
+          this.threeScene.liquidBackground.material.uniforms.uColorB.value,
+          {
+            r: color.r * 0.12,
+            g: color.g * 0.08,
+            b: color.b * 0.04,
+            duration: 0.7,
+            overwrite: true,
+          },
+        );
+      }
+      this.threeScene.worldScene?.setActiveNode(
+        environment?.marker ?? destination.id,
+      );
+      return;
+    }
+    if (state === "waiting") {
+      this.threeScene.liquidBlob?.hide();
+      this._showOnly(null);
+      return;
+    }
+    // Existing non-character routes and in-page section states remain supported.
+    this.threeScene.liquidBlob?.hide();
+>>>>>>> update
     const handlers = {
       home: () => this._showOnly("campaignHalo"),
       about: () => this._showOnly("plasmaRings"),
