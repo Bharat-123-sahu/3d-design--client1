@@ -317,7 +317,16 @@ export class StickerField {
           this.blob.reveal.value *
           (1 - this.blob.focus * 0.7),
       );
-      style.filter = `blur(${(0.08 + depth * 0.25) * (1 - e)}px) drop-shadow(0 4px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 ${e * 10}px rgba(${record.accent},${e * 0.25})) brightness(${1 + e * 0.15})`;
+      if (!this.blob.lowPower || record._lastEmphasis !== e) {
+        record._lastEmphasis = e;
+        const newFilter = this.blob.lowPower
+          ? `drop-shadow(0 4px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 ${e * 10}px rgba(${record.accent},${e * 0.25}))`
+          : `blur(${(0.08 + depth * 0.25) * (1 - e)}px) drop-shadow(0 4px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 ${e * 10}px rgba(${record.accent},${e * 0.25})) brightness(${1 + e * 0.15})`;
+        if (record._currentFilter !== newFilter) {
+          record._currentFilter = newFilter;
+          style.filter = newFilter;
+        }
+      }
     }
     if (!this.target && this.pointer)
       this.select(this.pointer.x, this.pointer.y);

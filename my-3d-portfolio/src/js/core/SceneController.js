@@ -124,6 +124,22 @@ export class SceneController {
       this._showOnly(environment?.effect ?? null);
       if (environment?.bloom != null)
         this.threeScene.postProcessing?.setBloomStrength?.(environment.bloom);
+      if (
+        destination.color &&
+        this.threeScene.liquidBackground?.material?.uniforms?.uColorB?.value
+      ) {
+        const color = new THREE.Color(destination.color);
+        gsap.to(
+          this.threeScene.liquidBackground.material.uniforms.uColorB.value,
+          {
+            r: color.r * 0.12,
+            g: color.g * 0.08,
+            b: color.b * 0.04,
+            duration: 0.7,
+            overwrite: true,
+          },
+        );
+      }
       this.threeScene.worldScene?.setActiveNode(
         environment?.marker ?? destination.id,
       );

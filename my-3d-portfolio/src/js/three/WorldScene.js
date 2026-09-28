@@ -745,6 +745,8 @@ export class WorldScene {
   }
 
   setContentMode(content) {
+    // Keep 3D world elements, paths, and destination markers active in the scene.
+    // Ensure layer 0 remains enabled across all states.
     const roots = [
       this.ground,
       ...Object.values(this.markers),
@@ -754,9 +756,7 @@ export class WorldScene {
       this.pathParticles.points,
     ];
     roots.forEach((root) =>
-      root.traverse((object) =>
-        content ? object.layers.disable(0) : object.layers.enable(0),
-      ),
+      root?.traverse?.((object) => object.layers.enable(0)),
     );
   }
 

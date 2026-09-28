@@ -97,9 +97,11 @@ const FilmGrainVignetteShader = {
 // presentation stay sharp; only the sphere's screen region is sampled.
 const JellyFocusShader = {
   uniforms: {
-    tDiffuse: { value: null }, uCenter: { value: new THREE.Vector2(0.5, 0.5) },
+    tDiffuse: { value: null },
+    uCenter: { value: new THREE.Vector2(0.5, 0.5) },
     uResolution: { value: new THREE.Vector2(1, 1) },
-    uRadius: { value: 0 }, uBlur: { value: 0 },
+    uRadius: { value: 0 },
+    uBlur: { value: 0 },
   },
   vertexShader: ChromaticAberrationShader.vertexShader,
   fragmentShader: `
@@ -163,7 +165,18 @@ export function createPostProcessing(renderer, scene, camera, width, height) {
     filmGrainPass,
     jellyFocusPass,
     setJellyFocus(x, y, radius, blur) {
-      jellyFocusPass.enabled = blur > 0.05;
+      if (
+        !Number.isFinite(x) ||
+        !Number.isFinite(y) ||
+        !Number.isFinite(radius) ||
+        !Number.isFinite(blur) ||
+        blur <= 0.05 ||
+        radius <= 0
+      ) {
+        jellyFocusPass.enabled = false;
+        return;
+      }
+      jellyFocusPass.enabled = true;
       jellyFocusPass.uniforms.uCenter.value.set(x, y);
       jellyFocusPass.uniforms.uRadius.value = radius;
       jellyFocusPass.uniforms.uBlur.value = blur;
@@ -174,10 +187,18 @@ export function createPostProcessing(renderer, scene, camera, width, height) {
       composer.setSize(width, height);
       jellyFocusPass.uniforms.uResolution.value.set(width, height);
       chromaticPass.enabled = !profile.lowPower && !profile.reduced;
-      filmGrainPass.uniforms.uGrainIntensity.value = profile.reduced ? 0 : profile.lowPower ? 0.025 : 0.06;
+      filmGrainPass.uniforms.uGrainIntensity.value = profile.reduced
+        ? 0
+        : profile.lowPower
+          ? 0.025
+          : 0.06;
     },
     destroy() {
-      jellyFocusPass.dispose(); bloomPass.dispose(); chromaticPass.dispose(); filmGrainPass.dispose(); composer.dispose();
+      jellyFocusPass.dispose();
+      bloomPass.dispose();
+      chromaticPass.dispose();
+      filmGrainPass.dispose();
+      composer.dispose();
     },
     /**
      * Update time-based uniforms each frame
@@ -191,14 +212,18 @@ export function createPostProcessing(renderer, scene, camera, width, height) {
      * Adjust bloom for different sections
      */
     setBloomStrength(strength) {
-      bloomPass.strength = strength;
+      if (Number.isFinite(strength)) {
+        bloomPass.strength = strength;
+      }
     },
 
     /**
      * Adjust chromatic aberration intensity
      */
     setChromaticOffset(offset) {
-      chromaticPass.uniforms.uOffset.value = offset;
+      if (Number.isFinite(offset)) {
+        chromaticPass.uniforms.uOffset.value = offset;
+      }
     },
   };
 }

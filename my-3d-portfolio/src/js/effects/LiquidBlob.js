@@ -156,7 +156,8 @@ export class LiquidBlob {
         : null);
 
     const lowPower =
-      this.reduced || this.lowPower ||
+      this.reduced ||
+      this.lowPower ||
       (typeof window !== "undefined" && window.innerWidth <= 700);
 
     this.clickStarBurst.trigger({
@@ -260,11 +261,13 @@ export class LiquidBlob {
     const halfHeight =
       Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * distance;
     const widthCap = halfHeight * camera.aspect * (mobile ? 0.81 : 0.72);
-    const scale =
+    const scale = Math.max(
+      0.0001,
       Math.min(
         halfHeight * this.layout.scale,
         widthCap * THREE.MathUtils.lerp(1, this.config.scroll.scale, p),
-      ) * this.reveal.value;
+      ) * Math.max(0.0001, this.reveal.value),
+    );
     camera.updateMatrixWorld();
     this.group.position
       .set(x * halfHeight * camera.aspect, y * halfHeight, -distance)
@@ -293,10 +296,12 @@ export class LiquidBlob {
     this.surfaceStickers.update(delta);
     this.group.updateMatrixWorld(true);
     this.stickerField.update(delta, camera, profile);
+    const focusRadius =
+      halfHeight > 0.0001 ? (scale / halfHeight / 2) * 1.08 : 0;
     postProcessing.setJellyFocus(
       (x + 1) / 2,
       (y + 1) / 2,
-      (scale / halfHeight / 2) * 1.08,
+      focusRadius,
       p * (mobile ? this.config.scroll.mobileBlur : this.config.scroll.blur),
     );
   }
