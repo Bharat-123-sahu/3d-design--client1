@@ -1,180 +1,224 @@
-import * as THREE from 'three';
-import gsap from 'gsap';
-import vertexShader from '../shaders/liquid/jellyVertex.glsl';
-import fragmentShader from '../shaders/liquid/jellyFragment.glsl';
-import { stickerLibrary, stickerCategories } from '../data/stickerData.js';
-import { SurfaceStickers } from './SurfaceStickers.js';
+import * as THREE from "three";
+import gsap from "gsap";
 
-/** Persistent gel sphere; the CPU surface and shared GPU displacement agree. */
+import liquidVertexShader from "../shaders/liquid/liquidVertex.glsl";
+import liquidFragmentShader from "../shaders/liquid/liquidFragment.glsl";
+
 export class LiquidBlob {
-  constructor(scene) {
+  constructor(scene, options = {}) {
     this.scene = scene;
-    this.group = new THREE.Group();
-    this.group.visible = false;
-    scene.add(this.group);
-    this.geometry = new THREE.SphereGeometry(1, 80, 56);
-    this.rest = this.geometry.attributes.position.array.slice();
-    this.geometry.setAttribute('aRest', new THREE.BufferAttribute(this.rest, 3));
-    this.impactNormal = new THREE.Vector3(0, 0, 1);
-    this.uniforms = {
-      uColorA: { value: new THREE.Color() }, uColorB: { value: new THREE.Color() },
-      uGlow: { value: new THREE.Color() }, uBase: { value: new THREE.Color('#050612') },
-      uTime: { value: 0 }, uSpring: { value: 0 }, uReduced: { value: 0 },
-      uImpact: { value: this.impactNormal }, uLight: { value: 1 }, uFocus: { value: 0 },
+
+    this.options = {
+      radius: 1.4,
+
+      colorA: "#00ffff",
+      colorB: "#8b5cf6",
+
+      distortion: 0.25,
+      mouseStrength: 0.12,
+      velocityStrength: 0.08,
+
+      speed: 0.5,
+      rotationSpeed: 0.15,
+
+      ...options,
     };
-    this.mesh = new THREE.Mesh(this.geometry, new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms: this.uniforms }));
-    this.group.add(this.mesh);
-    this.surfaceStickers = new SurfaceStickers(this.mesh, this.uniforms);
-    this.raycaster = new THREE.Raycaster();
-    this.pointer = new THREE.Vector2();
-    this.scratch = new THREE.Vector3();
-    this.stickers = [];
-    this.sequence = new Map();
-    this.scroll = this.focus = this.spring = this.velocity = this.time = 0;
-    this.reveal = { value: 0 };
-    this.layout = { x: 0, y: 0, z: 4, scale: 0.7 };
-  }
 
-  configure(config, id) {
-    this.destination = id;
-    this.config = config;
-    this.scroll = 0;
-    this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!this.configured) this.mesh.rotation.set(...config.rotation);
-    this.configured = true;
-    for (const [key, color] of Object.entries({ uColorA: config.colorA, uColorB: config.colorB, uGlow: config.glow, uBase: config.base })) {
-      const target = new THREE.Color(color);
-      gsap.to(this.uniforms[key].value, { r: target.r, g: target.g, b: target.b, duration: this.reduced ? 0 : 0.9, overwrite: true });
-    }
-    gsap.to(this.uniforms.uLight, { value: config.environmentIntensity, duration: 0.8, overwrite: true });
-    this.group.visible = true;
-    gsap.to(this.reveal, { value: 1, duration: this.reduced ? 0 : 0.8, ease: 'power3.out', overwrite: true });
-  }
+    this.time = 0;
 
-  hide(immediate = false) {
-    this.preview(null);
-    gsap.to(this.reveal, { value: 0, duration: immediate || this.reduced ? 0 : 0.45, overwrite: true,
-      onComplete: () => { this.group.visible = false; } });
-  }
-
-  // The same expression lives in jellySurface.glsl. Never changes topology.
-  deform(x, y, z, target, offset = 0) {
-    const dot = x * this.impactNormal.x + y * this.impactNormal.y + z * this.impactNormal.z;
-    const dent = this.spring * (0.32 - Math.pow(Math.max(0, dot), 10) * 1.1);
-    const breath = this.reduced ? 0 : Math.sin(x * 3 + y * 2 + this.time * 1.2) * 0.004;
-    const radius = 1 + dent + breath + offset;
-    return target.set(x * radius * (1 + this.spring * 0.2), y * radius * (1 - this.spring * 0.3), z * radius);
-  }
-
-  impact(hit, strength = 1) {
-    if (!hit || this.reduced) return;
-    this.impactNormal.copy(this.mesh.worldToLocal(hit.point.clone())).normalize();
-    this.velocity = THREE.MathUtils.clamp(this.velocity + strength * 1.25, -1.8, 1.8);
-  }
-
-  hitTest(clientX, clientY, camera, rect) {
-    if (!this.group.visible || this.reveal.value < 0.2) return null;
-    this.pointer.set((clientX - rect.left) / rect.width * 2 - 1, -(clientY - rect.top) / rect.height * 2 + 1);
-    camera.updateMatrixWorld();
-    this.group.updateMatrixWorld(true);
-    this.raycaster.setFromCamera(this.pointer, camera);
-    return this.raycaster.intersectObject(this.mesh, false)[0] || null;
-  }
-
-  surfaceFrame(hit) {
-    const center = this.mesh.worldToLocal(hit.point.clone()).normalize();
-    const normal = hit.face.normal.clone().normalize();
-    // Align the sticker's up direction with the current camera view at placement.
-    const viewUp = new THREE.Vector3(0, 1, 0).applyQuaternion(this.mesh.quaternion.clone().invert());
-    const tangent = viewUp.cross(normal).normalize();
-    if (tangent.lengthSq() < 0.1) tangent.set(1, 0, 0);
-    tangent.addScaledVector(center, -tangent.dot(center)).normalize();
-    return { center, tangent };
-  }
-
-  currentSticker() {
-    const sequence = stickerCategories[this.config?.stickerCategory] || stickerCategories.home;
-    return sequence[(this.sequence.get(this.destination) || 0) % sequence.length];
-  }
-
-  preview(hit) {
-    if (!hit || !this.config) { this.surfaceStickers.showPreview(null, null); return; }
-    const { center, tangent } = this.surfaceFrame(hit);
-    this.surfaceStickers.showPreview(this.currentSticker(), center, tangent);
-  }
-
-  async addSticker(id, hit) {
-    if (!stickerLibrary[id] || !hit || !this.config) return false;
-    const destination = this.destination;
-    const { center, tangent } = this.surfaceFrame(hit);
-    // Reserve the next curated mark synchronously: rapid input is never dropped.
-    this.sequence.set(destination, (this.sequence.get(destination) || 0) + 1);
-    this.impact(hit, 0.85);
-    this.preview(null);
-    await this.surfaceStickers.load(id);
-    if (this.destroyed) return false;
-    // Surface-local capture stays correct even if navigation occurred while loading.
-    const index = this.surfaceStickers.add(id, center, tangent, this.reduced);
-    this.stickers.push({ id, center, tangent, index });
-    return true;
-  }
-
-  update(delta, camera, profile, postProcessing) {
-    if (!this.group.visible || !this.config) return;
-    this.reduced = profile.reduced;
-    this.time += this.reduced ? 0 : delta;
-    for (let remaining = Math.min(delta, 0.1); remaining > 0;) {
-      const dt = Math.min(remaining, 1 / 120);
-      this.velocity += (-95 * this.spring - 9 * this.velocity) * dt;
-      this.spring = THREE.MathUtils.clamp(this.spring + this.velocity * dt, -0.085, 0.085);
-      remaining -= dt;
-    }
-    if (this.reduced) this.spring = this.velocity = 0;
-    const ease = this.reduced ? 1 : 1 - Math.exp(-delta * 7);
-    this.focus += (this.scroll - this.focus) * ease;
-    const mobile = profile.width <= 700;
-    const layout = mobile ? this.config.mobile : this.config;
-    const p = this.focus;
-    const targets = {
-      x: THREE.MathUtils.lerp(layout.position.x, layout.background.x, p),
-      y: THREE.MathUtils.lerp(layout.position.y, layout.background.y, p),
-      z: layout.position.z + p * this.config.scroll.depth,
-      scale: layout.scale * THREE.MathUtils.lerp(1, this.config.scroll.scale, p),
+    this.mouse = {
+      x: 0,
+      y: 0,
+      velocityX: 0,
+      velocityY: 0,
     };
-    for (const key of Object.keys(targets)) this.layout[key] += (targets[key] - this.layout[key]) * ease;
-    const { x, y, z: distance } = this.layout;
-    const halfHeight = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * distance;
-    const widthCap = halfHeight * camera.aspect * (mobile ? 0.81 : 0.72);
-    const scale = Math.min(halfHeight * this.layout.scale, widthCap * THREE.MathUtils.lerp(1, this.config.scroll.scale, p)) * this.reveal.value;
-    camera.updateMatrixWorld();
-    this.group.position.set(x * halfHeight * camera.aspect, y * halfHeight, -distance).applyMatrix4(camera.matrixWorld);
-    this.group.quaternion.copy(camera.quaternion);
-    this.group.scale.setScalar(scale);
-    this.mesh.rotation.y += this.reduced ? 0 : delta * this.config.rotationSpeed;
-    const position = this.geometry.attributes.position;
-    for (let i = 0; i < position.count; i++) {
-      this.deform(this.rest[i * 3], this.rest[i * 3 + 1], this.rest[i * 3 + 2], this.scratch);
-      position.setXYZ(i, this.scratch.x, this.scratch.y, this.scratch.z);
-    }
-    position.needsUpdate = true;
-    this.geometry.computeBoundingSphere();
-    this.uniforms.uTime.value = this.time;
-    this.uniforms.uSpring.value = this.spring;
-    this.uniforms.uReduced.value = this.reduced ? 1 : 0;
-    this.uniforms.uFocus.value = p;
-    this.surfaceStickers.update(delta);
-    postProcessing.setJellyFocus((x + 1) / 2, (y + 1) / 2, scale / halfHeight / 2 * 1.08, p * (mobile ? this.config.scroll.mobileBlur : this.config.scroll.blur));
+
+    this.create();
+  }
+
+  create() {
+    const geometry =
+      new THREE.IcosahedronGeometry(
+        this.options.radius,
+        64
+      );
+
+    const material =
+      new THREE.ShaderMaterial({
+        vertexShader: liquidVertexShader,
+
+        fragmentShader:
+          liquidFragmentShader,
+
+        uniforms: {
+          uTime: {
+            value: 0,
+          },
+
+          uDistortion: {
+            value:
+              this.options.distortion,
+          },
+
+          uMouse: {
+            value:
+              new THREE.Vector2(0, 0),
+          },
+
+          uMouseVelocity: {
+            value:
+              new THREE.Vector2(0, 0),
+          },
+
+          uMouseStrength: {
+            value:
+              this.options.mouseStrength,
+          },
+
+          uVelocityStrength: {
+            value:
+              this.options.velocityStrength,
+          },
+
+          uColorA: {
+            value: new THREE.Color(
+              this.options.colorA
+            ),
+          },
+
+          uColorB: {
+            value: new THREE.Color(
+              this.options.colorB
+            ),
+          },
+        },
+
+        transparent: false,
+      });
+
+    this.mesh =
+      new THREE.Mesh(
+        geometry,
+        material
+      );
+
+    this.scene.add(
+      this.mesh
+    );
+  }
+
+  update(
+    delta,
+    mouseX = 0,
+    mouseY = 0,
+    velocityX = 0,
+    velocityY = 0
+  ) {
+    this.time +=
+      delta * this.options.speed;
+
+    this.mouse.x +=
+      (mouseX - this.mouse.x) *
+      0.05;
+
+    this.mouse.y +=
+      (mouseY - this.mouse.y) *
+      0.05;
+
+    this.mouse.velocityX +=
+      (
+        velocityX -
+        this.mouse.velocityX
+      ) * 0.1;
+
+    this.mouse.velocityY +=
+      (
+        velocityY -
+        this.mouse.velocityY
+      ) * 0.1;
+
+    const uniforms =
+      this.mesh.material.uniforms;
+
+    uniforms.uTime.value =
+      this.time;
+
+    uniforms.uMouse.value.set(
+      this.mouse.x,
+      this.mouse.y
+    );
+
+    uniforms.uMouseVelocity.value.set(
+      this.mouse.velocityX,
+      this.mouse.velocityY
+    );
+
+    this.mesh.rotation.y +=
+      delta *
+      this.options.rotationSpeed;
+  }
+
+  setColors(
+    colorA,
+    colorB
+  ) {
+    this.mesh.material.uniforms
+      .uColorA.value.set(
+        colorA
+      );
+
+    this.mesh.material.uniforms
+      .uColorB.value.set(
+        colorB
+      );
+  }
+
+  setDistortion(value) {
+    this.mesh.material.uniforms
+      .uDistortion.value =
+      value;
+  }
+
+  setVisible(visible) {
+    this.mesh.visible = visible;
+  }
+
+  setScale(value) {
+    this.mesh.scale.setScalar(value);
+  }
+
+  show({ scale = 1, duration = 0.8, ease = "power3.out" } = {}) {
+    this.setVisible(true);
+
+    gsap.to(this.mesh.scale, {
+      x: scale,
+      y: scale,
+      z: scale,
+      duration,
+      ease,
+    });
+  }
+
+  hide({ scale = 0.01, duration = 0.5, ease = "power2.in" } = {}) {
+    gsap.to(this.mesh.scale, {
+      x: scale,
+      y: scale,
+      z: scale,
+      duration,
+      ease,
+      onComplete: () => {
+        this.setVisible(false);
+      },
+    });
   }
 
   destroy() {
-    this.destroyed = true;
-    this.hide(true);
-    gsap.killTweensOf(this.reveal);
-    this.surfaceStickers.destroy();
-    for (const key of ['uColorA', 'uColorB', 'uGlow', 'uBase']) gsap.killTweensOf(this.uniforms[key].value);
-    gsap.killTweensOf(this.uniforms.uLight);
-    this.geometry.dispose();
+    this.mesh.geometry.dispose();
+
     this.mesh.material.dispose();
-    this.scene.remove(this.group);
+
+    this.scene.remove(
+      this.mesh
+    );
   }
 }

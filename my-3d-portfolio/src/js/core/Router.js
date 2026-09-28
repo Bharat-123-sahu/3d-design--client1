@@ -4,7 +4,6 @@ import { cleanupRouteAnimations } from "../utils/animationRegistry.js";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ContentVisibilityManager } from "./ContentVisibilityManager.js";
-import { mountDestinationHero } from "../components/DestinationHero.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,13 +16,11 @@ export const APP_STATE = {
 };
 
 export class Router {
-  constructor({ rootElement, sceneController, lenis, onRouteChange, transitionManager }) {
+  constructor({ rootElement, sceneController, lenis, onRouteChange }) {
     this.root = rootElement;
     this.sceneController = sceneController;
     this.lenis = lenis;
     this.onRouteChange = onRouteChange;
-    this.transitionManager = transitionManager;
-    this.pendingHistory = null;
     this.routes = {};
     this.currentPath = null;
     this.activePath = null;
@@ -60,59 +57,74 @@ export class Router {
     this._updateActivePill(null);
   }
 
-  async navigateTo(path, animate = true, { history = true } = {}) {
-    const requested = this._normalizePath(path);
-    if (this.appState === APP_STATE.INTRO) return false;
-    if (this.isTransitioning) {
-      if (!history) this.pendingHistory = requested;
-      return false;
-    }
-    const route = this.routes[requested] || this.routes["/"];
-    if (!route) return false;
-    const normPath = route.path;
-    if (normPath === this.activePath && this.appState === APP_STATE.CONTENT) return true;
+  async navigateTo(path, animate = true) {
+    const normPath = this._normalizePath(path);
+    if (this.isTransitioning) return;
+    if (normPath === this.activePath && this.appState === APP_STATE.CONTENT)
+      return;
+
+    const route = this.routes[normPath] || this.routes["/"];
+    if (!route) return;
+
     animate = animate && !prefersReducedMotion();
     this.isTransitioning = true;
-    this.transitionManager.isTransitioning = true;
-    window.dispatchEvent(new CustomEvent("routeTransition", { detail: { busy: true } }));
-    this.lenis?.stop();
-    try {
-      cleanupRouteAnimations();
-      await this.transitionManager.exitContent(this.contentManager, animate && this.appState === APP_STATE.CONTENT);
-      this.activePath = null;
-      this._setAppState(APP_STATE.TRAVELING);
-      this.sceneController?.setState("transition");
-      if (this.navManager && navigationNodes[route.scene]) {
-        await this.navManager.navigate(route.scene, { immediate: !animate });
-      }
-      this._setAppState(APP_STATE.DESTINATION);
-      await this._swapContent(route, animate);
-      this.currentPath = this.activePath = normPath;
-      if (history && this.pendingHistory === null && window.location.pathname !== normPath) window.history.pushState(null, "", normPath);
-      else if (this.pendingHistory === null && (!this.routes[requested] || window.location.pathname === "/value")) window.history.replaceState(null, "", normPath);
-      this._updateActiveLink(normPath);
-      this._updateActivePill(normPath);
-      const heading = this.root.querySelector("h1");
-      heading?.setAttribute("tabindex", "-1");
-      heading?.focus({ preventScroll: true });
-      window.dispatchEvent(new CustomEvent("routeChanged", { detail: { path: normPath, scene: route.scene } }));
-      // Preserve valid in-page deep links on initial entry and browser history.
-      if (!history && window.location.hash) {
-        const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
-        if (target) this.lenis?.scrollTo(target, { immediate: true, force: true });
-      }
-      return true;
-    } finally {
-      this.isTransitioning = false;
-      this.transitionManager.isTransitioning = false;
-      this.lenis?.start();
-      window.dispatchEvent(new CustomEvent("routeTransition", { detail: { busy: false } }));
-      if (this.pendingHistory !== null) {
-        const pending = this.pendingHistory;
-        this.pendingHistory = null;
-        this.navigateTo(pending, true, { history: false });
-      }
+
+    if (normPath !== this.currentPath) {
+      window.history.pushState(null, "", normPath);
+      this.currentPath = normPath;
     }
+
+    cleanupRouteAnimations();
+    await this.contentManager.hideAll({
+      clear: true,
+      animate: animate && this.appState === APP_STATE.CONTENT,
+    });
+    this.activePath = null;
+    this._updateActiveLink(null);
+    this._updateActivePill(null);
+
+    if (this.navManager && !this.navManager.isLocked && navigationNodes[route.scene] && !prefersReducedMotion()) {
+      await this.navManager.standUp();
+
+      const sceneId = route.scene;
+      this._setAppState(APP_STATE.TRAVELING);
+      const arrival = this._waitForCharacterArrival(sceneId);
+      const didNavigate = this.navManager.navigate(sceneId);
+
+      if (!didNavigate) {
+        this.isTransitioning = false;
+        return;
+      }
+
+      await arrival;
+    } else {
+      await this._swapContent(route, animate);
+    }
+
+    this.activePath = normPath;
+    this._updateActiveLink(normPath);
+    this._updateActivePill(normPath);
+    this.isTransitioning = false;
+    const heading = this.root.querySelector("h1");
+    heading?.setAttribute("tabindex", "-1");
+    heading?.focus({ preventScroll: true });
+  }
+
+  _waitForCharacterArrival(expectedSceneId) {
+    return new Promise((resolve) => {
+      const handler = (e) => {
+        if (e.detail?.node !== expectedSceneId) return;
+
+        window.removeEventListener("characterArrived", handler);
+        this._setAppState(APP_STATE.DESTINATION);
+        this._swapContent(
+          this.routes[this.currentPath] || this.routes["/"],
+          true,
+        ).then(resolve);
+      };
+
+      window.addEventListener("characterArrived", handler);
+    });
   }
 
   async _swapContent(route, animate) {
@@ -120,16 +132,30 @@ export class Router {
     await this.contentManager.hideAll({ clear: true, animate: false });
 
     this.root.innerHTML = route.page();
-    mountDestinationHero(this.root, route.scene, this.sceneController);
     this.contentManager.prepareHidden(route.scene);
 
     if (this.lenis) {
-      this.lenis.scrollTo(0, { immediate: true, force: true });
+      this.lenis.scrollTo(0, { immediate: true });
     } else {
       window.scrollTo(0, 0);
     }
 
-    await this.transitionManager.enterContent(this.contentManager, route.scene, animate);
+    this.sceneController?.setState(route.scene);
+
+    if (animate) {
+      await Promise.all([
+        this.contentManager.show(route.scene, { animate: true }),
+        gsap.to(this.overlay, {
+          scaleY: 0,
+          transformOrigin: "top",
+          duration: 0.62,
+          ease: "power3.inOut",
+          delay: 0.06,
+        }),
+      ]);
+    } else {
+      await this.contentManager.show(route.scene, { animate: false });
+    }
 
     this._setAppState(APP_STATE.CONTENT);
     this.onRouteChange?.(route);
@@ -140,13 +166,12 @@ export class Router {
   _setAppState(state) {
     this.appState = state;
     document.documentElement.dataset.appState = state.toLowerCase();
-    this.sceneController?.threeScene?.setCharacterPresentation(state === APP_STATE.CONTENT);
   }
 
   _bindEvents() {
     document.addEventListener("click", (e) => {
       const link = e.target.closest("a[data-route]");
-      if (!link || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || link.target === "_blank" || link.hasAttribute("download")) return;
+      if (!link) return;
 
       const href = link.getAttribute("href");
       if (!href || href.startsWith("http") || href.startsWith("mailto"))
@@ -165,7 +190,10 @@ export class Router {
 
     window.addEventListener("popstate", () => {
       const path = this._normalizePath(window.location.pathname);
-      this.navigateTo(path, true, { history: false });
+      this.currentPath = path;
+      if (path !== this.activePath) {
+        this.navigateTo(path, true);
+      }
     });
   }
 
@@ -216,7 +244,6 @@ export class Router {
   }
 
   _normalizePath(path) {
-    const normalized = (path || "/").split(/[?#]/)[0].replace(/\/+$/, "") || "/";
-    return normalized === "/value" ? "/services" : normalized;
+    return path === "" ? "/" : path.replace(/\/+$/, "") || "/";
   }
 }

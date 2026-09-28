@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import gsap from "gsap";
-import { characterConfig } from "../data/experienceConfig.js";
 import { navigationNodes } from "../data/navigationData.js";
 
 /* ── Helpers ──────────────────────────────────────────────────────── */
@@ -47,9 +46,7 @@ function createGround(scene) {
   gridHelper.position.y = -1.6;
   gridHelper.material.transparent = true;
   gridHelper.material.opacity = 0.55;
-  floor.add(gridHelper);
-  gridHelper.rotation.x = Math.PI / 2;
-  gridHelper.position.set(0, 0, 0.02);
+  scene.add(gridHelper);
 
   return floor;
 }
@@ -163,27 +160,27 @@ function createHouseMarker(scene, pos) {
 
 function createChairMarker(scene, pos) {
   const group = new THREE.Group();
-  const red = new THREE.MeshStandardMaterial({ color: "#897695", roughness: 0.85 });
+  const red = makeEmissiveMat("#cc2200", 0.9);
   const dark = new THREE.MeshStandardMaterial({
-    color: "#534757",
+    color: "#0a0c14",
     roughness: 0.7,
   });
 
   // Seat
   const seat = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.08, 0.55), red);
-  seat.position.y = characterConfig.studio.seatHeight - 0.04;
+  seat.position.y = 0.4;
 
   // Back
   const back = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.55, 0.08), dark);
   back.position.set(0, 0.7, -0.24);
 
   // Legs
-  const legGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.32, 8);
+  const legGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.4, 6);
   const positions = [
-    [-0.25, 0.16, 0.22],
-    [0.25, 0.16, 0.22],
-    [-0.25, 0.16, -0.22],
-    [0.25, 0.16, -0.22],
+    [-0.25, 0.2, 0.22],
+    [0.25, 0.2, 0.22],
+    [-0.25, 0.2, -0.22],
+    [0.25, 0.2, -0.22],
   ];
   positions.forEach(([x, y, z]) => {
     const leg = new THREE.Mesh(legGeo, dark);
@@ -194,7 +191,7 @@ function createChairMarker(scene, pos) {
   group.add(seat, back);
   group.position.copy(pos);
   group.position.y = -1.6;
-  group.scale.setScalar(1);
+  group.scale.setScalar(0.6);
   scene.add(group);
   return group;
 }
@@ -281,23 +278,23 @@ function createBoardMarker(scene, pos) {
 
 function createDeskMarker(scene, pos) {
   const group = new THREE.Group();
-  const red = new THREE.MeshStandardMaterial({ color: "#f0dcca", roughness: 0.8 });
+  const red = makeEmissiveMat("#cc2200", 0.9);
   const dark = new THREE.MeshStandardMaterial({
-    color: "#987d6a",
+    color: "#0a0c14",
     roughness: 0.7,
   });
 
   // Desk top
   const top = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.06, 0.55), dark);
-  top.position.y = characterConfig.studio.deskHeight - 0.03;
+  top.position.y = 0.44;
 
   // Legs
-  const legGeo = new THREE.BoxGeometry(0.05, characterConfig.studio.deskHeight - 0.06, 0.05);
+  const legGeo = new THREE.BoxGeometry(0.05, 0.44, 0.05);
   [
-    [0.45, (characterConfig.studio.deskHeight - 0.06) / 2, 0.22],
-    [-0.45, (characterConfig.studio.deskHeight - 0.06) / 2, 0.22],
-    [0.45, (characterConfig.studio.deskHeight - 0.06) / 2, -0.22],
-    [-0.45, (characterConfig.studio.deskHeight - 0.06) / 2, -0.22],
+    [0.45, 0.22, 0.22],
+    [-0.45, 0.22, 0.22],
+    [0.45, 0.22, -0.22],
+    [-0.45, 0.22, -0.22],
   ].forEach(([x, y, z]) => {
     const leg = new THREE.Mesh(legGeo, dark);
     leg.position.set(x, y, z);
@@ -306,12 +303,12 @@ function createDeskMarker(scene, pos) {
 
   // Mail/phone icon on desk (simple envelope shape)
   const env = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.01, 0.14), red);
-  env.position.set(0.1, characterConfig.studio.deskHeight + 0.005, 0);
+  env.position.set(0.1, 0.48, 0);
 
   group.add(top, env);
   group.position.copy(pos);
   group.position.y = -1.6;
-  group.scale.setScalar(1);
+  group.scale.setScalar(0.6);
   scene.add(group);
   return group;
 }
@@ -453,29 +450,6 @@ export class WorldScene {
     this.markers.value = createBoardMarker(this.scene, value.position);
     this.markers.contact = createDeskMarker(this.scene, contact.position);
 
-    // Keep walk endpoints clear. Only the chair shares a seating anchor.
-    for (const [id, marker] of Object.entries(this.markers)) {
-      if (id !== "about") marker.position.z -= 0.85;
-    }
-    this.markers.about.traverse(object => object.layers.enable(1));
-    const studioDesk = createDeskMarker(this.scene, about.position.clone().add(new THREE.Vector3(-0.9, 0, -0.15)));
-    studioDesk.scale.setScalar(0.9);
-    studioDesk.traverse(object => object.layers.enable(1));
-    this.markers.studioDesk = studioDesk;
-    const studioBase = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.1, 0.05, 48), new THREE.MeshStandardMaterial({ color: "#534c5d", roughness: 0.95 }));
-    studioBase.position.copy(about.position).add(new THREE.Vector3(-0.35, -0.027, 0));
-    studioBase.layers.enable(1);
-    this.scene.add(studioBase);
-    this.markers.studioBase = studioBase;
-    // Soft contact patches ground the furniture without a second shadow pass.
-    for (const marker of [this.markers.about, studioDesk]) {
-      const shadow = new THREE.Mesh(new THREE.CircleGeometry(0.44, 24), new THREE.MeshBasicMaterial({ color: "#17131d", transparent: true, opacity: 0.22, depthWrite: false }));
-      shadow.rotation.x = -Math.PI / 2;
-      shadow.position.y = 0.001;
-      shadow.layers.enable(1);
-      marker.add(shadow);
-    }
-
     // Destination signs
     for (const [id, node] of Object.entries(navigationNodes)) {
       const sign = createSignSprite(node.label, node.signPosition, node.color);
@@ -484,7 +458,7 @@ export class WorldScene {
     }
 
     for (const [id, marker] of Object.entries(this.markers)) {
-      if (navigationNodes[id]) this._registerInteractive(marker, id);
+      this._registerInteractive(marker, id);
     }
 
     for (const [id, sign] of Object.entries(this.signs)) {
@@ -560,11 +534,6 @@ export class WorldScene {
     this.onDestinationSelect = handler;
   }
 
-  setContentMode(content) {
-    const roots = [this.ground, ...Object.values(this.markers), ...Object.values(this.signs), ...Object.values(this.nodeLights), ...this.pathSegments.map(segment => segment.group), this.pathParticles.points];
-    roots.forEach(root => root.traverse(object => content ? object.layers.disable(0) : object.layers.enable(0)));
-  }
-
   _setVisibility(visible) {
     const opacity = visible ? 1 : 0;
     for (const seg of this.pathSegments) {
@@ -576,7 +545,6 @@ export class WorldScene {
       sign.material.opacity = visible ? 0.92 : 0;
     }
     this.ground.visible = visible;
-    Object.values(this.markers).forEach(marker => { marker.visible = visible; });
   }
 
   /**
@@ -587,7 +555,7 @@ export class WorldScene {
     this.isActive = true;
     this._setVisibility(false);
     // Fade in world elements
-    this.activationTimer = setTimeout(() => {
+    setTimeout(() => {
       this.pathSegments.forEach((seg, i) => {
         gsap.to(seg.tubeMat, { opacity: 0.85, duration: 1.2, delay: i * 0.1 });
         gsap.to(seg.glowMat, { opacity: 0.18, duration: 1.2, delay: i * 0.1 });
@@ -601,7 +569,6 @@ export class WorldScene {
         gsap.to(sign.material, { opacity: 0.92, duration: 1.0, delay: 0.5 });
       }
       this.ground.visible = true;
-      Object.values(this.markers).forEach(marker => { marker.visible = true; });
       gsap.fromTo(
         this.ground.material,
         { opacity: 0 },
@@ -614,12 +581,11 @@ export class WorldScene {
    * Highlight the active node — brighten its light and sign.
    */
   setActiveNode(nodeId) {
-    if (this.activeNode === nodeId) return;
     this.activeNode = nodeId;
 
     for (const [id, light] of Object.entries(this.nodeLights)) {
       const target = id === nodeId ? 2.8 : 0.0;
-      gsap.to(light, { intensity: target, duration: 0.8, ease: "power2.out", overwrite: "auto" });
+      gsap.to(light, { intensity: target, duration: 0.8, ease: "power2.out" });
     }
 
     // Brighten active sign
@@ -688,8 +654,7 @@ export class WorldScene {
 
     // Subtle sign bob
     for (const sign of Object.values(this.signs)) {
-      const node = navigationNodes[sign.userData.navNode];
-      if (node) sign.position.y = node.signPosition.y + Math.sin(elapsed * 1.2 + sign.position.x) * 0.015;
+      sign.position.y += Math.sin(elapsed * 1.2 + sign.position.x) * 0.00025;
     }
 
     // Flicker path glow
@@ -701,23 +666,13 @@ export class WorldScene {
       );
     });
 
-    // Furniture stays grounded and aligned with the character seating anchor.
+    // Marker gentle hover animation
+    for (const marker of Object.values(this.markers)) {
+      marker.rotation.y += delta * 0.18;
+    }
   }
 
   destroy() {
-    clearTimeout(this.activationTimer);
-    const geometries = new Set(), materials = new Set();
-    const roots = [this.ground, ...Object.values(this.markers), ...Object.values(this.signs), ...Object.values(this.nodeLights), ...this.pathSegments.map(segment => segment.group), this.pathParticles.points];
-    roots.forEach(root => {
-      root.traverse(object => {
-        gsap.killTweensOf(object);
-        if (object.geometry) geometries.add(object.geometry);
-        for (const material of [object.material].flat().filter(Boolean)) materials.add(material);
-      });
-      root.removeFromParent();
-    });
-    geometries.forEach(geometry => geometry.dispose());
-    materials.forEach(material => { gsap.killTweensOf(material); material.map?.dispose(); material.dispose(); });
     if (this.container) {
       this.container.removeEventListener("pointermove", this._handlePointerMove);
       this.container.removeEventListener("pointerleave", this._handlePointerLeave);

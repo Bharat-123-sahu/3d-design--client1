@@ -216,7 +216,6 @@ export class ThunderIntro {
 
   handleStart() {
     if (this.state !== INTRO_STATES.READY || this.isComplete) return;
-    const worldExit = this.threeScene?.introEffect?.startExit?.();
     this.setState(INTRO_STATES.STARTING);
 
     const exitTimeline = gsap.timeline({
@@ -248,7 +247,7 @@ export class ThunderIntro {
         },
         "<",
       )
-      .add(worldExit || gsap.timeline(), "<")
+      .add(this.threeScene?.introEffect?.startExit?.(), "<")
       .to(
         this.overlay,
         {

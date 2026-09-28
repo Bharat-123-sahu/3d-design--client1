@@ -1,4 +1,3 @@
-import { VideoReveal } from "../components/VideoReveal.js";
 import { siteContent as c } from "../data/siteContent.js";
 
 const {
@@ -235,6 +234,10 @@ export function HomePage() {
           <a href="${hero.cta2Href}" class="btn btn--ghost magnetic" data-route>${hero.cta2Label}</a>
         </div>
 
+        <div class="hero-image-wrap js-image-reveal" style="margin-top: 60px; border-radius: 16px; overflow: hidden; max-height: 100vh; background: #000;">
+          <img src="${c.brand.images.hero}" alt="Hero" style="width: 100%; height: 100%; object-fit: cover; opacity: 1;">
+        </div>
+
         <div class="hero-orbit" aria-hidden="true" style="z-index: -1;">
           ${hero.orbitCards.map((label, i) => `<span class="hero-orbit__card hero-orbit__card--${i + 1}">${label}</span>`).join("")}
         </div>
@@ -245,8 +248,6 @@ export function HomePage() {
         </div>
       </div>
     </section>
-
-    ${VideoReveal()}
 
     <!-- 2. METRIC RIBBON ─────────────────────────────── -->
     <section class="metric-ribbon" aria-label="Key marketing metrics">

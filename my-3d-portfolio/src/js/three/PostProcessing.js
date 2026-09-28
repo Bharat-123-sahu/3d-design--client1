@@ -93,42 +93,6 @@ const FilmGrainVignetteShader = {
   `,
 };
 
-// Local depth blur in the existing composer. DOM content and the companion
-// presentation stay sharp; only the sphere's screen region is sampled.
-const JellyFocusShader = {
-  uniforms: {
-    tDiffuse: { value: null }, uCenter: { value: new THREE.Vector2(0.5, 0.5) },
-    uResolution: { value: new THREE.Vector2(1, 1) },
-    uRadius: { value: 0 }, uBlur: { value: 0 },
-  },
-  vertexShader: ChromaticAberrationShader.vertexShader,
-  fragmentShader: `
-    uniform sampler2D tDiffuse;
-    uniform vec2 uCenter;
-    uniform vec2 uResolution;
-    uniform float uRadius;
-    uniform float uBlur;
-    varying vec2 vUv;
-    void main() {
-      vec2 d = vUv - uCenter;
-      d.x *= uResolution.x / uResolution.y;
-      float mask = 1.0 - smoothstep(uRadius, uRadius + 0.04, length(d));
-      vec2 stepUV = vec2(uBlur) / uResolution;
-      vec4 sharp = texture2D(tDiffuse, vUv);
-      if (mask < 0.001) { gl_FragColor = sharp; return; }
-      vec4 color = sharp * 0.2;
-      color += texture2D(tDiffuse, vUv + vec2(stepUV.x, 0.0)) * 0.12;
-      color += texture2D(tDiffuse, vUv - vec2(stepUV.x, 0.0)) * 0.12;
-      color += texture2D(tDiffuse, vUv + vec2(0.0, stepUV.y)) * 0.12;
-      color += texture2D(tDiffuse, vUv - vec2(0.0, stepUV.y)) * 0.12;
-      color += texture2D(tDiffuse, vUv + stepUV) * 0.08;
-      color += texture2D(tDiffuse, vUv - stepUV) * 0.08;
-      color += texture2D(tDiffuse, vUv + vec2(stepUV.x, -stepUV.y)) * 0.08;
-      color += texture2D(tDiffuse, vUv + vec2(-stepUV.x, stepUV.y)) * 0.08;
-      gl_FragColor = mix(sharp, color, mask);
-    }`,
-};
-
 export function createPostProcessing(renderer, scene, camera, width, height) {
   const composer = new EffectComposer(renderer);
 
@@ -144,9 +108,6 @@ export function createPostProcessing(renderer, scene, camera, width, height) {
     0.82, // threshold
   );
   composer.addPass(bloomPass);
-  const jellyFocusPass = new ShaderPass(JellyFocusShader);
-  jellyFocusPass.enabled = false;
-  composer.addPass(jellyFocusPass);
 
   // Chromatic Aberration
   const chromaticPass = new ShaderPass(ChromaticAberrationShader);
@@ -161,23 +122,15 @@ export function createPostProcessing(renderer, scene, camera, width, height) {
     bloomPass,
     chromaticPass,
     filmGrainPass,
-    jellyFocusPass,
-    setJellyFocus(x, y, radius, blur) {
-      jellyFocusPass.enabled = blur > 0.05;
-      jellyFocusPass.uniforms.uCenter.value.set(x, y);
-      jellyFocusPass.uniforms.uRadius.value = radius;
-      jellyFocusPass.uniforms.uBlur.value = blur;
-    },
 
     resize(width, height, profile) {
       composer.setPixelRatio(profile.dpr * (profile.lowPower ? 0.8 : 1));
       composer.setSize(width, height);
-      jellyFocusPass.uniforms.uResolution.value.set(width, height);
       chromaticPass.enabled = !profile.lowPower && !profile.reduced;
       filmGrainPass.uniforms.uGrainIntensity.value = profile.reduced ? 0 : profile.lowPower ? 0.025 : 0.06;
     },
     destroy() {
-      jellyFocusPass.dispose(); bloomPass.dispose(); chromaticPass.dispose(); filmGrainPass.dispose(); composer.dispose();
+      bloomPass.dispose(); chromaticPass.dispose(); filmGrainPass.dispose(); composer.dispose();
     },
     /**
      * Update time-based uniforms each frame

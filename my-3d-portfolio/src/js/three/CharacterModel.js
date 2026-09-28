@@ -1,153 +1,614 @@
-import * as THREE from "three";
-import { characterConfig } from "../data/experienceConfig.js";
+import * as THREE from 'three';
 
-// Pip: an original lavender field mouse, with a cream muzzle and coral neckerchief.
-// One articulated model is shared by the world and companion cameras.
 export class CharacterModel {
-  constructor() {
+  constructor(options = {}) {
     this.root = new THREE.Group();
-    this.root.name = "PipOriginalMouse";
+    this.root.name = 'ProceduralBoyCharacter';
+
+    this.height = options.height ?? 1.8;
+    this.scale = options.scale ?? 1;
+
     this.parts = {};
+    this.materials = {};
+
+    this.#createMaterials();
+    this.#buildCharacter();
+
+    this.root.scale.setScalar(this.scale);
+
+    // Animation state
+    this.state = 'idle';
     this.time = 0;
-    this.state = "idle";
-    this.restState = "idle";
-    this.reactionUntil = 0;
-    this.gaitPhase = 0;
-    this.locomotionSpeed = 0;
-    this.runBlend = 0;
-    this.sphere = new THREE.SphereGeometry(1, 24, 16);
-    this.materials = Object.fromEntries(Object.entries({ fur: "#9293c4", cream: "#fff0d7", pink: "#df9fae", ink: "#24263c", white: "#ffffff", scarf: "#ec735b" }).map(([name, color]) => [name, new THREE.MeshStandardMaterial({ color, roughness: 0.62 })]));
-    this.build();
-    this.root.traverse(object => object.layers.enable(1));
+    this.walkTime = 0;
+    this.transition = 0;
+
+    // Pose targets
+    this.pose = {
+      leftArmX: 0,
+      rightArmX: 0,
+      leftLegX: 0,
+      rightLegX: 0,
+      bodyY: 0,
+      headX: 0,
+      headY: 0,
+      bodyRotZ: 0,
+    };
   }
 
-  ellipsoid(parent, material, position, scale) {
-    const mesh = new THREE.Mesh(this.sphere, this.materials[material]);
-    mesh.position.set(...position);
-    mesh.scale.set(...scale);
-    parent.add(mesh);
+  #createMaterials() {
+    this.materials.skin = new THREE.MeshStandardMaterial({
+      color: 0xc98f72,
+      roughness: 0.72,
+      metalness: 0.02,
+    });
+
+    this.materials.hair = new THREE.MeshStandardMaterial({
+      color: 0x151515,
+      roughness: 0.55,
+      metalness: 0.05,
+    });
+
+    this.materials.shirt = new THREE.MeshStandardMaterial({
+      color: 0x161b22,
+      roughness: 0.68,
+      metalness: 0.08,
+    });
+
+    this.materials.pants = new THREE.MeshStandardMaterial({
+      color: 0x11151b,
+      roughness: 0.78,
+      metalness: 0.04,
+    });
+
+    this.materials.shoes = new THREE.MeshStandardMaterial({
+      color: 0x08090b,
+      roughness: 0.5,
+      metalness: 0.1,
+    });
+
+    this.materials.backpack = new THREE.MeshStandardMaterial({
+      color: 0x202735,
+      roughness: 0.68,
+      metalness: 0.05,
+    });
+  }
+
+  #mesh(geometry, material, name) {
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.name = name;
+
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
     return mesh;
   }
 
-  setPresentationOpacity(opacity) {
-    for (const material of Object.values(this.materials)) {
-      const transparent = opacity < 1;
-      if (material.transparent !== transparent) {
-        material.transparent = transparent;
-        material.needsUpdate = true;
-      }
-      material.opacity = opacity;
-      material.depthWrite = !transparent;
-    }
-  }
+  #buildCharacter() {
+    const scale = this.height / 1.8;
 
-  build() {
-    const body = this.parts.body = new THREE.Group();
-    this.root.add(body);
-    this.ellipsoid(body, "fur", [0, 0.62, 0], [0.255, 0.37, 0.205]);
-    this.ellipsoid(body, "cream", [0, 0.61, 0.175], [0.18, 0.245, 0.07]);
-    const head = this.parts.head = new THREE.Group();
-    head.position.set(0, 1.03, 0.02);
-    body.add(head);
-    this.ellipsoid(head, "fur", [0, 0, 0], [0.32, 0.285, 0.25]);
-    for (const side of [-1, 1]) {
-      const ear = this.ellipsoid(head, "fur", [side * 0.27, 0.22, -0.025], [0.195, 0.235, 0.095]);
-      ear.rotation.z = side * -0.22;
-      this.ellipsoid(head, "pink", [side * 0.276, 0.225, 0.055], [0.143, 0.177, 0.028]);
-      this.ellipsoid(head, "cream", [side * 0.09, -0.105, 0.205], [0.135, 0.09, 0.095]);
-      const eye = this.ellipsoid(head, "white", [side * 0.13, 0.04, 0.212], [0.089, 0.113, 0.049]);
-      this.parts[side < 0 ? "eyeL" : "eyeR"] = eye;
-      this.ellipsoid(eye, "ink", [0.15 * -side, -0.04, 0.87], [0.56, 0.67, 0.4]);
-      this.ellipsoid(eye, "white", [-0.06, 0.22, 1.2], [0.18, 0.17, 0.13]);
-      const brow = this.ellipsoid(head, "ink", [side * 0.13, 0.169, 0.218], [0.066, 0.015, 0.017]);
-      brow.rotation.z = side * -0.14;
-      const arm = new THREE.Group();
-      arm.position.set(side * 0.235, 0.78, 0);
-      body.add(arm);
-      this.ellipsoid(arm, "fur", [side * 0.03, -0.14, 0], [0.07, 0.18, 0.073]);
-      this.ellipsoid(arm, "cream", [side * 0.045, -0.285, 0.015], [0.079, 0.088, 0.075]);
-      this.parts[side < 0 ? "armL" : "armR"] = arm;
-      const leg = new THREE.Group();
-      leg.position.set(side * 0.125, 0.34, 0);
-      body.add(leg);
-      this.ellipsoid(leg, "fur", [0, -0.105, 0], [0.083, 0.16, 0.085]);
-      this.ellipsoid(leg, "cream", [0, -0.277, 0.065], [0.1, 0.06, 0.16]);
-      this.parts[side < 0 ? "legL" : "legR"] = leg;
-    }
-    this.ellipsoid(head, "ink", [0, -0.058, 0.306], [0.047, 0.035, 0.032]);
-    const smile = new THREE.CatmullRomCurve3([new THREE.Vector3(-0.09,-0.16,0.267),new THREE.Vector3(0,-0.18,0.289),new THREE.Vector3(0.09,-0.15,0.267)]);
-    head.add(new THREE.Mesh(new THREE.TubeGeometry(smile, 14, 0.009, 5, false), this.materials.ink));
-    this.ellipsoid(body, "scarf", [0, 0.865, 0.07], [0.212, 0.048, 0.17]);
-    const scarf = this.ellipsoid(body, "scarf", [0.11, 0.78, 0.21], [0.065, 0.12, 0.022]);
-    scarf.rotation.z = -0.35;
-    const tailCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(0,0.36,-0.12),new THREE.Vector3(0.22,0.22,-0.35),new THREE.Vector3(0.48,0.14,-0.31),new THREE.Vector3(0.53,0.24,-0.18)]);
-    const tail = this.parts.tail = new THREE.Mesh(new THREE.TubeGeometry(tailCurve, 24, 0.023, 8, false), this.materials.pink);
-    body.add(tail);
-    const shadow = new THREE.Mesh(new THREE.CircleGeometry(0.34, 32), new THREE.MeshBasicMaterial({ color: "#121124", transparent: true, opacity: 0.2, depthWrite: false }));
-    shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = 0.004;
-    shadow.scale.y = 0.72;
-    this.root.add(shadow);
+    // ROOT
+    const bodyRoot = new THREE.Group();
+    bodyRoot.name = 'BodyRoot';
+    this.root.add(bodyRoot);
+
+    // --------------------------------------------
+    // LEGS
+    // --------------------------------------------
+
+    const leftLeg = new THREE.Group();
+    leftLeg.position.set(-0.15, 0.95, 0);
+    leftLeg.name = 'LeftLeg';
+    bodyRoot.add(leftLeg);
+
+    const leftLowerLeg = new THREE.Group();
+    leftLowerLeg.name = 'LeftLowerLeg';
+    leftLeg.add(leftLowerLeg);
+
+    const leftUpperMesh = this.#mesh(
+      new THREE.CapsuleGeometry(0.085, 0.32, 6, 10),
+      this.materials.pants,
+      'LeftUpperLegMesh'
+    );
+    leftUpperMesh.position.y = -0.18;
+    leftLeg.add(leftUpperMesh);
+
+    const leftLowerMesh = this.#mesh(
+      new THREE.CapsuleGeometry(0.07, 0.30, 6, 10),
+      this.materials.pants,
+      'LeftLowerLegMesh'
+    );
+    leftLowerMesh.position.y = -0.34;
+    leftLowerLeg.add(leftLowerMesh);
+
+    const leftFoot = this.#mesh(
+      new THREE.BoxGeometry(0.17, 0.10, 0.34),
+      this.materials.shoes,
+      'LeftFoot'
+    );
+    leftFoot.position.set(0, -0.53, 0.08);
+    leftLowerLeg.add(leftFoot);
+
+    // Right leg
+    const rightLeg = new THREE.Group();
+    rightLeg.position.set(0.15, 0.95, 0);
+    rightLeg.name = 'RightLeg';
+    bodyRoot.add(rightLeg);
+
+    const rightLowerLeg = new THREE.Group();
+    rightLowerLeg.name = 'RightLowerLeg';
+    rightLeg.add(rightLowerLeg);
+
+    const rightUpperMesh = this.#mesh(
+      new THREE.CapsuleGeometry(0.085, 0.32, 6, 10),
+      this.materials.pants,
+      'RightUpperLegMesh'
+    );
+    rightUpperMesh.position.y = -0.18;
+    rightLeg.add(rightUpperMesh);
+
+    const rightLowerMesh = this.#mesh(
+      new THREE.CapsuleGeometry(0.07, 0.30, 6, 10),
+      this.materials.pants,
+      'RightLowerLegMesh'
+    );
+    rightLowerMesh.position.y = -0.34;
+    rightLowerLeg.add(rightLowerMesh);
+
+    const rightFoot = this.#mesh(
+      new THREE.BoxGeometry(0.17, 0.10, 0.34),
+      this.materials.shoes,
+      'RightFoot'
+    );
+    rightFoot.position.set(0, -0.53, 0.08);
+    rightLowerLeg.add(rightFoot);
+
+    // --------------------------------------------
+    // TORSO
+    // --------------------------------------------
+
+    const torso = this.#mesh(
+      new THREE.CapsuleGeometry(0.23, 0.38, 8, 16),
+      this.materials.shirt,
+      'Torso'
+    );
+
+    torso.position.y = 1.30;
+    torso.scale.set(1, 1.08, 0.72);
+
+    bodyRoot.add(torso);
+
+    // --------------------------------------------
+    // NECK + HEAD
+    // --------------------------------------------
+
+    const neck = this.#mesh(
+      new THREE.CylinderGeometry(0.075, 0.075, 0.12, 12),
+      this.materials.skin,
+      'Neck'
+    );
+
+    neck.position.y = 1.62;
+    bodyRoot.add(neck);
+
+    const head = this.#mesh(
+      new THREE.SphereGeometry(0.18, 20, 20),
+      this.materials.skin,
+      'Head'
+    );
+
+    head.position.y = 1.83;
+    head.scale.set(0.95, 1.08, 0.95);
+    bodyRoot.add(head);
+
+    // Hair
+    const hair = this.#mesh(
+      new THREE.SphereGeometry(0.185, 18, 18),
+      this.materials.hair,
+      'Hair'
+    );
+
+    hair.position.set(0, 1.91, -0.015);
+    hair.scale.set(1, 0.58, 1.02);
+    bodyRoot.add(hair);
+
+    // --------------------------------------------
+    // ARMS
+    // --------------------------------------------
+
+    const leftArm = new THREE.Group();
+    leftArm.position.set(-0.30, 1.48, 0);
+    leftArm.name = 'LeftArm';
+    bodyRoot.add(leftArm);
+
+    const leftUpperArm = this.#mesh(
+      new THREE.CapsuleGeometry(0.06, 0.22, 6, 10),
+      this.materials.shirt,
+      'LeftUpperArmMesh'
+    );
+    leftUpperArm.position.y = -0.12;
+    leftArm.add(leftUpperArm);
+
+    const leftForearm = new THREE.Group();
+    leftForearm.position.y = -0.28;
+    leftForearm.name = 'LeftForearm';
+    leftArm.add(leftForearm);
+
+    const leftForearmMesh = this.#mesh(
+      new THREE.CapsuleGeometry(0.055, 0.20, 6, 10),
+      this.materials.shirt,
+      'LeftForearmMesh'
+    );
+    leftForearmMesh.position.y = -0.11;
+    leftForearm.add(leftForearmMesh);
+
+    const leftHand = this.#mesh(
+      new THREE.SphereGeometry(0.055, 10, 10),
+      this.materials.skin,
+      'LeftHand'
+    );
+    leftHand.position.y = -0.25;
+    leftForearm.add(leftHand);
+
+    // Right arm
+    const rightArm = new THREE.Group();
+    rightArm.position.set(0.30, 1.48, 0);
+    rightArm.name = 'RightArm';
+    bodyRoot.add(rightArm);
+
+    const rightUpperArm = this.#mesh(
+      new THREE.CapsuleGeometry(0.06, 0.22, 6, 10),
+      this.materials.shirt,
+      'RightUpperArmMesh'
+    );
+    rightUpperArm.position.y = -0.12;
+    rightArm.add(rightUpperArm);
+
+    const rightForearm = new THREE.Group();
+    rightForearm.position.y = -0.28;
+    rightForearm.name = 'RightForearm';
+    rightArm.add(rightForearm);
+
+    const rightForearmMesh = this.#mesh(
+      new THREE.CapsuleGeometry(0.055, 0.20, 6, 10),
+      this.materials.shirt,
+      'RightForearmMesh'
+    );
+    rightForearmMesh.position.y = -0.11;
+    rightForearm.add(rightForearmMesh);
+
+    const rightHand = this.#mesh(
+      new THREE.SphereGeometry(0.055, 10, 10),
+      this.materials.skin,
+      'RightHand'
+    );
+    rightHand.position.y = -0.25;
+    rightForearm.add(rightHand);
+
+    // --------------------------------------------
+    // BACKPACK
+    // --------------------------------------------
+
+    const backpack = this.#mesh(
+      new THREE.BoxGeometry(0.30, 0.40, 0.13),
+      this.materials.backpack,
+      'Backpack'
+    );
+
+    backpack.position.set(0, 1.34, -0.20);
+    bodyRoot.add(backpack);
+
+    // Backpack top
+    const backpackTop = this.#mesh(
+      new THREE.BoxGeometry(0.24, 0.08, 0.12),
+      this.materials.backpack,
+      'BackpackTop'
+    );
+
+    backpackTop.position.set(0, 1.57, -0.20);
+    bodyRoot.add(backpackTop);
+
+    this.parts = {
+      bodyRoot,
+
+      torso,
+      neck,
+      head,
+      hair,
+
+      leftArm,
+      leftForearm,
+      leftHand,
+
+      rightArm,
+      rightForearm,
+      rightHand,
+
+      leftLeg,
+      leftLowerLeg,
+      leftFoot,
+
+      rightLeg,
+      rightLowerLeg,
+      rightFoot,
+
+      backpack,
+    };
+
+    // Apply global scaling to all body dimensions through the root.
+    this.root.scale.setScalar(scale * this.scale);
   }
 
   setState(state) {
-    this.state = this.restState = state;
-    this.reactionUntil = 0;
-    if (!["walk", "run", "transition"].includes(state)) this.locomotionSpeed = 0;
-  }
-  setLocomotion(speed, allowRun) {
-    const state = allowRun && speed > characterConfig.travel.runThreshold ? "run" : "walk";
-    if (this.state !== state) this.setState(state);
-    this.locomotionSpeed = speed;
-  }
-  react(state) { this.state = state; this.reactionUntil = this.time + 2.5; }
+    if (!state) return;
 
-  update(delta, reduced = false) {
-    this.time += delta;
-    if (this.reactionUntil && this.time > this.reactionUntil) { this.reactionUntil = 0; this.state = this.restState; }
-    const t = reduced ? 0 : this.time;
-    const p = this.parts;
-    const walking = this.state === "walk" || this.state === "run" || this.state === "transition";
-    this.runBlend = THREE.MathUtils.damp(this.runBlend, this.state === "run" ? 1 : 0, 7, delta);
-    const speed = this.locomotionSpeed;
-    if (walking && !reduced) this.gaitPhase += delta * Math.min(18, speed * 4.6 / this.root.scale.x);
-    const stride = walking && !reduced ? Math.sin(this.gaitPhase) * (0.36 + this.runBlend * 0.12) * Math.min(1, speed / 0.65) : 0;
-    const sitting = this.restState === "sit";
-    const wave = this.state === "wave";
-    const celebrate = this.state === "celebrate";
-    const thinking = ["thinking", "curious", "inspect"].includes(this.state);
-    const point = ["point", "interact"].includes(this.state);
-    // Lift the pelvis by the rotated foot's actual extent so neither foot
-    // penetrates the floor as the stride blends in and out.
-    const footBottom = 0.34 - 0.277 * Math.cos(stride) - 0.065 * Math.abs(Math.sin(stride)) - Math.hypot(0.06 * Math.cos(stride), 0.16 * Math.sin(stride));
-    const blend = 1 - Math.exp(-characterConfig.poseBlend * delta);
-    const approach = (object, key, target) => object[key] = THREE.MathUtils.lerp(object[key], target, blend);
-    approach(p.legL.rotation, "x", sitting ? -Math.PI / 2 : stride);
-    approach(p.legR.rotation, "x", sitting ? -Math.PI / 2 : -stride);
-    approach(p.armL.rotation, "x", -stride * 0.7);
-    approach(p.armR.rotation, "x", point ? -1.3 : thinking ? -0.85 : stride * 0.7);
-    approach(p.armL.rotation, "z", celebrate ? -2.2 : sitting ? -0.83 : 0.12);
-    approach(p.armR.rotation, "z", wave ? 2.3 + Math.sin(t * 10) * 0.25 : celebrate ? 2.2 : thinking ? 0.7 : -0.12);
-    approach(p.body.position, "y", sitting ? characterConfig.studio.seatHeight / this.root.scale.x - 0.25 : walking ? Math.max(0, -footBottom) + Math.abs(stride) * 0.02 : celebrate ? Math.abs(Math.sin(t * 6)) * 0.09 : 0);
-    if (!sitting) {
-      const clearance = [p.legL.rotation.x, p.legR.rotation.x].map(angle => -(0.34 - 0.277 * Math.cos(angle) - 0.065 * Math.abs(Math.sin(angle)) - Math.hypot(0.06 * Math.cos(angle), 0.16 * Math.sin(angle))));
-      p.body.position.y = Math.max(p.body.position.y, ...clearance);
+    const normalized = state.toLowerCase();
+
+    if (
+      ![
+        'idle',
+        'walk',
+        'stand',
+        'sit',
+        'look',
+        'interact'
+      ].includes(normalized)
+    ) {
+      return;
     }
-    approach(p.head.rotation, "y", this.state === "look" ? Math.sin(t * 0.8) * 0.35 : this.state === "turn" ? 0.35 : 0);
-    approach(p.head.rotation, "z", thinking ? -0.16 : wave ? 0.09 : 0);
-    approach(p.head.rotation, "x", thinking ? 0.1 : 0);
-    p.body.scale.y = 1 + (walking || reduced ? 0 : Math.sin(t * 2) * 0.006);
-    const blink = !reduced && t % 4.6 > 4.45 ? 0.12 : 1;
-    p.eyeL.scale.y = p.eyeR.scale.y = 0.113 * blink;
-    p.tail.rotation.y = reduced ? 0 : Math.sin(t * 1.9) * 0.08;
+
+    if (this.state !== normalized) {
+      this.state = normalized;
+      this.transition = 0;
+    }
   }
 
-  dispose() {
-    const geometries = new Set();
-    const materials = new Set();
-    this.root.traverse(object => { if (object.geometry) geometries.add(object.geometry); if (object.material) materials.add(object.material); });
-    geometries.forEach(item => item.dispose());
-    materials.forEach(item => item.dispose());
-    this.root.removeFromParent();
+  getObject() {
+    return this.root;
+  }
+
+  setPosition(position) {
+    this.root.position.copy(position);
+  }
+
+  setRotationY(rotation) {
+    this.root.rotation.y = rotation;
+  }
+
+  update(delta) {
+    this.time += delta;
+
+    switch (this.state) {
+      case 'idle':
+        this.#animateIdle(delta);
+        break;
+
+      case 'walk':
+        this.#animateWalk(delta);
+        break;
+
+      case 'stand':
+        this.#animateStand(delta);
+        break;
+
+      case 'sit':
+        this.#animateSit(delta);
+        break;
+
+      case 'look':
+        this.#animateLook(delta);
+        break;
+
+      case 'interact':
+        this.#animateInteract(delta);
+        break;
+    }
+  }
+
+  #smooth(current, target, speed = 10) {
+    return THREE.MathUtils.damp(
+      current,
+      target,
+      speed,
+      1 / 60
+    );
+  }
+
+  #animateIdle() {
+    const breathe = Math.sin(this.time * 1.8) * 0.012;
+
+    this.parts.bodyRoot.position.y =
+      this.#smooth(
+        this.parts.bodyRoot.position.y,
+        breathe,
+        7
+      );
+
+    this.parts.head.rotation.x =
+      this.#smooth(
+        this.parts.head.rotation.x,
+        Math.sin(this.time * 0.7) * 0.018,
+        5
+      );
+
+    this.parts.leftArm.rotation.x =
+      this.#smooth(
+        this.parts.leftArm.rotation.x,
+        0.03,
+        7
+      );
+
+    this.parts.rightArm.rotation.x =
+      this.#smooth(
+        this.parts.rightArm.rotation.x,
+        -0.03,
+        7
+      );
+
+    this.parts.leftLeg.rotation.x =
+      this.#smooth(this.parts.leftLeg.rotation.x, 0, 7);
+
+    this.parts.rightLeg.rotation.x =
+      this.#smooth(this.parts.rightLeg.rotation.x, 0, 7);
+  }
+
+  #animateWalk() {
+    this.walkTime += 0.20;
+
+    const legSwing = Math.sin(this.walkTime) * 0.65;
+    const armSwing = Math.sin(this.walkTime) * 0.45;
+
+    this.parts.leftLeg.rotation.x =
+      this.#smooth(
+        this.parts.leftLeg.rotation.x,
+        legSwing,
+        15
+      );
+
+    this.parts.rightLeg.rotation.x =
+      this.#smooth(
+        this.parts.rightLeg.rotation.x,
+        -legSwing,
+        15
+      );
+
+    this.parts.leftArm.rotation.x =
+      this.#smooth(
+        this.parts.leftArm.rotation.x,
+        -armSwing,
+        15
+      );
+
+    this.parts.rightArm.rotation.x =
+      this.#smooth(
+        this.parts.rightArm.rotation.x,
+        armSwing,
+        15
+      );
+
+    this.parts.bodyRoot.position.y =
+      0.015 + Math.abs(Math.sin(this.walkTime * 2)) * 0.018;
+
+    this.parts.bodyRoot.rotation.z =
+      Math.sin(this.walkTime * 2) * 0.01;
+
+    this.parts.head.rotation.x =
+      Math.sin(this.walkTime * 2) * 0.012;
+  }
+
+  #animateStand() {
+    this.parts.leftLeg.rotation.x =
+      this.#smooth(
+        this.parts.leftLeg.rotation.x,
+        0,
+        6
+      );
+
+    this.parts.rightLeg.rotation.x =
+      this.#smooth(
+        this.parts.rightLeg.rotation.x,
+        0,
+        6
+      );
+
+    this.parts.leftArm.rotation.x =
+      this.#smooth(
+        this.parts.leftArm.rotation.x,
+        0,
+        6
+      );
+
+    this.parts.rightArm.rotation.x =
+      this.#smooth(
+        this.parts.rightArm.rotation.x,
+        0,
+        6
+      );
+
+    this.parts.bodyRoot.position.y =
+      this.#smooth(
+        this.parts.bodyRoot.position.y,
+        0,
+        5
+      );
+  }
+
+  #animateSit() {
+    this.parts.leftLeg.rotation.x =
+      this.#smooth(
+        this.parts.leftLeg.rotation.x,
+        -1.15,
+        5
+      );
+
+    this.parts.rightLeg.rotation.x =
+      this.#smooth(
+        this.parts.rightLeg.rotation.x,
+        -1.15,
+        5
+      );
+
+    this.parts.leftArm.rotation.x =
+      this.#smooth(
+        this.parts.leftArm.rotation.x,
+        -0.15,
+        5
+      );
+
+    this.parts.rightArm.rotation.x =
+      this.#smooth(
+        this.parts.rightArm.rotation.x,
+        -0.15,
+        5
+      );
+
+    this.parts.bodyRoot.position.y =
+      this.#smooth(
+        this.parts.bodyRoot.position.y,
+        -0.28,
+        5
+      );
+
+    this.parts.bodyRoot.rotation.x =
+      this.#smooth(
+        this.parts.bodyRoot.rotation.x,
+        -0.08,
+        5
+      );
+  }
+
+  #animateLook() {
+    this.#animateIdle();
+
+    this.parts.head.rotation.y =
+      this.#smooth(
+        this.parts.head.rotation.y,
+        0.25,
+        5
+      );
+  }
+
+  #animateInteract() {
+    this.#animateIdle();
+
+    this.parts.rightArm.rotation.x =
+      this.#smooth(
+        this.parts.rightArm.rotation.x,
+        -0.85,
+        6
+      );
+
+    this.parts.rightForearm.rotation.x =
+      this.#smooth(
+        this.parts.rightForearm.rotation.x,
+        -0.35,
+        6
+      );
+
+    this.parts.head.rotation.x =
+      this.#smooth(
+        this.parts.head.rotation.x,
+        -0.05,
+        5
+      );
   }
 }

@@ -10,12 +10,6 @@ import { TransitionManager } from "./core/TransitionManager.js";
 import { Router } from "./core/Router.js";
 import { ThemeManager } from "./core/ThemeManager.js";
 import { ThunderIntro } from "./core/ThunderIntro.js";
-import { CharacterNavigation } from "./components/CharacterNavigation.js";
-import { navigationNodes } from "./data/navigationData.js";
-import { FeedbackPage } from "./pages/FeedbackPage.js";
-import { ExperiencePage } from "./pages/ExperiencePage.js";
-import { initFeedback } from "./animations/FeedbackController.js";
-import { initVideoReveal } from "./animations/VideoRevealController.js";
 import { CharacterNavigationManager } from "./core/CharacterNavigationManager.js";
 import { initWorkScroll } from "./animations/WorkScrollController.js";
 
@@ -66,8 +60,6 @@ import { initNavbarStateManager } from "./animations/navbarStateManager.js";
 
 function initPageAnimations(sceneController, lenis) {
   initWorkScroll(lenis);
-  initFeedback(sceneController?.threeScene?.navManager);
-  initVideoReveal();
   // Existing systems
   try {
     initScrollAnimations();
@@ -230,10 +222,15 @@ function initNavPill() {
   const linkRect = activeLink.getBoundingClientRect();
 
   // Position pill under the active link instantly on first render
-  gsap.set(pill, {
-    x: linkRect.left - navRect.left,
-    width: linkRect.width,
-    opacity: 1,
+  import("gsap").then(({ default: gsapMod }) => {
+    const g = gsapMod || window.gsap;
+    if (g) {
+      g.set(pill, {
+        x: linkRect.left - navRect.left,
+        width: linkRect.width,
+        opacity: 1,
+      });
+    }
   });
 }
 
@@ -263,7 +260,6 @@ function bootstrap() {
 
   const router = new Router({
     rootElement: document.getElementById("page-content"),
-    transitionManager,
     sceneController,
     lenis,
     onRouteChange: () => {
@@ -278,19 +274,24 @@ function bootstrap() {
   bindSectionNavigation(transitionManager);
 
   router.register([
-    { path: navigationNodes.home.route, page: HomePage, scene: "home" },
-    { path: navigationNodes.about.route, page: AboutPage, scene: "about" },
-    { path: navigationNodes.value.route, page: ValuePage, scene: "value" },
-    { path: navigationNodes.experience.route, page: ExperiencePage, scene: "experience" },
-    { path: navigationNodes.feedback.route, page: FeedbackPage, scene: "feedback" },
-    { path: navigationNodes.work.route, page: WorkPage, scene: "work" },
+    { path: "/", page: HomePage, scene: "home" },
+    { path: "/about", page: AboutPage, scene: "about" },
+    { path: "/value", page: ValuePage, scene: "value" },
+    { path: "/work", page: WorkPage, scene: "work" },
     { path: "/team", page: TeamPage, scene: "team" },
     { path: "/company", page: CompanyPage, scene: "company" },
-    { path: navigationNodes.contact.route, page: ContactPage, scene: "contact" },
+    { path: "/contact", page: ContactPage, scene: "contact" },
   ]);
 
   threeScene?.worldScene?.setDestinationSelectHandler?.((nodeId) => {
-    const route = navigationNodes[nodeId]?.route;
+    const routeByNode = {
+      home: "/",
+      about: "/about",
+      work: "/work",
+      value: "/value",
+      contact: "/contact",
+    };
+    const route = routeByNode[nodeId];
     if (route) router.navigateTo(route, true);
   });
 
@@ -324,11 +325,6 @@ function bootstrap() {
 
         router.enterWorldMode();
         navManager.unlock();
-        const characterNavigation = new CharacterNavigation(navManager, router);
-        threeScene.characterNavigation = characterNavigation;
-        threeScene.attachCharacterView(characterNavigation.viewport);
-        characterNavigation.bindWorldCharacter(threeScene);
-        // Intro completion only unlocks the guide. Travel requires user input.
         initNavPill();
       },
       { once: true },
