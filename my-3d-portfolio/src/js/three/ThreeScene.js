@@ -372,11 +372,41 @@ export class ThreeScene {
     this.characterContentMode = content;
     this.characterPresentationTween?.kill();
     this.characterPresence ||= { opacity: 1 };
-    this.characterPresence.opacity = 1;
     const model = this.navManager?.model;
-    model?.setPresentationOpacity(1);
-    model?.root.traverse((object) => object.layers.enable(0));
-    this.worldScene?.setContentMode(false);
+
+    if (!content) {
+      // Re-entering world / travelling: ensure layer 0 is enabled and fade character and destination models back in
+      model?.root.traverse((object) => object.layers.enable(0));
+      this.worldScene?.setContentMode(false);
+      this.characterPresentationTween = gsap.to(this.characterPresence, {
+        opacity: 1,
+        duration: 0.6,
+        ease: "power2.out",
+        onUpdate: () => {
+          model?.setPresentationOpacity(this.characterPresence.opacity);
+          this.worldScene?.setPresentationOpacity(
+            this.characterPresence.opacity,
+          );
+        },
+      });
+      return;
+    }
+
+    // Arrived at destination: slowly and smoothly fade character AND destination models out
+    this.characterPresentationTween = gsap.to(this.characterPresence, {
+      opacity: 0,
+      duration: 1.4,
+      ease: "power2.inOut",
+      onUpdate: () => {
+        model?.setPresentationOpacity(this.characterPresence.opacity);
+        this.worldScene?.setPresentationOpacity(this.characterPresence.opacity);
+      },
+      onComplete: () => {
+        // Once completely faded out, hide from main camera
+        model?.root.traverse((object) => object.layers.disable(0));
+        this.worldScene?.setPresentationOpacity(0);
+      },
+    });
   }
 
   attachCharacterView(container) {
@@ -520,7 +550,14 @@ export class ThreeScene {
       this.scene.fog = null;
       renderer.clear();
       this.navManager.model.setPresentationOpacity(1);
+      this.worldScene?.setPresentationOpacity(1);
       renderer.render(this.scene, this.characterCamera);
+      this.navManager.model.setPresentationOpacity(
+        this.characterPresence?.opacity ?? 1,
+      );
+      this.worldScene?.setPresentationOpacity(
+        this.characterPresence?.opacity ?? 1,
+      );
 
       renderer.readRenderTargetPixels(
         this.companionRenderTarget,

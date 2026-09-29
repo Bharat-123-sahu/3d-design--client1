@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-28T18:24:27.600Z",
+  "timestamp": "2026-09-29T15:26:54.628Z",
   "viewports": [
     {
       "width": 360,
@@ -101,8 +101,10 @@
       "canvasPresent": true,
       "canvasWidth": 1407,
       "canvasHeight": 752,
-      "companionVisiblePixels": 5109,
+      "companionVisiblePixels": 5179,
       "headingPresent": true,
+      "formLabelsCount": 0,
+      "labelsVisible": true,
       "hasBlackScreen": false
     },
     {
@@ -112,8 +114,10 @@
       "canvasPresent": true,
       "canvasWidth": 1407,
       "canvasHeight": 752,
-      "companionVisiblePixels": 15292,
+      "companionVisiblePixels": 15262,
       "headingPresent": true,
+      "formLabelsCount": 0,
+      "labelsVisible": true,
       "hasBlackScreen": false
     },
     {
@@ -123,8 +127,10 @@
       "canvasPresent": true,
       "canvasWidth": 1407,
       "canvasHeight": 752,
-      "companionVisiblePixels": 14167,
+      "companionVisiblePixels": 14393,
       "headingPresent": true,
+      "formLabelsCount": 0,
+      "labelsVisible": true,
       "hasBlackScreen": false
     },
     {
@@ -134,8 +140,23 @@
       "canvasPresent": true,
       "canvasWidth": 1407,
       "canvasHeight": 752,
-      "companionVisiblePixels": 13129,
+      "companionVisiblePixels": 13185,
       "headingPresent": true,
+      "formLabelsCount": 0,
+      "labelsVisible": true,
+      "hasBlackScreen": false
+    },
+    {
+      "destination": "contact",
+      "pathname": "/contact",
+      "appState": "content",
+      "canvasPresent": true,
+      "canvasWidth": 1407,
+      "canvasHeight": 752,
+      "companionVisiblePixels": 4838,
+      "headingPresent": true,
+      "formLabelsCount": 5,
+      "labelsVisible": true,
       "hasBlackScreen": false
     },
     {
@@ -145,8 +166,10 @@
       "canvasPresent": true,
       "canvasWidth": 1407,
       "canvasHeight": 752,
-      "companionVisiblePixels": 5319,
+      "companionVisiblePixels": 5348,
       "headingPresent": true,
+      "formLabelsCount": 0,
+      "labelsVisible": true,
       "hasBlackScreen": false
     }
   ],

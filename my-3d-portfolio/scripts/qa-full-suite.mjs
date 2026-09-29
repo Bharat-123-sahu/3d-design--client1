@@ -152,11 +152,13 @@ async function run() {
     await takeScreenshot("01_world_start");
 
     // 2. Journey Test: Work -> Services -> Experience -> Feedback -> Home
+    // 2. Journey Test: Work -> Services -> Experience -> Feedback -> Contact -> Home
     const testDestinations = [
       { id: "work", path: "/work", label: "Work" },
       { id: "value", path: "/services", label: "Services" },
       { id: "experience", path: "/experience", label: "Experience" },
       { id: "feedback", path: "/feedback", label: "Feedback" },
+      { id: "contact", path: "/contact", label: "Contact" },
       { id: "home", path: "/", label: "Home" },
     ];
 
@@ -184,6 +186,8 @@ async function run() {
 
       // Wait 1 second for settle & idle animation
       await new Promise((r) => setTimeout(r, 1000));
+      // Wait 1.6 seconds for slow character fade and idle settlement
+      await new Promise((r) => setTimeout(r, 1600));
 
       const destinationStatus = await evalJs(`
         (() => {
@@ -197,6 +201,11 @@ async function run() {
               if (data[j] > 40) companionPixels++;
             }
           }
+          const labels = Array.from(document.querySelectorAll('.form-label')).map(l => ({
+            text: l.textContent.trim(),
+            visible: l.clientHeight > 0,
+            color: getComputedStyle(l).color
+          }));
           return {
             destination: '${dest.id}',
             pathname: location.pathname,
@@ -206,6 +215,8 @@ async function run() {
             canvasHeight: canvas?.clientHeight,
             companionVisiblePixels: companionPixels,
             headingPresent: !!document.querySelector('main h1, .section-header, h1'),
+            formLabelsCount: labels.length,
+            labelsVisible: labels.length > 0 ? labels.every(l => l.visible) : true,
             hasBlackScreen: false
           };
         })()

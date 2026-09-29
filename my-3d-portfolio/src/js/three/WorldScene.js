@@ -691,10 +691,83 @@ export class WorldScene {
         this.scene.add(model);
         this._registerInteractive(model, cfg.id);
         model.visible = this.isActive;
+        if (this.presentationOpacity !== undefined) {
+          this._applyMarkerOpacity(model, this.presentationOpacity);
+        }
       } catch (err) {
         console.warn(`[WorldScene] Failed to load ${cfg.id} environment:`, err);
       }
     });
+  }
+
+  _applyMarkerOpacity(marker, opacity) {
+    if (!marker) return;
+    const isHidden = opacity <= 0.001;
+    marker.visible = !isHidden;
+    marker.traverse((child) => {
+      if (child.isMesh && child.material) {
+        const mats = Array.isArray(child.material)
+          ? child.material
+          : [child.material];
+        for (const mat of mats) {
+          if (mat.userData.baseOpacity === undefined) {
+            mat.userData.baseOpacity =
+              typeof mat.opacity === "number" ? mat.opacity : 1;
+            mat.transparent = true;
+          }
+          mat.opacity = mat.userData.baseOpacity * opacity;
+        }
+      }
+    });
+  }
+
+  setPresentationOpacity(opacity) {
+    this.presentationOpacity = opacity;
+    const isHidden = opacity <= 0.001;
+
+    for (const marker of Object.values(this.markers)) {
+      this._applyMarkerOpacity(marker, opacity);
+    }
+
+    for (const sign of Object.values(this.signs)) {
+      if (!sign?.material) continue;
+      if (sign.material.userData.baseOpacity === undefined) {
+        sign.material.userData.baseOpacity = sign.material.opacity || 0.92;
+        sign.material.transparent = true;
+      }
+      sign.material.opacity = sign.material.userData.baseOpacity * opacity;
+      sign.visible = !isHidden;
+    }
+
+    for (const light of Object.values(this.nodeLights)) {
+      if (!light) continue;
+      if (light.userData.baseIntensity === undefined) {
+        light.userData.baseIntensity = light.intensity || 1.5;
+      }
+      light.intensity = light.userData.baseIntensity * opacity;
+    }
+
+    if (this.ground?.material) {
+      if (this.ground.material.userData.baseOpacity === undefined) {
+        this.ground.material.userData.baseOpacity =
+          this.ground.material.opacity || 1;
+        this.ground.material.transparent = true;
+      }
+      this.ground.material.opacity =
+        this.ground.material.userData.baseOpacity * opacity;
+      this.ground.visible = !isHidden;
+    }
+
+    for (const seg of this.pathSegments) {
+      if (seg.tubeMat) seg.tubeMat.opacity = 0.85 * opacity;
+      if (seg.glowMat) seg.glowMat.opacity = 0.18 * opacity;
+      if (seg.group) seg.group.visible = !isHidden;
+    }
+
+    if (this.pathParticles?.points?.material) {
+      this.pathParticles.points.material.opacity = 0.75 * opacity;
+      this.pathParticles.points.visible = !isHidden;
+    }
   }
 
   _bindPointerEvents() {
@@ -758,6 +831,9 @@ export class WorldScene {
     roots.forEach((root) =>
       root?.traverse?.((object) => object.layers.enable(0)),
     );
+    if (!content) {
+      this.setPresentationOpacity(1);
+    }
   }
 
   _setVisibility(visible) {

@@ -556,6 +556,71 @@ function createExperienceEnvironment() {
   crystalGroup.add(c1, c2);
   root.add(crystalGroup);
 
+  // 6. Futuristic Chrono Sentinel / Experience Android Character Model
+  const sentinel = new THREE.Group();
+  sentinel.name = "ChronoSentinel";
+  sentinel.position.set(0.65, 0.45, 0.1);
+  sentinel.rotation.y = -0.4;
+
+  // Sleek torso
+  const sentTorso = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.12, 0.08, 0.28, 16),
+    matPillar,
+  );
+  sentTorso.castShadow = true;
+  // Glowing chest core reactor
+  const sentCore = new THREE.Mesh(
+    new THREE.SphereGeometry(0.045, 16, 16),
+    matGold,
+  );
+  sentCore.position.set(0, 0.04, 0.09);
+  sentTorso.add(sentCore);
+
+  // Futuristic head with holographic visor
+  const sentHead = new THREE.Mesh(
+    new THREE.SphereGeometry(0.1, 16, 16),
+    matBase,
+  );
+  sentHead.position.set(0, 0.22, 0);
+  const sentVisor = new THREE.Mesh(
+    new THREE.BoxGeometry(0.18, 0.045, 0.08),
+    matBlue,
+  );
+  sentVisor.position.set(0, 0.01, 0.08);
+  sentHead.add(sentVisor);
+
+  // Floating shoulder pauldrons
+  for (const s of [-1, 1]) {
+    const pauldron = new THREE.Mesh(
+      new THREE.ConeGeometry(0.06, 0.1, 8),
+      matViolet,
+    );
+    pauldron.rotation.z = s * -1.2;
+    pauldron.position.set(s * 0.17, 0.1, 0);
+    sentTorso.add(pauldron);
+
+    // Sleek articulated cyber arm
+    const arm = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.025, 0.02, 0.22, 8),
+      matBase,
+    );
+    arm.position.set(s * 0.18, -0.06, 0.02);
+    arm.rotation.z = s * 0.2;
+    sentTorso.add(arm);
+  }
+
+  // Floating hover ring base underneath sentinel
+  const hoverRing = new THREE.Mesh(
+    new THREE.TorusGeometry(0.16, 0.015, 8, 24),
+    matBlue,
+  );
+  hoverRing.rotation.x = Math.PI / 2;
+  hoverRing.position.set(0, -0.18, 0);
+  sentinel.add(hoverRing);
+
+  sentinel.add(sentTorso, sentHead);
+  root.add(sentinel);
+
   return root;
 }
 
@@ -782,6 +847,89 @@ function createFeedbackEnvironment() {
 
   reactionGroup.add(heartGroup, starGroup, bubbleGroup, spark1, spark2);
   root.add(reactionGroup);
+
+  // 5. Adorable Futuristic Feedback Robot Companion (standing at kiosk)
+  const botGroup = new THREE.Group();
+  botGroup.name = "FeedbackBotCompanion";
+  botGroup.position.set(-0.25, 0.82, -0.05);
+
+  // Rounded cute robot chassis
+  const botBody = new THREE.Mesh(
+    new THREE.SphereGeometry(0.14, 20, 16),
+    matStation,
+  );
+  botBody.scale.set(1, 0.92, 0.85);
+  botBody.castShadow = true;
+
+  // Digital face screen with glowing eyes & smile
+  const faceScreen = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.1, 0.1, 0.03, 16),
+    matScreen,
+  );
+  faceScreen.rotation.x = Math.PI / 2;
+  faceScreen.position.set(0, 0.02, 0.11);
+
+  // Digital cyan glowing eyes
+  for (const s of [-1, 1]) {
+    const eye = new THREE.Mesh(
+      new THREE.SphereGeometry(0.02, 10, 10),
+      matWhiteGlow,
+    );
+    eye.position.set(s * 0.04, 0.02, 0.125);
+    botBody.add(eye);
+  }
+  // Digital smile arc
+  const smile = new THREE.Mesh(
+    new THREE.TorusGeometry(0.028, 0.005, 8, 16, Math.PI),
+    matWarmGold,
+  );
+  smile.rotation.z = Math.PI;
+  smile.position.set(0, -0.025, 0.125);
+  botBody.add(smile);
+
+  // Glowing robot audio headphones with antenna
+  const botPhones = new THREE.Mesh(
+    new THREE.TorusGeometry(0.15, 0.014, 8, 24, Math.PI),
+    matCoral,
+  );
+  botPhones.position.set(0, 0.03, 0);
+  for (const s of [-1, 1]) {
+    const earcup = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.04, 0.025, 12),
+      matCoral,
+    );
+    earcup.rotation.z = Math.PI / 2;
+    earcup.position.set(s * 0.15, 0.03, 0);
+    botBody.add(earcup);
+  }
+
+  // Antenna with glowing beacon sphere
+  const antennaStem = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.006, 0.006, 0.1, 8),
+    matStation,
+  );
+  antennaStem.position.set(0, 0.15, 0);
+  const beacon = new THREE.Mesh(
+    new THREE.SphereGeometry(0.025, 12, 12),
+    matWarmGold,
+  );
+  beacon.position.set(0, 0.2, 0);
+  botBody.add(antennaStem, beacon, botPhones, faceScreen);
+
+  // Articulated robotic arms
+  for (const s of [-1, 1]) {
+    const bArm = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.018, 0.014, 0.13, 8),
+      matStation,
+    );
+    bArm.position.set(s * 0.13, -0.04, 0.05);
+    bArm.rotation.x = -0.5;
+    bArm.rotation.z = s * -0.25;
+    botBody.add(bArm);
+  }
+
+  botGroup.add(botBody);
+  root.add(botGroup);
 
   return root;
 }

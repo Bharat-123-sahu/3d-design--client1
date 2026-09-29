@@ -32,10 +32,15 @@ export class StickerField {
       zIndex: "0",
       visibility: "hidden",
     });
-    document.body.append(this.layer);
+    if (document.body) {
+      document.body.append(this.layer);
+    } else {
+      document.documentElement.append(this.layer);
+    }
+    const ids = this.surface?.ids || [];
     this.ready = Promise.allSettled(
-      this.surface.ids.map(async (id, slot) => {
-        await this.surface.load(id);
+      ids.map(async (id, slot) => {
+        await this.surface?.load(id);
         if (!this.destroyed) this.spawn(id, slot);
       }),
     );
@@ -177,6 +182,7 @@ export class StickerField {
   }
 
   project(world) {
+    if (!this.camera || !this.rect) return { x: 0, y: 0 };
     const p = world.clone().project(this.camera),
       r = this.rect;
     return {
@@ -186,8 +192,11 @@ export class StickerField {
   }
 
   update(delta, camera) {
+    if (!camera) return;
+    const canvas = document.querySelector("#three-canvas");
+    if (!canvas) return;
     this.camera = camera;
-    this.rect = document.querySelector("#three-canvas").getBoundingClientRect();
+    this.rect = canvas.getBoundingClientRect();
     this.visible =
       this.blob.group.visible &&
       this.blob.reveal.value > 0.05 &&
@@ -205,6 +214,14 @@ export class StickerField {
         height) /
       2;
     const easing = this.blob.reduced ? 1 : 1 - Math.exp(-delta * 8);
+    // Disable erratic zigzag ONLY on mobile devices (smartphones <= 768px).
+    // Ensure full lively dynamic zigzag runs on laptop, desktop, and computer!
+    const isMobile =
+      (typeof window !== "undefined" && window.innerWidth <= 768) ||
+      (width <= 768 &&
+        typeof screen !== "undefined" &&
+        Math.min(screen.width, screen.height) <= 600);
+
     for (const record of this.records) {
       if (
         record.state === STICKER_STATE.ATTACHED ||
@@ -217,30 +234,34 @@ export class StickerField {
       const baseAngle =
         ((ring + depth / 3) / count) * Math.PI * 2 - Math.PI / 2;
 
-      // Dynamic zigzag & organic continuous floating motion
-      const speed = this.blob.reduced ? 0 : 1.4;
+      // Dynamic floating motion: full lively organic zig-zag on laptop/desktop, calm circular orbit on mobile
+      const speed = this.blob.reduced ? 0 : isMobile ? 0.4 : 1.35;
       const t = this.time * speed + phase;
 
-      const zigzagX = this.blob.reduced
-        ? 0
-        : Math.sin(t * 1.6 + slot * 0.8) * 32 +
-          Math.cos(t * 0.85 + slot * 1.5) * 20 +
-          Math.sin(t * 3.1 + phase) * 12;
+      const zigzagX =
+        this.blob.reduced || isMobile
+          ? 0
+          : Math.sin(t * 1.6 + slot * 0.8) * 32 +
+            Math.cos(t * 0.85 + slot * 1.5) * 20 +
+            Math.sin(t * 3.1 + phase) * 12;
 
-      const zigzagY = this.blob.reduced
-        ? 0
-        : Math.cos(t * 1.4 + phase * 1.3) * 36 +
-          Math.sin(t * 0.75 + slot * 1.8) * 24 +
-          Math.cos(t * 2.8 + slot) * 14;
+      const zigzagY =
+        this.blob.reduced || isMobile
+          ? 0
+          : Math.cos(t * 1.4 + phase * 1.3) * 36 +
+            Math.sin(t * 0.75 + slot * 1.8) * 24 +
+            Math.cos(t * 2.8 + slot) * 14;
 
-      const angleSway = this.blob.reduced
-        ? 0
-        : Math.sin(t * 0.65 + phase * 0.9) * 0.15;
+      const angleSway =
+        this.blob.reduced || isMobile
+          ? 0
+          : Math.sin(t * 0.65 + phase * 0.9) * 0.15;
       const angle = baseAngle + angleSway;
 
-      const orbitWobble = this.blob.reduced
-        ? 0
-        : Math.sin(t * 1.1 + slot) * (width * 0.04);
+      const orbitWobble =
+        this.blob.reduced || isMobile
+          ? 0
+          : Math.sin(t * 1.1 + slot) * (width * 0.04);
 
       const parallax =
         this.pointer && !this.blob.reduced
@@ -298,16 +319,18 @@ export class StickerField {
         )
         .applyMatrix4(camera.matrixWorld);
 
-      // Lively rotation tilting & bobbing
-      record.rotation = this.blob.reduced
-        ? 0
-        : Math.sin(t * 1.5 + phase) * 18 +
-          Math.cos(t * 0.75 + slot) * 12 +
-          Math.sin(t * 2.9) * 6;
+      // Stable gentle orientation on mobile; full lively dynamic tilt & bob on laptop/desktop
+      record.rotation =
+        this.blob.reduced || isMobile
+          ? (slot % 2 === 0 ? 1 : -1) * (3 + (slot % 4) * 2)
+          : Math.sin(t * 1.5 + phase) * 18 +
+            Math.cos(t * 0.75 + slot) * 12 +
+            Math.sin(t * 2.9) * 6;
 
-      const scalePulse = this.blob.reduced
-        ? 1
-        : 1 + Math.sin(t * 1.3 + phase) * 0.08;
+      const scalePulse =
+        this.blob.reduced || isMobile
+          ? 1
+          : 1 + Math.sin(t * 1.3 + phase) * 0.08;
 
       const style = record.element.style;
       style.visibility = "inherit";
