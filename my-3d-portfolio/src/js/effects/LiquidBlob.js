@@ -109,15 +109,15 @@ export class LiquidBlob {
       x * this.impactNormal.x +
       y * this.impactNormal.y +
       z * this.impactNormal.z;
-    const dent = this.spring * (0.32 - Math.pow(Math.max(0, dot), 10) * 1.1);
+    const dent = this.spring * (0.34 - Math.pow(Math.max(0, dot), 3.5) * 0.75);
     const breath = this.reduced
       ? 0
       : Math.sin(x * 3 + y * 2 + this.time * 1.2) * 0.004;
     const radius = 1 + dent + breath + offset;
     return target.set(
-      x * radius * (1 + this.spring * 0.2),
-      y * radius * (1 - this.spring * 0.3),
-      z * radius,
+      x * radius * (1 + this.spring * 0.32),
+      y * radius * (1 - this.spring * 0.38),
+      z * radius * (1 + this.spring * 0.16),
     );
   }
 
@@ -127,9 +127,9 @@ export class LiquidBlob {
       .copy(this.mesh.worldToLocal(hit.point.clone()))
       .normalize();
     this.velocity = THREE.MathUtils.clamp(
-      this.velocity + strength * 1.25,
-      -1.8,
-      1.8,
+      this.velocity + strength * 1.45,
+      -2.2,
+      2.2,
     );
   }
 
@@ -234,11 +234,11 @@ export class LiquidBlob {
     this.time += this.reduced ? 0 : delta;
     for (let remaining = Math.min(delta, 0.1); remaining > 0; ) {
       const dt = Math.min(remaining, 1 / 120);
-      this.velocity += (-95 * this.spring - 9 * this.velocity) * dt;
+      this.velocity += (-42 * this.spring - 5.2 * this.velocity) * dt;
       this.spring = THREE.MathUtils.clamp(
         this.spring + this.velocity * dt,
-        -0.085,
-        0.085,
+        -0.16,
+        0.16,
       );
       remaining -= dt;
     }

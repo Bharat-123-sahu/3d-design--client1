@@ -33,7 +33,8 @@ export class CharacterNavigationManager {
     this.worldScene = worldScene;
     this.model = new CharacterModel();
     this.character = { group: this.model.root };
-    scene.add(this.model.root);
+    const parent = this.worldScene?.worldGroup || this.scene;
+    parent.add(this.model.root);
     this.model.root.visible = false;
     this.currentNode = null;
     this.targetNode = null;
@@ -231,7 +232,14 @@ export class CharacterNavigationManager {
       this.cameraLook.copy(node.cameraLookAt);
       this.cameraTarget.copy(node.cameraPosition);
     }
-    const fit = Math.max(1, this.profile.cameraDistance * 0.8);
+    const isMobile = this.profile.width <= 768 || this.camera.aspect < 1.0;
+    let fit;
+    if (isMobile) {
+      const aspectFactor = Math.max(0.35, Math.min(1.0, this.camera.aspect));
+      fit = Math.max(1.35, 1.25 / aspectFactor);
+    } else {
+      fit = Math.max(1, this.profile.cameraDistance * 0.8);
+    }
     this.cameraTarget
       .sub(this.cameraLook)
       .multiplyScalar(fit)

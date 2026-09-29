@@ -40,9 +40,9 @@ const ribbonFragment = /* glsl */ `
 
   void main() {
     float head = 1.0 - smoothstep(uProgress - uSoftness, uProgress, vAlong);
-    float tail = smoothstep(uProgress - 0.45, uProgress - 0.08, vAlong);
-    float flicker = 0.64 + 0.36 * sin(uTime * (32.0 + vFlicker * 13.0) + vFlicker * 11.0);
-    flicker += hash(floor(uTime * 28.0) + vFlicker * 61.0) * 0.18;
+    float tail = (uProgress >= 0.96) ? 1.0 : smoothstep(uProgress - 0.45, uProgress - 0.08, vAlong);
+    float flicker = 0.72 + 0.28 * sin(uTime * (36.0 + vFlicker * 16.0) + vFlicker * 11.0);
+    flicker += hash(floor(uTime * 32.0) + vFlicker * 61.0) * 0.22;
     float energy = clamp(head * tail * flicker * uPulse, 0.0, 1.0);
     gl_FragColor = vec4(uColor, energy * uOpacity);
   }
@@ -223,25 +223,30 @@ export class ElectricThunderEffect {
     this.branchCount = this.reduceMotion ? 3 : this.isMobile ? 5 : 9;
 
     this.layers = [
-      this.createRibbonLayer("#fff2ee", 0.98, 0.018, 0.045),
-      this.createRibbonLayer("#ff1f2f", 0.68, 0.062, 0.085),
-      this.createRibbonLayer("#9b0616", 0.34, 0.18, 0.16),
+      this.createRibbonLayer("#ffffff", 0.98, 0.024, 0.04),
+      this.createRibbonLayer("#ff1a35", 0.85, 0.075, 0.09),
+      this.createRibbonLayer("#d80018", 0.58, 0.22, 0.18),
     ];
 
     this.branches = [];
     for (let i = 0; i < this.branchCount; i += 1) {
-      const layer = this.createRibbonLayer(i % 2 ? "#ff4252" : "#ff0f2d", 0.42, 0.028, 0.12);
+      const layer = this.createRibbonLayer(
+        i % 2 ? "#ff3348" : "#ff0520",
+        0.72,
+        0.038,
+        0.12,
+      );
       this.branches.push({
         ...layer,
-        offset: 0.16 + Math.random() * 0.55,
-        span: 0.12 + Math.random() * 0.16,
+        offset: 0.12 + Math.random() * 0.65,
+        span: 0.18 + Math.random() * 0.22,
         side: Math.random() > 0.5 ? 1 : -1,
       });
     }
 
     this.sparkField = this.createSparks();
     this.impactGlow = this.createImpactGlow();
-    this.light = new THREE.PointLight("#ff1229", 0, 12, 1.7);
+    this.light = new THREE.PointLight("#ff1229", 0, 14, 1.5);
     this.light.position.set(0, 0.1, 2.2);
     this.scene.add(this.light);
 
@@ -276,12 +281,17 @@ export class ElectricThunderEffect {
       velocities[stride + 1] = Math.sin(angle) * speed;
       velocities[stride + 2] = (Math.random() - 0.5) * 0.8;
       seeds[i] = Math.random();
-      sizes[i] = this.reduceMotion ? 0.9 + Math.random() * 1.4 : 1.2 + Math.random() * 2.2;
+      sizes[i] = this.reduceMotion
+        ? 0.9 + Math.random() * 1.4
+        : 1.2 + Math.random() * 2.2;
     }
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute("aVelocity", new THREE.BufferAttribute(velocities, 3));
+    geometry.setAttribute(
+      "aVelocity",
+      new THREE.BufferAttribute(velocities, 3),
+    );
     geometry.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
     geometry.setAttribute("aSize", new THREE.BufferAttribute(sizes, 1));
 
@@ -330,12 +340,17 @@ export class ElectricThunderEffect {
 
   rebuildPaths() {
     const distance = Math.abs(this.camera.position.z || 5);
-    const height = 2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov * 0.5)) * distance;
+    const height =
+      2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov * 0.5)) * distance;
     const width = height * this.camera.aspect;
     this.viewport.width = width;
     this.viewport.height = height;
-    this.mainPath = makeLightningPath(this.maxPoints, width, height, this.state === INTRO_STATES.STARTING);
-    this.branchPaths = this.branches.map((branch) => this.createBranchPath(branch));
+    const fromRight =
+      this.state === INTRO_STATES.STARTING ? true : Math.random() > 0.5;
+    this.mainPath = makeLightningPath(this.maxPoints, width, height, fromRight);
+    this.branchPaths = this.branches.map((branch) =>
+      this.createBranchPath(branch),
+    );
     this.updateGeometry();
   }
 
@@ -349,11 +364,15 @@ export class ElectricThunderEffect {
 
     for (let i = 0; i < count; i += 1) {
       const t = i / (count - 1);
-      const x = start.x + (Math.random() - 0.2) * this.viewport.width * 0.16 * t;
+      const x =
+        start.x + (Math.random() - 0.2) * this.viewport.width * 0.16 * t;
       const y =
         start.y +
         direction * length * t +
-        Math.sin(t * Math.PI * 3.2 + branch.offset * 5.0) * 0.16 * this.viewport.height * t;
+        Math.sin(t * Math.PI * 3.2 + branch.offset * 5.0) *
+          0.16 *
+          this.viewport.height *
+          t;
       points.push(new THREE.Vector3(x, y, start.z - 0.03));
     }
 
@@ -361,10 +380,19 @@ export class ElectricThunderEffect {
   }
 
   updateGeometry() {
-    const jitter = this.reduceMotion ? 0.006 : 0.025 + this.charge.value * 0.045;
-    this.layers.forEach((layer) => updateRibbonGeometry(layer.geometry, this.mainPath, jitter));
+    const isReady = this.state === INTRO_STATES.READY;
+    const jitter = this.reduceMotion
+      ? 0.006
+      : 0.028 + (this.charge.value + (isReady ? 0.35 : 0)) * 0.05;
+    this.layers.forEach((layer) =>
+      updateRibbonGeometry(layer.geometry, this.mainPath, jitter),
+    );
     this.branches.forEach((branch, index) => {
-      updateRibbonGeometry(branch.geometry, this.branchPaths[index], jitter * 0.65);
+      updateRibbonGeometry(
+        branch.geometry,
+        this.branchPaths[index],
+        jitter * 0.75,
+      );
     });
   }
 
@@ -373,7 +401,9 @@ export class ElectricThunderEffect {
     const lightTheme = theme === "light";
     this.layers[1].material.uniforms.uOpacity.value = lightTheme ? 0.52 : 0.68;
     this.layers[2].material.uniforms.uOpacity.value = lightTheme ? 0.18 : 0.34;
-    this.sparkField.material.uniforms.uOpacity.value = lightTheme ? 0.035 : 0.06;
+    this.sparkField.material.uniforms.uOpacity.value = lightTheme
+      ? 0.035
+      : 0.06;
   }
 
   setState(state) {
@@ -387,7 +417,11 @@ export class ElectricThunderEffect {
   }
 
   startReveal() {
-    if (this.state !== INTRO_STATES.IDLE && this.state !== INTRO_STATES.CHARGING) return null;
+    if (
+      this.state !== INTRO_STATES.IDLE &&
+      this.state !== INTRO_STATES.CHARGING
+    )
+      return null;
     this.setState(INTRO_STATES.LIGHTNING_REVEAL);
     this.rebuildPaths();
     this.progress.value = 0;
@@ -398,16 +432,44 @@ export class ElectricThunderEffect {
       onComplete: () => this.setState(INTRO_STATES.READY),
     });
 
-    timeline.to(this.charge, { value: 1, duration: this.reduceMotion ? 0.25 : 0.55 }, 0);
-    timeline.to(this.progress, { value: 1, duration: this.reduceMotion ? 0.45 : 0.9, ease: "power3.inOut" }, 0.08);
-    timeline.to(this.burst, { value: 1, duration: this.reduceMotion ? 0.35 : 0.65, ease: "expo.out" }, this.reduceMotion ? 0.32 : 0.58);
-    timeline.to(this.burst, { value: 0.12, duration: 0.8, ease: "power2.out" }, ">");
-    timeline.to(this.charge, { value: 0.22, duration: 0.9, ease: "power2.out" }, "<");
+    timeline.to(
+      this.charge,
+      { value: 1, duration: this.reduceMotion ? 0.25 : 0.55 },
+      0,
+    );
+    timeline.to(
+      this.progress,
+      {
+        value: 1,
+        duration: this.reduceMotion ? 0.45 : 0.9,
+        ease: "power3.inOut",
+      },
+      0.08,
+    );
+    timeline.to(
+      this.burst,
+      { value: 1, duration: this.reduceMotion ? 0.35 : 0.65, ease: "expo.out" },
+      this.reduceMotion ? 0.32 : 0.58,
+    );
+    timeline.to(
+      this.burst,
+      { value: 0.4, duration: 0.8, ease: "power2.out" },
+      ">",
+    );
+    timeline.to(
+      this.charge,
+      { value: 0.95, duration: 0.6, ease: "power2.out" },
+      "<",
+    );
     return timeline;
   }
 
   startExit() {
-    if (this.state === INTRO_STATES.STARTING || this.state === INTRO_STATES.COMPLETE) return null;
+    if (
+      this.state === INTRO_STATES.STARTING ||
+      this.state === INTRO_STATES.COMPLETE
+    )
+      return null;
     this.setState(INTRO_STATES.STARTING);
     this.rebuildPaths();
     this.progress.value = 0;
@@ -421,16 +483,36 @@ export class ElectricThunderEffect {
       },
     });
 
-    timeline.to(this.charge, { value: 1.25, duration: this.reduceMotion ? 0.2 : 0.45 }, 0);
-    timeline.to(this.progress, { value: 1.08, duration: this.reduceMotion ? 0.35 : 0.72, ease: "power4.in" }, 0.05);
-    timeline.to(this.burst, { value: 1.35, duration: this.reduceMotion ? 0.3 : 0.55, ease: "expo.out" }, 0.32);
+    timeline.to(
+      this.charge,
+      { value: 1.25, duration: this.reduceMotion ? 0.2 : 0.45 },
+      0,
+    );
+    timeline.to(
+      this.progress,
+      {
+        value: 1.08,
+        duration: this.reduceMotion ? 0.35 : 0.72,
+        ease: "power4.in",
+      },
+      0.05,
+    );
+    timeline.to(
+      this.burst,
+      {
+        value: 1.35,
+        duration: this.reduceMotion ? 0.3 : 0.55,
+        ease: "expo.out",
+      },
+      0.32,
+    );
     timeline.to(this.charge, { value: 0, duration: 0.4 }, ">");
     return timeline;
   }
 
   update(delta, elapsed) {
     this.time += delta;
-    const rebuildRate = this.reduceMotion ? 0.16 : 0.055;
+    const rebuildRate = this.reduceMotion ? 0.16 : 0.065;
 
     if (!this._nextRebuild || elapsed > this._nextRebuild) {
       this._nextRebuild = elapsed + rebuildRate;
@@ -439,42 +521,71 @@ export class ElectricThunderEffect {
       }
     }
 
-    const pulse =
-      this.charge.value *
-      (0.75 + 0.25 * Math.sin(elapsed * (this.reduceMotion ? 8 : 26))) *
-      (this.state === INTRO_STATES.READY ? 0.34 : 1);
+    let pulse;
+    if (this.state === INTRO_STATES.READY) {
+      // Continuous vivid electric storm with dynamic crackles and surges
+      const surge =
+        Math.sin(elapsed * 14.0) * 0.25 + Math.sin(elapsed * 30.0) * 0.15;
+      const microFlicker = Math.random() < 0.18 ? 0.35 : 0.0;
+      pulse = Math.max(0.65, (this.charge.value + surge + microFlicker) * 1.25);
+    } else {
+      pulse =
+        this.charge.value *
+        (0.75 + 0.25 * Math.sin(elapsed * (this.reduceMotion ? 8 : 26)));
+    }
 
     this.layers.forEach((layer, index) => {
       layer.material.uniforms.uTime.value = elapsed;
       layer.material.uniforms.uProgress.value = this.progress.value;
-      layer.material.uniforms.uPulse.value = Math.max(0.08, pulse * (1 - index * 0.16));
+      layer.material.uniforms.uPulse.value = Math.max(
+        0.12,
+        pulse * (1 - index * 0.12),
+      );
     });
 
     this.branches.forEach((branch) => {
-      const localProgress = THREE.MathUtils.clamp(
-        (this.progress.value - branch.offset) / branch.span,
-        0,
-        1,
-      );
+      const localProgress =
+        this.state === INTRO_STATES.READY
+          ? 1.0
+          : THREE.MathUtils.clamp(
+              (this.progress.value - branch.offset) / branch.span,
+              0,
+              1,
+            );
       branch.material.uniforms.uTime.value = elapsed;
       branch.material.uniforms.uProgress.value = localProgress;
-      branch.material.uniforms.uPulse.value = pulse * 0.9;
+      branch.material.uniforms.uPulse.value = pulse * 1.05;
     });
 
     this.sparkField.material.uniforms.uTime.value = elapsed;
     this.sparkField.material.uniforms.uBurst.value = this.burst.value;
     this.impactGlow.material.uniforms.uTime.value = elapsed;
-    this.impactGlow.material.uniforms.uOpacity.value =
-      this.burst.value * (this.theme === "light" ? 0.28 : 0.48) + this.charge.value * 0.04;
-    this.impactGlow.scale.setScalar(0.9 + this.burst.value * 1.1);
-    this.light.intensity =
-      this.charge.value * (this.theme === "light" ? 5.5 : 9) +
-      this.burst.value * (this.theme === "light" ? 10 : 16);
+
+    if (this.state === INTRO_STATES.READY) {
+      this.impactGlow.material.uniforms.uOpacity.value =
+        0.45 + Math.sin(elapsed * 9.0) * 0.2;
+      this.impactGlow.scale.setScalar(1.2 + Math.sin(elapsed * 12.0) * 0.25);
+      this.sparkField.material.uniforms.uOpacity.value =
+        0.32 + Math.sin(elapsed * 10.0) * 0.12;
+      this.light.intensity =
+        6.0 +
+        Math.sin(elapsed * 16.0) * 2.5 +
+        (Math.random() < 0.15 ? 4.0 : 0.0);
+    } else {
+      this.impactGlow.material.uniforms.uOpacity.value =
+        this.burst.value * (this.theme === "light" ? 0.28 : 0.48) +
+        this.charge.value * 0.04;
+      this.impactGlow.scale.setScalar(0.9 + this.burst.value * 1.1);
+      this.light.intensity =
+        this.charge.value * (this.theme === "light" ? 5.5 : 9) +
+        this.burst.value * (this.theme === "light" ? 10 : 16);
+    }
   }
 
   handleResize() {
     this.rebuildPaths();
-    this.sparkField.material.uniforms.uPixelRatio.value = getViewportProfile().dpr;
+    this.sparkField.material.uniforms.uPixelRatio.value =
+      getViewportProfile().dpr;
   }
 
   destroy() {

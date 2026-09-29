@@ -2,19 +2,34 @@ import gsap from "gsap";
 import { INTRO_STATES } from "../effects/ElectricThunderEffect.js";
 
 export class ThunderIntro {
-  constructor({ threeScene = null, sceneController = null, lenis = null } = {}) {
+  constructor({
+    threeScene = null,
+    sceneController = null,
+    lenis = null,
+  } = {}) {
     this.threeScene = threeScene;
     this.sceneController = sceneController;
     this.lenis = lenis;
     this.state = INTRO_STATES.IDLE;
-    this.reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     this.isComplete = false;
     this.timeline = null;
     this.magneticMove = null;
 
     this.overlay = this.createOverlay();
+    this.canvas = this.overlay.querySelector(".thunder-intro__canvas");
+    this.ctx = this.canvas?.getContext("2d");
+    this.bolts = [];
+    this.lastBoltSpawn = 0;
+    this.ambientFlash = 0;
+    this.initLightningCanvas();
+
     this.button = this.overlay.querySelector("[data-intro-start]");
-    this.titleLines = [...this.overlay.querySelectorAll(".thunder-intro__line")];
+    this.titleLines = [
+      ...this.overlay.querySelectorAll(".thunder-intro__line"),
+    ];
     this.atmosphere = this.overlay.querySelector(".thunder-intro__atmosphere");
 
     this.handleStart = this.handleStart.bind(this);
@@ -34,6 +49,7 @@ export class ThunderIntro {
     overlay.setAttribute("aria-label", "Cinematic intro");
     overlay.dataset.introState = this.state;
     overlay.innerHTML = `
+      <canvas class="thunder-intro__canvas" aria-hidden="true"></canvas>
       <div class="thunder-intro__atmosphere" aria-hidden="true">
         <span></span><span></span><span></span><span></span><span></span>
       </div>
@@ -70,7 +86,9 @@ export class ThunderIntro {
     this.originalLightIntensities = {};
     Object.entries(this.threeScene.lights || {}).forEach(([key, light]) => {
       this.originalLightIntensities[key] = light.intensity;
-      gsap.set(light, { intensity: Math.min(light.intensity, key === "ambient" ? 0.05 : 0.18) });
+      gsap.set(light, {
+        intensity: Math.min(light.intensity, key === "ambient" ? 0.05 : 0.18),
+      });
     });
 
     this.threeScene.particles?.hide?.();
@@ -117,7 +135,7 @@ export class ThunderIntro {
       .to(
         this.overlay,
         {
-          "--intro-blackout": 0.18,
+          "--intro-blackout": 0.88,
           "--intro-reveal": 1,
           duration: this.reduceMotion ? 0.45 : 1.1,
           ease: "power3.out",
@@ -159,40 +177,30 @@ export class ThunderIntro {
       duration: this.reduceMotion ? 0.25 : 0.55,
       ease: "power2.out",
     });
-    gsap.to(this.threeScene?.postProcessing?.chromaticPass?.uniforms?.uOffset || {}, {
-      value: this.reduceMotion ? 0.002 : 0.006,
-      duration: 0.2,
-      yoyo: true,
-      repeat: 1,
-    });
+    gsap.to(
+      this.threeScene?.postProcessing?.chromaticPass?.uniforms?.uOffset || {},
+      {
+        value: this.reduceMotion ? 0.002 : 0.006,
+        duration: 0.2,
+        yoyo: true,
+        repeat: 1,
+      },
+    );
     return strikeTimeline;
   }
 
   revealWorld() {
     if (!this.threeScene) return;
-
-    Object.entries(this.originalLightIntensities || {}).forEach(([key, intensity]) => {
-      const light = this.threeScene.lights?.[key];
-      if (light) {
-        gsap.to(light, {
-          intensity,
-          duration: this.reduceMotion ? 0.35 : 1.15,
-          ease: "power2.out",
-        });
-      }
-    });
-
-    this.threeScene.particles?.show?.();
-    gsap.to(this.threeScene.renderer, {
-      toneMappingExposure: 1,
-      duration: this.reduceMotion ? 0.35 : 1.1,
-      ease: "power2.out",
-    });
-    this.sceneController?.refresh?.();
+    // Keep 3D world hidden and scene lights atmospheric until user clicks START
   }
 
   handlePointerMove(event) {
-    if (this.state !== INTRO_STATES.READY || this.reduceMotion || event.pointerType === "touch") return;
+    if (
+      this.state !== INTRO_STATES.READY ||
+      this.reduceMotion ||
+      event.pointerType === "touch"
+    )
+      return;
 
     const rect = this.button.getBoundingClientRect();
     const x = event.clientX - rect.left - rect.width / 2;
@@ -218,6 +226,35 @@ export class ThunderIntro {
     if (this.state !== INTRO_STATES.READY || this.isComplete) return;
     const worldExit = this.threeScene?.introEffect?.startExit?.();
     this.setState(INTRO_STATES.STARTING);
+
+    // Massive electrical burst on click!
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    for (let i = 0; i < 10; i++) {
+      const angle = (i / 10) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      this.spawnLightningBolt(w, h, { burst: true, angle });
+    }
+    this.ambientFlash = 1.0;
+
+    Object.entries(this.originalLightIntensities || {}).forEach(
+      ([key, intensity]) => {
+        const light = this.threeScene?.lights?.[key];
+        if (light) {
+          gsap.to(light, {
+            intensity,
+            duration: this.reduceMotion ? 0.35 : 1.15,
+            ease: "power2.out",
+          });
+        }
+      },
+    );
+
+    this.threeScene?.particles?.show?.();
+    gsap.to(this.threeScene?.renderer || {}, {
+      toneMappingExposure: 1,
+      duration: this.reduceMotion ? 0.35 : 1.1,
+      ease: "power2.out",
+    });
 
     const exitTimeline = gsap.timeline({
       onComplete: () => this.complete(),
@@ -270,11 +307,183 @@ export class ThunderIntro {
       duration: 0.9,
       ease: "power2.out",
     });
-    gsap.to(this.threeScene?.postProcessing?.chromaticPass?.uniforms?.uOffset || {}, {
-      value: 0.003,
-      duration: 0.65,
-      ease: "power2.out",
-    });
+    gsap.to(
+      this.threeScene?.postProcessing?.chromaticPass?.uniforms?.uOffset || {},
+      {
+        value: 0.003,
+        duration: 0.65,
+        ease: "power2.out",
+      },
+    );
+  }
+
+  initLightningCanvas() {
+    if (!this.canvas || !this.ctx) return;
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      this.canvas.width = w * dpr;
+      this.canvas.height = h * dpr;
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+    this.canvasResizeHandler = resize;
+
+    const animate = (time) => {
+      if (this.isComplete) return;
+      this.animFrameId = requestAnimationFrame(animate);
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      this.ctx.clearRect(0, 0, w, h);
+
+      // Flash background slightly on lightning strike
+      if (this.ambientFlash > 0.01) {
+        this.ctx.fillStyle = `rgba(255, 15, 35, ${this.ambientFlash * 0.12})`;
+        this.ctx.fillRect(0, 0, w, h);
+        this.ambientFlash *= 0.88;
+      }
+
+      // In READY state or LIGHTNING_REVEAL, continuously generate electric bolts
+      const spawnInterval = this.state === INTRO_STATES.READY ? 75 : 140;
+      if (
+        (this.state === INTRO_STATES.READY ||
+          this.state === INTRO_STATES.LIGHTNING_REVEAL) &&
+        time - this.lastBoltSpawn > spawnInterval
+      ) {
+        this.lastBoltSpawn = time;
+        const count =
+          this.state === INTRO_STATES.READY
+            ? Math.random() < 0.45
+              ? 2
+              : 1
+            : 1;
+        for (let i = 0; i < count; i++) {
+          this.spawnLightningBolt(w, h);
+        }
+        if (Math.random() < 0.28) this.ambientFlash = 0.85;
+      }
+
+      // Update and draw existing bolts
+      this.bolts = this.bolts.filter((bolt) => {
+        bolt.life -= 0.055;
+        if (bolt.life <= 0) return false;
+
+        this.drawLightningBolt(bolt);
+        return true;
+      });
+    };
+
+    this.animFrameId = requestAnimationFrame(animate);
+  }
+
+  spawnLightningBolt(w, h, { burst = false, angle = 0 } = {}) {
+    let sx, sy, ex, ey;
+    const btnRect = this.button?.getBoundingClientRect();
+    const targetX = btnRect ? btnRect.left + btnRect.width / 2 : w / 2;
+    const targetY = btnRect ? btnRect.top + btnRect.height / 2 : h / 2;
+
+    if (burst) {
+      sx = targetX;
+      sy = targetY;
+      const dist = Math.max(w, h) * (0.4 + Math.random() * 0.5);
+      ex = sx + Math.cos(angle) * dist;
+      ey = sy + Math.sin(angle) * dist;
+    } else {
+      const side = Math.floor(Math.random() * 4);
+      if (side === 0) {
+        // Top
+        sx = Math.random() * w;
+        sy = -10;
+      } else if (side === 1) {
+        // Left
+        sx = -10;
+        sy = Math.random() * h;
+      } else if (side === 2) {
+        // Right
+        sx = w + 10;
+        sy = Math.random() * h;
+      } else {
+        // Top-corner / diagonal
+        sx = Math.random() < 0.5 ? -10 : w + 10;
+        sy = Math.random() * h * 0.5;
+      }
+      // Target towards center or around START button
+      ex = targetX + (Math.random() - 0.5) * 220;
+      ey = targetY + (Math.random() - 0.5) * 160;
+    }
+
+    const segments = [];
+    const buildBranch = (x1, y1, x2, y2, depth) => {
+      if (depth <= 0) {
+        segments.push({ x1, y1, x2, y2 });
+        return;
+      }
+      const midX = (x1 + x2) / 2;
+      const midY = (y1 + y2) / 2;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = -dy / len;
+      const ny = dx / len;
+      const displacement = (Math.random() - 0.5) * len * 0.42;
+      const px = midX + nx * displacement;
+      const py = midY + ny * displacement;
+
+      buildBranch(x1, y1, px, py, depth - 1);
+      buildBranch(px, py, x2, y2, depth - 1);
+
+      if (Math.random() < 0.32 && depth >= 2) {
+        const theta = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.1;
+        const bLen = len * 0.45;
+        const bx = px + Math.cos(theta) * bLen;
+        const by = py + Math.sin(theta) * bLen;
+        buildBranch(px, py, bx, by, depth - 2);
+      }
+    };
+
+    buildBranch(sx, sy, ex, ey, 5);
+    this.bolts.push({ segments, life: 1.0, maxLife: 1.0 });
+  }
+
+  drawLightningBolt(bolt) {
+    if (!this.ctx) return;
+    const alpha = Math.min(1.0, bolt.life * 1.5);
+    const ctx = this.ctx;
+
+    ctx.save();
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    // Pass 1: Neon Crimson Wide Aura Glow
+    ctx.shadowBlur = 26;
+    ctx.shadowColor = "#ff0022";
+    ctx.strokeStyle = `rgba(255, 10, 45, ${alpha * 0.55})`;
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    for (const s of bolt.segments) {
+      ctx.moveTo(s.x1, s.y1);
+      ctx.lineTo(s.x2, s.y2);
+    }
+    ctx.stroke();
+
+    // Pass 2: Bright Red Plasma Core
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = "#ff2244";
+    ctx.strokeStyle = `rgba(255, 60, 85, ${alpha * 0.85})`;
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+
+    // Pass 3: Hot White Core Center
+    ctx.shadowBlur = 4;
+    ctx.shadowColor = "#ffffff";
+    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
+    ctx.lineWidth = 1.0;
+    ctx.stroke();
+
+    ctx.restore();
   }
 
   complete() {
@@ -290,6 +499,9 @@ export class ThunderIntro {
 
   destroy() {
     this.timeline?.kill();
+    if (this.animFrameId) cancelAnimationFrame(this.animFrameId);
+    if (this.canvasResizeHandler)
+      window.removeEventListener("resize", this.canvasResizeHandler);
     this.button?.removeEventListener("click", this.handleStart);
     this.button?.removeEventListener("pointermove", this.handlePointerMove);
     this.button?.removeEventListener("pointerleave", this.handlePointerLeave);

@@ -2233,3 +2233,11 @@ body.is-navigating .navbar__link.is-active {
   
 @include responsive.site;
 @include destination-hero.styles;
+
+@media (max-width: 768px) {
+  .sticker-field {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}

@@ -1,19 +1,26 @@
 .thunder-intro {
-  --intro-blackout: 0.98;
-  --intro-reveal: 0;
-  --intro-spark-opacity: 0.08;
+  --intro-blackout: 0;
+  --intro-reveal: 1;
+  --intro-spark-opacity: 0.14;
   position: fixed;
   inset: 0;
   z-index: 180;
   display: grid;
   place-items: center;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 48%, rgba(255, 24, 48, calc(0.12 * var(--intro-reveal))), transparent 34%),
-    rgba(0, 0, 0, var(--intro-blackout));
+  background: transparent;
   color: #fff7f4;
   pointer-events: auto;
   isolation: isolate;
+}
+
+.thunder-intro__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .thunder-intro::before {
@@ -22,10 +29,11 @@
   z-index: -2;
   content: "";
   background:
-    radial-gradient(circle at 18% 42%, rgba(255, 24, 48, 0.12), transparent 22%),
-    radial-gradient(circle at 72% 52%, rgba(120, 0, 15, 0.2), transparent 30%),
-    linear-gradient(180deg, #020202 0%, #090205 58%, #030303 100%);
-  opacity: calc(0.16 + var(--intro-reveal) * 0.28);
+    radial-gradient(circle at 18% 42%, rgba(255, 24, 48, 0.15), transparent 25%),
+    radial-gradient(circle at 72% 52%, rgba(220, 10, 30, 0.18), transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(255, 10, 30, 0.12), transparent 60%);
+  opacity: 1;
+  pointer-events: none;
 }
 
 .thunder-intro::after {
@@ -41,16 +49,16 @@
   opacity: var(--intro-spark-opacity);
   filter: drop-shadow(0 0 10px rgba(255, 24, 48, 0.9));
   animation: thunderSparkDrift 9s linear infinite;
+  pointer-events: none;
 }
 
 .thunder-intro__veil {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(circle at 50% 52%, transparent calc(9% + var(--intro-reveal) * 24%), rgba(0, 0, 0, 0.72) calc(42% + var(--intro-reveal) * 16%)),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.72), transparent 44%, rgba(0, 0, 0, 0.7));
-  opacity: calc(1 - var(--intro-reveal) * 0.62);
+  background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
+  opacity: 1;
+  pointer-events: none;
 }
 
 .thunder-intro__atmosphere {
@@ -249,5 +257,46 @@
   }
   100% {
     transform: translateX(120%);
+  }
+}
+
+.thunder-intro[data-intro-state="READY"] {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 18, 42, 0.22), transparent 48%),
+    radial-gradient(circle at 18% 40%, rgba(255, 24, 48, 0.16), transparent 28%),
+    radial-gradient(circle at 82% 60%, rgba(200, 10, 30, 0.18), transparent 30%),
+    rgba(0, 0, 0, var(--intro-blackout));
+
+  .thunder-intro__atmosphere {
+    opacity: 0.85;
+  }
+
+  .thunder-intro__start {
+    border-color: rgba(255, 60, 80, 0.95);
+    animation: thunderStartPulse 2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes thunderStartPulse {
+  0% {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+      0 0 25px rgba(255, 24, 48, 0.55),
+      0 0 45px rgba(255, 10, 30, 0.3),
+      0 18px 64px rgba(0, 0, 0, 0.7);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.25) inset,
+      0 0 40px rgba(255, 30, 55, 0.85),
+      0 0 75px rgba(255, 15, 35, 0.5),
+      0 18px 64px rgba(0, 0, 0, 0.85);
+  }
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+      0 0 25px rgba(255, 24, 48, 0.55),
+      0 0 45px rgba(255, 10, 30, 0.3),
+      0 18px 64px rgba(0, 0, 0, 0.7);
   }
 }

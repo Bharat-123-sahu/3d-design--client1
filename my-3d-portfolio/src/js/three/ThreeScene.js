@@ -374,6 +374,11 @@ export class ThreeScene {
     this.characterPresence ||= { opacity: 1 };
     const model = this.navManager?.model;
 
+    if (!this.worldScene?.isActive) {
+      this.worldScene?.setPresentationOpacity?.(0);
+      return;
+    }
+
     if (!content) {
       // Re-entering world / travelling: ensure layer 0 is enabled and fade character and destination models back in
       model?.root.traverse((object) => object.layers.enable(0));
@@ -606,6 +611,8 @@ export class ThreeScene {
     const width = Math.max(this.container.clientWidth, 1);
     const height = Math.max(this.container.clientHeight, 1);
 
+    const isMobile = width <= 768 || width / height < 1.0;
+    this.camera.fov = isMobile ? 54 : 42;
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.profile = getViewportProfile();
@@ -615,6 +622,7 @@ export class ThreeScene {
     this.postProcessing?.resize(width, height, this.profile);
     this.particles.geometry.setDrawRange(0, this.profile.lowPower ? 420 : 1400);
     this.stars.geometry.setDrawRange(0, this.profile.lowPower ? 540 : 1800);
+    this.worldScene?.handleResize?.(this.profile);
     this.navManager?.handleResize?.(this.profile);
     this.resizeCharacterView();
     if (!this.navManager)

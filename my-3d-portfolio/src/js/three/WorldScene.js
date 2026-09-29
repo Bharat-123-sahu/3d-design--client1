@@ -2,6 +2,7 @@ import * as THREE from "three";
 import gsap from "gsap";
 import { characterConfig } from "../data/experienceConfig.js";
 import { navigationNodes } from "../data/navigationData.js";
+import { getViewportProfile } from "../utils/responsive.js";
 import { ModelLoader } from "./ModelLoader.js";
 
 /* ── Helpers ──────────────────────────────────────────────────────── */
@@ -490,6 +491,10 @@ export class WorldScene {
     this.camera = camera;
     this.container = container;
     this.isActive = false;
+    this.worldGroup = new THREE.Group();
+    this.worldGroup.name = "WorldSceneGroup";
+    this.worldGroup.visible = false;
+    this.scene.add(this.worldGroup);
     this.markers = {};
     this.signs = {};
     this.interactiveObjects = [];
@@ -509,32 +514,32 @@ export class WorldScene {
 
   _build() {
     // Ground
-    this.ground = createGround(this.scene);
+    this.ground = createGround(this.worldGroup);
 
     // Paths
-    this.pathSegments = createAllPaths(this.scene);
+    this.pathSegments = createAllPaths(this.worldGroup);
 
     // Destination markers
     const { home, about, work, value, contact, experience, feedback } =
       navigationNodes;
-    this.markers.home = createHouseMarker(this.scene, home.position);
-    this.markers.about = createChairMarker(this.scene, about.position);
-    this.markers.work = createMonitorMarker(this.scene, work.position);
-    this.markers.contact = createDeskMarker(this.scene, contact.position);
+    this.markers.home = createHouseMarker(this.worldGroup, home.position);
+    this.markers.about = createChairMarker(this.worldGroup, about.position);
+    this.markers.work = createMonitorMarker(this.worldGroup, work.position);
+    this.markers.contact = createDeskMarker(this.worldGroup, contact.position);
 
     // Initial placeholders for environments (replaced immediately upon GLB load)
     this.markers.value = createGroundPadPlaceholder(
-      this.scene,
+      this.worldGroup,
       new THREE.Vector3(0, -1.6, -4.35),
       "#00e5ff",
     );
     this.markers.experience = createGroundPadPlaceholder(
-      this.scene,
+      this.worldGroup,
       new THREE.Vector3(-3.5, -1.6, 2.15),
       "#7055ff",
     );
     this.markers.feedback = createGroundPadPlaceholder(
-      this.scene,
+      this.worldGroup,
       new THREE.Vector3(3.5, -1.6, 2.15),
       "#ffaa33",
     );
@@ -554,7 +559,7 @@ export class WorldScene {
     }
     this.markers.about.traverse((object) => object.layers.enable(1));
     const studioDesk = createDeskMarker(
-      this.scene,
+      this.worldGroup,
       about.position.clone().add(new THREE.Vector3(-0.9, 0, -0.15)),
     );
     studioDesk.scale.setScalar(0.9);
@@ -568,7 +573,7 @@ export class WorldScene {
       .copy(about.position)
       .add(new THREE.Vector3(-0.35, -0.027, 0));
     studioBase.layers.enable(1);
-    this.scene.add(studioBase);
+    this.worldGroup.add(studioBase);
     this.markers.studioBase = studioBase;
     // Soft contact patches ground the furniture without a second shadow pass.
     for (const marker of [this.markers.about, studioDesk]) {
@@ -593,7 +598,7 @@ export class WorldScene {
     // Destination signs
     for (const [id, node] of Object.entries(navigationNodes)) {
       const sign = createSignSprite(node.label, node.signPosition, node.color);
-      this.scene.add(sign);
+      this.worldGroup.add(sign);
       this.signs[id] = sign;
     }
 
@@ -606,10 +611,16 @@ export class WorldScene {
     }
 
     // Path particles
-    this.pathParticles = createPathParticles(this.scene, this.pathSegments);
+    this.pathParticles = createPathParticles(
+      this.worldGroup,
+      this.pathSegments,
+    );
 
     // Node lights
-    this.nodeLights = createNodeLights(this.scene);
+    this.nodeLights = createNodeLights(this.worldGroup);
+
+    // Initial responsive scaling
+    this.handleResize(getViewportProfile());
 
     // Start hidden, activate after intro
     this._setVisibility(false);
@@ -679,7 +690,7 @@ export class WorldScene {
         // Replace placeholder
         const placeholder = this.markers[cfg.id];
         if (placeholder) {
-          this.scene.remove(placeholder);
+          this.worldGroup.remove(placeholder);
           const idx = this.interactiveObjects.indexOf(placeholder);
           if (idx !== -1) this.interactiveObjects.splice(idx, 1);
         }
@@ -688,7 +699,7 @@ export class WorldScene {
         if (cfg.id === "value") {
           this.markers.services = model;
         }
-        this.scene.add(model);
+        this.worldGroup.add(model);
         this._registerInteractive(model, cfg.id);
         model.visible = this.isActive;
         if (this.presentationOpacity !== undefined) {
@@ -722,8 +733,13 @@ export class WorldScene {
   }
 
   setPresentationOpacity(opacity) {
+    if (!this.isActive) {
+      this.worldGroup.visible = false;
+      return;
+    }
     this.presentationOpacity = opacity;
     const isHidden = opacity <= 0.001;
+    this.worldGroup.visible = !isHidden;
 
     for (const marker of Object.values(this.markers)) {
       this._applyMarkerOpacity(marker, opacity);
@@ -837,6 +853,7 @@ export class WorldScene {
   }
 
   _setVisibility(visible) {
+    this.worldGroup.visible = visible && this.isActive;
     const opacity = visible ? 1 : 0;
     for (const seg of this.pathSegments) {
       seg.tubeMat.opacity = visible ? 0.85 : 0;
@@ -858,9 +875,11 @@ export class WorldScene {
   activate() {
     if (this.isActive) return;
     this.isActive = true;
+    this.worldGroup.visible = true;
     this._setVisibility(false);
     // Fade in world elements
     this.activationTimer = setTimeout(() => {
+      this.worldGroup.visible = true;
       this.pathSegments.forEach((seg, i) => {
         gsap.to(seg.tubeMat, { opacity: 0.85, duration: 1.2, delay: i * 0.1 });
         gsap.to(seg.glowMat, { opacity: 0.18, duration: 1.2, delay: i * 0.1 });
@@ -1026,8 +1045,21 @@ export class WorldScene {
     // Furniture stays grounded and aligned with the character seating anchor.
   }
 
+  handleResize(profile = getViewportProfile()) {
+    const isMobile =
+      (profile.width || window.innerWidth) <= 768 ||
+      (profile.aspect || window.innerWidth / window.innerHeight) < 1.0;
+    const aspect =
+      profile.aspect || window.innerWidth / Math.max(1, window.innerHeight);
+    const mobileScale = isMobile
+      ? Math.min(1.0, Math.max(0.65, aspect * 1.45))
+      : 1.0;
+    this.worldGroup.scale.setScalar(mobileScale);
+  }
+
   destroy() {
     clearTimeout(this.activationTimer);
+    this.worldGroup?.removeFromParent();
     const geometries = new Set(),
       materials = new Set();
     const roots = [

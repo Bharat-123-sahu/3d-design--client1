@@ -197,6 +197,22 @@ export class StickerField {
     if (!canvas) return;
     this.camera = camera;
     this.rect = canvas.getBoundingClientRect();
+
+    const isMobile =
+      (typeof window !== "undefined" && window.innerWidth <= 768) ||
+      this.rect.width <= 768 ||
+      (typeof screen !== "undefined" &&
+        Math.min(screen.width, screen.height) <= 600);
+
+    // Completely disable background stickers on mobile: neither animate nor show
+    if (isMobile) {
+      this.visible = false;
+      this.layer.style.visibility = "hidden";
+      this.layer.style.display = "none";
+      return;
+    }
+
+    this.layer.style.display = "block";
     this.visible =
       this.blob.group.visible &&
       this.blob.reveal.value > 0.05 &&
@@ -214,13 +230,6 @@ export class StickerField {
         height) /
       2;
     const easing = this.blob.reduced ? 1 : 1 - Math.exp(-delta * 8);
-    // Disable erratic zigzag ONLY on mobile devices (smartphones <= 768px).
-    // Ensure full lively dynamic zigzag runs on laptop, desktop, and computer!
-    const isMobile =
-      (typeof window !== "undefined" && window.innerWidth <= 768) ||
-      (width <= 768 &&
-        typeof screen !== "undefined" &&
-        Math.min(screen.width, screen.height) <= 600);
 
     for (const record of this.records) {
       if (
