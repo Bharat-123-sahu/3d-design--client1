@@ -219,22 +219,22 @@ export class ElectricThunderEffect {
     this.group.visible = true;
     this.scene.add(this.group);
 
-    this.maxPoints = this.reduceMotion ? 34 : this.isMobile ? 44 : 62;
-    this.branchCount = this.reduceMotion ? 3 : this.isMobile ? 5 : 9;
+    this.maxPoints = this.reduceMotion ? 28 : this.isMobile ? 36 : 48;
+    this.branchCount = this.reduceMotion ? 1 : this.isMobile ? 1 : 2;
 
     this.layers = [
-      this.createRibbonLayer("#ffffff", 0.98, 0.032, 0.04),
-      this.createRibbonLayer("#00f0ff", 0.9, 0.095, 0.1),
-      this.createRibbonLayer("#0055ff", 0.65, 0.26, 0.2),
+      this.createRibbonLayer("#ffffff", 0.95, 0.016, 0.03),
+      this.createRibbonLayer("#00f0ff", 0.85, 0.045, 0.08),
+      this.createRibbonLayer("#0055ff", 0.55, 0.11, 0.15),
     ];
 
     this.branches = [];
     for (let i = 0; i < this.branchCount; i += 1) {
       const layer = this.createRibbonLayer(
         i % 2 ? "#00e5ff" : "#0066ff",
-        0.78,
-        0.048,
-        0.12,
+        0.75,
+        0.025,
+        0.1,
       );
       this.branches.push({
         ...layer,
@@ -359,7 +359,7 @@ export class ElectricThunderEffect {
     const start = this.mainPath[startIndex] || new THREE.Vector3();
     const count = this.maxPoints;
     const points = [];
-    const length = this.viewport.height * (0.24 + Math.random() * 0.28);
+    const length = this.viewport.height * (0.09 + Math.random() * 0.12);
     const direction = branch.side;
 
     for (let i = 0; i < count; i += 1) {
@@ -523,11 +523,11 @@ export class ElectricThunderEffect {
 
     let pulse;
     if (this.state === INTRO_STATES.READY) {
-      // Continuous vivid electric storm with dynamic crackles and surges
+      // Subtle background electric presence (smaller and refined)
       const surge =
-        Math.sin(elapsed * 14.0) * 0.25 + Math.sin(elapsed * 30.0) * 0.15;
-      const microFlicker = Math.random() < 0.18 ? 0.35 : 0.0;
-      pulse = Math.max(0.65, (this.charge.value + surge + microFlicker) * 1.25);
+        Math.sin(elapsed * 10.0) * 0.12 + Math.sin(elapsed * 22.0) * 0.08;
+      const microFlicker = Math.random() < 0.1 ? 0.18 : 0.0;
+      pulse = Math.max(0.32, (this.charge.value + surge + microFlicker) * 0.65);
     } else {
       pulse =
         this.charge.value *

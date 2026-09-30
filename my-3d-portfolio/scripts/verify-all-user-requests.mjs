@@ -201,6 +201,55 @@ async function run() {
       await new Promise((r) => setTimeout(r, 300));
     }
 
+    // Sample thunder bolts count and size during READY state
+    console.log(
+      "3b. Sampling thunder bolts in READY state (checking max 2-3 and small size)...",
+    );
+    const sampleResults = await evalJs(`
+      (async () => {
+        let maxCount = 0;
+        let lengths = [];
+        for (let i = 0; i < 12; i++) {
+          const intro = window.__THUNDER_INTRO__;
+          if (intro) {
+            const count = intro.bolts.length;
+            if (count > maxCount) maxCount = count;
+            for (const b of intro.bolts) {
+              if (b.segments?.length) {
+                const s0 = b.segments[0];
+                const sLast = b.segments[b.segments.length - 1];
+                const len = Math.hypot(sLast.x2 - s0.x1, sLast.y2 - s0.y1);
+                lengths.push(len);
+              }
+            }
+          }
+          await new Promise(r => setTimeout(r, 120));
+        }
+        return {
+          maxActiveBolts: maxCount,
+          boltLengths: lengths,
+          avgLength: lengths.length ? lengths.reduce((a, b) => a + b, 0) / lengths.length : 0,
+        };
+      })()
+    `);
+    console.log("Thunder Bolt Sampling:", sampleResults);
+    assert.ok(
+      sampleResults.maxActiveBolts <= 2,
+      "Must never exceed 2-3 active bolts at a time",
+    );
+    if (sampleResults.avgLength > 0) {
+      assert.ok(
+        sampleResults.avgLength < 250,
+        "Bolts must be small/compact (not spanning full screen)",
+      );
+    }
+    report.checks.push({
+      test: "Thunder bolt quantity and size limits",
+      ...sampleResults,
+    });
+
+    await takeScreenshot("01-start-page-roman-dbs-blue");
+
     // Click START button
     console.log("4. Clicking START button...");
     await evalJs(`document.querySelector('[data-intro-start]')?.click()`);

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-30T11:54:18.170Z",
+  "timestamp": "2026-09-30T12:25:03.129Z",
   "checks": [
     {
       "test": "Start page Roman typography & DBS thunder",
@@ -8,6 +8,23 @@
       "letterSpacing": "11.154px",
       "hasCanvas": true,
       "introState": "LIGHTNING_REVEAL"
+    },
+    {
+      "test": "Thunder bolt quantity and size limits",
+      "maxActiveBolts": 1,
+      "boltLengths": [
+        87.28057462014505,
+        87.28057462014505,
+        87.28057462014505,
+        101.68627444751898,
+        101.68627444751898,
+        85.74229692386558,
+        85.74229692386558,
+        94.0629799098508,
+        94.0629799098508,
+        98.11846026940505
+      ],
+      "avgLength": 92.2943286692311
     },
     {
       "test": "Mobile WorldScene scale",

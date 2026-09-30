@@ -42,6 +42,7 @@ export class ThunderIntro {
 
     this.prepareScene();
     this.playIntro();
+    if (typeof window !== "undefined") window.__THUNDER_INTRO__ = this;
   }
 
   createOverlay() {
@@ -245,14 +246,14 @@ export class ThunderIntro {
     const worldExit = this.threeScene?.introEffect?.startExit?.();
     this.setState(INTRO_STATES.STARTING);
 
-    // Massive electrical burst on click!
+    // Small crisp electrical burst on click (maximum 2 small zaps)
     const w = window.innerWidth;
     const h = window.innerHeight;
-    for (let i = 0; i < 10; i++) {
-      const angle = (i / 10) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+    for (let i = 0; i < 2; i++) {
+      const angle = (i / 2) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
       this.spawnLightningBolt(w, h, { burst: true, angle });
     }
-    this.ambientFlash = 1.0;
+    this.ambientFlash = 0.5;
 
     Object.entries(this.originalLightIntensities || {}).forEach(
       ([key, intensity]) => {
@@ -364,29 +365,29 @@ export class ThunderIntro {
         this.ambientFlash *= 0.88;
       }
 
-      // In READY state or LIGHTNING_REVEAL, continuously generate electric bolts
-      const spawnInterval = this.state === INTRO_STATES.READY ? 70 : 130;
+      // In READY state or LIGHTNING_REVEAL, generate small, controlled electric bolts
+      // User requirement: Maximum 2-3 bolts at a time, smaller in size
+      const MAX_ACTIVE_BOLTS = 2; // Strict limit: at most 2 active on screen (never exceeds 2-3)
+      const spawnInterval = this.state === INTRO_STATES.READY ? 360 : 550;
+
       if (
         (this.state === INTRO_STATES.READY ||
           this.state === INTRO_STATES.LIGHTNING_REVEAL) &&
+        this.bolts.length < MAX_ACTIVE_BOLTS &&
         time - this.lastBoltSpawn > spawnInterval
       ) {
         this.lastBoltSpawn = time;
-        const count =
-          this.state === INTRO_STATES.READY
-            ? Math.random() < 0.45
-              ? 2
-              : 1
-            : 1;
-        for (let i = 0; i < count; i++) {
+        const availableSlots = MAX_ACTIVE_BOLTS - this.bolts.length;
+        const toSpawn = Math.min(availableSlots, Math.random() < 0.25 ? 2 : 1);
+        for (let i = 0; i < toSpawn; i++) {
           this.spawnLightningBolt(w, h);
         }
-        if (Math.random() < 0.32) this.ambientFlash = 0.88;
+        if (Math.random() < 0.22) this.ambientFlash = 0.5;
       }
 
       // Update and draw existing bolts
       this.bolts = this.bolts.filter((bolt) => {
-        bolt.life -= 0.052;
+        bolt.life -= 0.065;
         if (bolt.life <= 0) return false;
 
         this.drawLightningBolt(bolt);
@@ -404,33 +405,24 @@ export class ThunderIntro {
     const targetY = btnRect ? btnRect.top + btnRect.height / 2 : h / 2;
 
     if (burst) {
+      // Small compact radial burst on click (around 65-110px)
       sx = targetX;
       sy = targetY;
-      const dist = Math.max(w, h) * (0.42 + Math.random() * 0.55);
+      const dist = 65 + Math.random() * 45;
       ex = sx + Math.cos(angle) * dist;
       ey = sy + Math.sin(angle) * dist;
     } else {
-      const side = Math.floor(Math.random() * 4);
-      if (side === 0) {
-        // Top
-        sx = Math.random() * w;
-        sy = -10;
-      } else if (side === 1) {
-        // Left
-        sx = -10;
-        sy = Math.random() * h;
-      } else if (side === 2) {
-        // Right
-        sx = w + 10;
-        sy = Math.random() * h;
-      } else {
-        // Top-corner / diagonal
-        sx = Math.random() < 0.5 ? -10 : w + 10;
-        sy = Math.random() * h * 0.5;
-      }
-      // Target towards center or around START button
-      ex = targetX + (Math.random() - 0.5) * 220;
-      ey = targetY + (Math.random() - 0.5) * 160;
+      // Small localized anime electric arc around central focal area (title or button)
+      // Bolt length is short (55-110px) so it does NOT cut across the whole screen
+      const arcAngle = Math.random() * Math.PI * 2;
+      const radius = 35 + Math.random() * 95;
+      sx = targetX + Math.cos(arcAngle) * radius;
+      sy = targetY + Math.sin(arcAngle) * (radius * 0.72);
+
+      const boltAngle = arcAngle + Math.PI * 0.75 + (Math.random() - 0.5) * 1.1;
+      const boltLen = 55 + Math.random() * 55;
+      ex = sx + Math.cos(boltAngle) * boltLen;
+      ey = sy + Math.sin(boltAngle) * boltLen;
     }
 
     const segments = [];
@@ -447,17 +439,17 @@ export class ThunderIntro {
       const len = Math.hypot(dx, dy) || 1;
       const nx = -dy / len;
       const ny = dx / len;
-      // Bold cartoon/anime zig-zag displacement (Dragon Ball Super sharp angles)
-      const displacement = (Math.random() - 0.5) * len * 0.55;
+      // Controlled tight anime zig-zag displacement
+      const displacement = (Math.random() - 0.5) * len * 0.38;
       const px = midX + nx * displacement;
       const py = midY + ny * displacement;
 
-      // Add anime ki spark at sharp corners
-      if (depth >= 2 && Math.random() < 0.4) {
+      // Small anime ki spark at sharp corners
+      if (depth >= 2 && Math.random() < 0.28) {
         sparks.push({
           x: px,
           y: py,
-          size: 3 + Math.random() * 4,
+          size: 1.2 + Math.random() * 1.8,
           rot: Math.random() * Math.PI,
         });
       }
@@ -465,17 +457,19 @@ export class ThunderIntro {
       buildBranch(x1, y1, px, py, depth - 1);
       buildBranch(px, py, x2, y2, depth - 1);
 
-      if (Math.random() < 0.35 && depth >= 2) {
-        const theta = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.35;
-        const bLen = len * 0.52;
+      // At most one tiny secondary sub-branch
+      if (Math.random() < 0.2 && depth === 2) {
+        const theta = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.1;
+        const bLen = len * 0.35;
         const bx = px + Math.cos(theta) * bLen;
         const by = py + Math.sin(theta) * bLen;
         buildBranch(px, py, bx, by, depth - 2);
       }
     };
 
-    buildBranch(sx, sy, ex, ey, 4);
-    const thickness = burst ? 1.55 : 1.1 + Math.random() * 0.65;
+    // Compact depth 3
+    buildBranch(sx, sy, ex, ey, 3);
+    const thickness = burst ? 1.2 : 0.9 + Math.random() * 0.35;
     this.bolts.push({ segments, sparks, thickness, life: 1.0, maxLife: 1.0 });
   }
 
@@ -483,18 +477,18 @@ export class ThunderIntro {
     if (!this.ctx) return;
     const alpha = Math.min(1.0, bolt.life * 1.5);
     const ctx = this.ctx;
-    const thickness = bolt.thickness || 1.2;
+    const thickness = bolt.thickness || 1.0;
 
     ctx.save();
     ctx.lineCap = "round";
     ctx.lineJoin = "miter";
     ctx.miterLimit = 3;
 
-    // Pass 1: Dragon Ball Super Deep Blue Ki Aura (thick stylized outer glow)
-    ctx.shadowBlur = 32;
+    // Pass 1: Dragon Ball Super Deep Blue Ki Aura (compact, refined glow)
+    ctx.shadowBlur = 12;
     ctx.shadowColor = "#0055ff";
-    ctx.strokeStyle = `rgba(0, 95, 255, ${alpha * 0.75})`;
-    ctx.lineWidth = Math.max(12, 19 * thickness);
+    ctx.strokeStyle = `rgba(0, 95, 255, ${alpha * 0.72})`;
+    ctx.lineWidth = Math.max(4.5, 6.5 * thickness);
     ctx.beginPath();
     for (const s of bolt.segments) {
       ctx.moveTo(s.x1, s.y1);
@@ -502,24 +496,24 @@ export class ThunderIntro {
     }
     ctx.stroke();
 
-    // Pass 2: Electric Cyan Super Saiyan Blue Plasma Core
-    ctx.shadowBlur = 16;
+    // Pass 2: Electric Cyan Super Saiyan Blue Plasma Core (crisp)
+    ctx.shadowBlur = 6;
     ctx.shadowColor = "#00f0ff";
-    ctx.strokeStyle = `rgba(0, 240, 255, ${alpha * 0.95})`;
-    ctx.lineWidth = Math.max(6, 8.5 * thickness);
+    ctx.strokeStyle = `rgba(0, 240, 255, ${alpha * 0.92})`;
+    ctx.lineWidth = Math.max(2.2, 3.2 * thickness);
     ctx.stroke();
 
-    // Pass 3: Searing Pure White Hot Core Center
-    ctx.shadowBlur = 6;
+    // Pass 3: Searing Pure White Hot Core Center (sharp & clean)
+    ctx.shadowBlur = 3;
     ctx.shadowColor = "#ffffff";
     ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 1.0})`;
-    ctx.lineWidth = Math.max(2.6, 3.8 * thickness);
+    ctx.lineWidth = Math.max(1.0, 1.4 * thickness);
     ctx.stroke();
 
     // Pass 4: Anime Diamond Ki Sparks along bolt nodes
     if (bolt.sparks && bolt.sparks.length) {
       ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 6;
       ctx.shadowColor = "#00f0ff";
       for (const sp of bolt.sparks) {
         ctx.save();
