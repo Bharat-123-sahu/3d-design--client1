@@ -116,20 +116,39 @@ export class StickerField {
     let available = this.records.filter(
       (r) => r.state === STICKER_STATE.AVAILABLE && r.size,
     );
-    if (!available.length) {
+    if (!available.length && this.records.length) {
       this.generation++;
       this.surface.ids.forEach((id, slot) => this.spawn(id, slot));
       available = this.records.filter(
         (r) => r.state === STICKER_STATE.AVAILABLE && r.size,
       );
     }
-    if (!available.length) return null;
-    return available[Math.floor(Math.random() * available.length)];
+    if (available.length) {
+      return available[Math.floor(Math.random() * available.length)];
+    }
+    const ids = this.surface?.ids || [];
+    if (ids.length) {
+      const id = ids[Math.floor(Math.random() * ids.length)];
+      return {
+        id,
+        state: STICKER_STATE.AVAILABLE,
+        size: 80,
+        screen: { x: this.pointer?.x || 0, y: this.pointer?.y || 0 },
+      };
+    }
+    return null;
   }
 
   select(x, y) {
     this.pointer = { x, y };
-    if (!this.camera || !this.visible) {
+    if (!this.visible) {
+      if (!this.target) {
+        this.target = this.pickRandomAvailable();
+        if (this.target) this.setState(this.target, STICKER_STATE.TARGETED);
+      }
+      return this.target;
+    }
+    if (!this.camera) {
       this.clearTarget();
       return null;
     }

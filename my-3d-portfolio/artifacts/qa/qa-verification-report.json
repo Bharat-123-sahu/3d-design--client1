@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-09-30T11:54:18.170Z",
+  "checks": [
+    {
+      "test": "Start page Roman typography & DBS thunder",
+      "charCount": 20,
+      "fontFamily": "Cinzel, \"Times New Roman\", Baskerville, Georgia, serif",
+      "letterSpacing": "11.154px",
+      "hasCanvas": true,
+      "introState": "LIGHTNING_REVEAL"
+    },
+    {
+      "test": "Mobile WorldScene scale",
+      "worldGroupScale": 1,
+      "appState": "world",
+      "worldVisible": true
+    },
+    {
+      "test": "Mobile Jelly Ball Sticker Paste & Punch",
+      "hit": true,
+      "attached": true,
+      "countBefore": 0,
+      "countAfter": 1,
+      "punchScale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "stickerFieldVisible": false
+    },
+    {
+      "test": "Pip interaction & speech bubble",
+      "hasBubble": true,
+      "bubbleText": "✨ Pip's ready for adventure!",
+      "hasSoundToggle": true
+    },
+    {
+      "test": "Multi-destination travel sequence",
+      "result": "ALL_HOPS_SUCCESSFUL"
+    }
+  ],
+  "errors": [],
+  "exceptions": []
+}

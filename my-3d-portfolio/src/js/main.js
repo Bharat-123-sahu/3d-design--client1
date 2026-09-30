@@ -18,6 +18,7 @@ import { initFeedback } from "./animations/FeedbackController.js";
 import { initVideoReveal } from "./animations/VideoRevealController.js";
 import { CharacterNavigationManager } from "./core/CharacterNavigationManager.js";
 import { initWorkScroll } from "./animations/WorkScrollController.js";
+import { PlayfulDelights } from "./effects/PlayfulDelights.js";
 
 import { Navbar } from "./components/Navbar.js";
 import { Footer } from "./components/Footer.js";
@@ -268,6 +269,7 @@ function bootstrap() {
   setOverlayScroller(lenis);
   const sceneController = new SceneController();
   const threeScene = initThreeLayer(sceneController);
+  if (typeof window !== "undefined") window.__THREE_SCENE__ = threeScene;
   new ThemeManager({ sceneController });
 
   const transitionManager = new TransitionManager({ lenis, sceneController });
@@ -354,10 +356,20 @@ function bootstrap() {
         threeScene.attachCharacterView(characterNavigation.viewport);
         characterNavigation.bindWorldCharacter(threeScene);
         // Root entry keeps START -> world. Explicit URLs restore their destination.
-        if (window.location.pathname !== "/" || window.location.hash || window.history.state?.destination) {
-          router.navigateTo(window.location.pathname, false, { history: false });
+        if (
+          window.location.pathname !== "/" ||
+          window.location.hash ||
+          window.history.state?.destination
+        ) {
+          router.navigateTo(window.location.pathname, false, {
+            history: false,
+          });
         }
         initNavPill();
+        new PlayfulDelights({
+          sceneController,
+          characterNav: characterNavigation,
+        });
       },
       { once: true },
     );

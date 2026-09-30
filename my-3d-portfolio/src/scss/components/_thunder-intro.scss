@@ -29,9 +29,9 @@
   z-index: -2;
   content: "";
   background:
-    radial-gradient(circle at 18% 42%, rgba(255, 24, 48, 0.15), transparent 25%),
-    radial-gradient(circle at 72% 52%, rgba(220, 10, 30, 0.18), transparent 30%),
-    radial-gradient(circle at 50% 50%, rgba(255, 10, 30, 0.12), transparent 60%);
+    radial-gradient(circle at 18% 42%, rgba(0, 220, 255, 0.20), transparent 28%),
+    radial-gradient(circle at 72% 52%, rgba(0, 100, 255, 0.24), transparent 32%),
+    radial-gradient(circle at 50% 50%, rgba(0, 180, 255, 0.16), transparent 60%);
   opacity: 1;
   pointer-events: none;
 }
@@ -42,12 +42,12 @@
   z-index: -1;
   content: "";
   background-image:
-    radial-gradient(circle, rgba(255, 58, 76, 0.8) 0 1px, transparent 1.8px),
-    radial-gradient(circle, rgba(255, 255, 255, 0.42) 0 1px, transparent 1.6px);
+    radial-gradient(circle, rgba(0, 240, 255, 0.85) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.6) 0 1px, transparent 1.6px);
   background-position: 0 0, 35px 55px;
   background-size: 118px 118px, 176px 176px;
   opacity: var(--intro-spark-opacity);
-  filter: drop-shadow(0 0 10px rgba(255, 24, 48, 0.9));
+  filter: drop-shadow(0 0 12px rgba(0, 200, 255, 0.95));
   animation: thunderSparkDrift 9s linear infinite;
   pointer-events: none;
 }
@@ -56,7 +56,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.55) 100%);
+  background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(0, 2, 10, 0.6) 100%);
   opacity: 1;
   pointer-events: none;
 }
@@ -70,10 +70,10 @@
 
 .thunder-intro__atmosphere span {
   position: absolute;
-  width: 1px;
+  width: 1.5px;
   height: min(18vh, 120px);
-  background: linear-gradient(180deg, transparent, rgba(255, 36, 57, 0.76), transparent);
-  filter: blur(0.2px) drop-shadow(0 0 14px rgba(255, 36, 57, 0.9));
+  background: linear-gradient(180deg, transparent, rgba(0, 230, 255, 0.88), transparent);
+  filter: blur(0.2px) drop-shadow(0 0 14px rgba(0, 180, 255, 0.95));
   opacity: 0.18;
   transform: rotate(62deg);
   animation: thunderArcIdle 3.8s ease-in-out infinite;
@@ -97,20 +97,31 @@
 
 .thunder-intro__title {
   display: grid;
-  gap: 0.02em;
+  gap: 0.08em;
   margin: 0;
-  font-size: clamp(3.15rem, 10vw, 9rem);
-  font-weight: 950;
-  line-height: 0.82;
-  letter-spacing: 0;
+  font-family: "Cinzel", "Times New Roman", "Baskerville", "Georgia", serif;
+  font-size: clamp(2.8rem, 8.5vw, 7.5rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  color: #f0faff;
   text-shadow:
-    0 0 22px rgba(255, 20, 44, 0.22),
-    0 18px 60px rgba(0, 0, 0, 0.82);
+    0 0 24px rgba(0, 220, 255, 0.5),
+    0 0 60px rgba(0, 100, 255, 0.35),
+    0 18px 60px rgba(0, 0, 0, 0.9);
 }
 
 .thunder-intro__line {
-  display: block;
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.06em;
+  will-change: transform, opacity;
+}
+
+.thunder-intro__char {
+  display: inline-block;
   will-change: transform, opacity, filter;
 }
 
@@ -118,24 +129,25 @@
   position: relative;
   display: inline-grid;
   place-items: center;
-  min-width: 132px;
-  min-height: 48px;
-  padding: 0 26px;
+  min-width: 136px;
+  min-height: 50px;
+  padding: 0 28px;
   overflow: hidden;
-  border: 1px solid rgba(255, 47, 68, 0.72);
+  border: 1px solid rgba(0, 230, 255, 0.85);
   border-radius: 7px;
   background:
-    linear-gradient(135deg, rgba(255, 24, 48, 0.18), rgba(20, 0, 4, 0.72)),
-    rgba(5, 0, 2, 0.68);
+    linear-gradient(135deg, rgba(0, 140, 255, 0.25), rgba(0, 10, 35, 0.8)),
+    rgba(2, 6, 18, 0.72);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-    0 0 28px rgba(255, 24, 48, 0.28),
-    0 18px 64px rgba(0, 0, 0, 0.62);
-  color: #fff3f0;
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 0 32px rgba(0, 210, 255, 0.4),
+    0 18px 64px rgba(0, 0, 0, 0.68);
+  color: #f0faff;
   cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 950;
-  letter-spacing: 0.18em;
+  font-family: "Cinzel", "Times New Roman", "Georgia", serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   will-change: transform, opacity;
 }
@@ -144,7 +156,7 @@
   position: absolute;
   inset: 0;
   content: "";
-  background: linear-gradient(90deg, transparent, rgba(255, 42, 62, 0.66), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.75), transparent);
   transform: translateX(-120%);
   animation: thunderButtonTrace 2.8s ease-in-out infinite;
 }
@@ -153,17 +165,17 @@
   position: absolute;
   inset: 4px;
   content: "";
-  border: 1px solid rgba(255, 96, 111, 0.18);
+  border: 1px solid rgba(0, 220, 255, 0.25);
   border-radius: 4px;
-  box-shadow: 0 0 18px rgba(255, 24, 48, 0.16) inset;
+  box-shadow: 0 0 18px rgba(0, 200, 255, 0.2) inset;
 }
 
 .thunder-intro__start:hover {
-  border-color: rgba(255, 112, 126, 0.96);
+  border-color: rgba(120, 245, 255, 1);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-    0 0 38px rgba(255, 24, 48, 0.48),
-    0 22px 70px rgba(0, 0, 0, 0.66);
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+    0 0 42px rgba(0, 220, 255, 0.65),
+    0 22px 70px rgba(0, 0, 0, 0.7);
 }
 
 .thunder-intro__start span {
@@ -262,17 +274,17 @@
 
 .thunder-intro[data-intro-state="READY"] {
   background:
-    radial-gradient(circle at 50% 50%, rgba(255, 18, 42, 0.22), transparent 48%),
-    radial-gradient(circle at 18% 40%, rgba(255, 24, 48, 0.16), transparent 28%),
-    radial-gradient(circle at 82% 60%, rgba(200, 10, 30, 0.18), transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(0, 160, 255, 0.24), transparent 48%),
+    radial-gradient(circle at 18% 40%, rgba(0, 220, 255, 0.20), transparent 28%),
+    radial-gradient(circle at 82% 60%, rgba(0, 80, 255, 0.22), transparent 30%),
     rgba(0, 0, 0, var(--intro-blackout));
 
   .thunder-intro__atmosphere {
-    opacity: 0.85;
+    opacity: 0.92;
   }
 
   .thunder-intro__start {
-    border-color: rgba(255, 60, 80, 0.95);
+    border-color: rgba(0, 240, 255, 0.95);
     animation: thunderStartPulse 2s ease-in-out infinite alternate;
   }
 }
@@ -280,23 +292,23 @@
 @keyframes thunderStartPulse {
   0% {
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-      0 0 25px rgba(255, 24, 48, 0.55),
-      0 0 45px rgba(255, 10, 30, 0.3),
-      0 18px 64px rgba(0, 0, 0, 0.7);
+      0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+      0 0 26px rgba(0, 210, 255, 0.6),
+      0 0 50px rgba(0, 100, 255, 0.35),
+      0 18px 64px rgba(0, 0, 0, 0.75);
   }
   50% {
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.25) inset,
-      0 0 40px rgba(255, 30, 55, 0.85),
-      0 0 75px rgba(255, 15, 35, 0.5),
-      0 18px 64px rgba(0, 0, 0, 0.85);
+      0 0 0 1px rgba(255, 255, 255, 0.3) inset,
+      0 0 45px rgba(0, 240, 255, 0.9),
+      0 0 85px rgba(0, 120, 255, 0.6),
+      0 18px 64px rgba(0, 0, 0, 0.88);
   }
   100% {
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-      0 0 25px rgba(255, 24, 48, 0.55),
-      0 0 45px rgba(255, 10, 30, 0.3),
-      0 18px 64px rgba(0, 0, 0, 0.7);
+      0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+      0 0 26px rgba(0, 210, 255, 0.6),
+      0 0 50px rgba(0, 100, 255, 0.35),
+      0 18px 64px rgba(0, 0, 0, 0.75);
   }
 }

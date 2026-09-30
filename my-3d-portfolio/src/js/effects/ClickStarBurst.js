@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { soundFX } from "./SoundFX.js";
 
 /**
  * ClickStarBurst
@@ -403,6 +404,7 @@ export class ClickStarBurst {
         : this.scratch.set(1, 0, 0);
     const U = this.scratchU.crossVectors(N, upRef).normalize();
     const V = this.scratchV.crossVectors(N, U).normalize();
+    soundFX.sparkleChime();
 
     // 1. Central optical flash spark right at the epicenter
     this._spawnParticle({

@@ -6,6 +6,7 @@ import { stickerLibrary } from "../data/stickerData.js";
 import { SurfaceStickers } from "./SurfaceStickers.js";
 import { StickerField } from "./StickerField.js";
 import { ClickStarBurst } from "./ClickStarBurst.js";
+import { soundFX } from "./SoundFX.js";
 
 /** Persistent gel sphere; the CPU surface and shared GPU displacement agree. */
 export class LiquidBlob {
@@ -50,6 +51,8 @@ export class LiquidBlob {
     this.scratch = new THREE.Vector3();
     this.stickers = [];
     this.scroll = this.focus = this.spring = this.velocity = this.time = 0;
+    this.punchScale = new THREE.Vector3(1, 1, 1);
+    this.punchTimeline = null;
     this.reveal = { value: 0 };
     this.layout = { x: 0, y: 0, z: 4, scale: 0.7 };
   }
@@ -109,15 +112,23 @@ export class LiquidBlob {
       x * this.impactNormal.x +
       y * this.impactNormal.y +
       z * this.impactNormal.z;
-    const dent = this.spring * (0.34 - Math.pow(Math.max(0, dot), 3.5) * 0.75);
+    const dp = Math.max(-1, Math.min(1, dot));
+    const dent = this.spring * (0.52 - Math.pow(Math.max(0, dp), 2.8) * 1.25);
+    const dist = Math.acos(dp);
+    const ripple = this.reduced
+      ? 0
+      : Math.sin(dist * 6.5 - this.time * 15.0) *
+        Math.exp(-dist * 1.6) *
+        this.spring *
+        0.16;
     const breath = this.reduced
       ? 0
-      : Math.sin(x * 3 + y * 2 + this.time * 1.2) * 0.004;
-    const radius = 1 + dent + breath + offset;
+      : Math.sin(x * 3 + y * 2 + this.time * 1.2) * 0.005;
+    const radius = 1 + dent + ripple + breath + offset;
     return target.set(
-      x * radius * (1 + this.spring * 0.32),
-      y * radius * (1 - this.spring * 0.38),
-      z * radius * (1 + this.spring * 0.16),
+      x * radius * (1 + this.spring * 0.45),
+      y * radius * (1 - this.spring * 0.52),
+      z * radius * (1 + this.spring * 0.28),
     );
   }
 
@@ -127,15 +138,78 @@ export class LiquidBlob {
       .copy(this.mesh.worldToLocal(hit.point.clone()))
       .normalize();
     this.velocity = THREE.MathUtils.clamp(
-      this.velocity + strength * 1.45,
-      -2.2,
-      2.2,
+      this.velocity + strength * 2.8,
+      -3.6,
+      3.6,
     );
   }
 
   triggerImpact(hit, strength = 1) {
     if (!hit) return;
     this.impact(hit, strength);
+    soundFX.jellyBoing(Math.min(1.4, 0.8 + strength * 0.3));
+
+    // Dynamic squash-and-stretch spring-damped scale punch
+    if (!this.reduced) {
+      this.punchTimeline?.kill();
+      this.punchTimeline = gsap.timeline();
+
+      const localHit = this.mesh.worldToLocal(hit.point.clone()).normalize();
+      const nx = Math.abs(localHit.x),
+        ny = Math.abs(localHit.y),
+        nz = Math.abs(localHit.z);
+
+      // Squash along normal axis, stretch outward along perpendicular axes (volume conservation)
+      const punchX = THREE.MathUtils.lerp(1.24, 0.72, nx);
+      const punchY = THREE.MathUtils.lerp(1.24, 0.72, ny);
+      const punchZ = THREE.MathUtils.lerp(1.24, 0.72, nz);
+
+      // Rebound overshoot
+      const reboundX = THREE.MathUtils.lerp(0.92, 1.16, nx);
+      const reboundY = THREE.MathUtils.lerp(0.92, 1.16, ny);
+      const reboundZ = THREE.MathUtils.lerp(0.92, 1.16, nz);
+
+      this.punchTimeline
+        .to(this.punchScale, {
+          x: punchX,
+          y: punchY,
+          z: punchZ,
+          duration: 0.08,
+          ease: "power2.out",
+        })
+        .to(this.punchScale, {
+          x: reboundX,
+          y: reboundY,
+          z: reboundZ,
+          duration: 0.14,
+          ease: "power1.inOut",
+        })
+        .to(this.punchScale, {
+          x: 1,
+          y: 1,
+          z: 1,
+          duration: 0.75,
+          ease: "elastic.out(1.3, 0.26)",
+        });
+
+      // Rotational torque impulse wobble
+      const torqueX = (Math.random() - 0.5) * 0.28 * strength;
+      const torqueZ = (Math.random() - 0.5) * 0.28 * strength;
+      gsap.to(this.mesh.rotation, {
+        x: `+=${torqueX}`,
+        z: `+=${torqueZ}`,
+        duration: 0.12,
+        ease: "power2.out",
+        onComplete: () => {
+          gsap.to(this.mesh.rotation, {
+            x: this.config?.rotation ? this.config.rotation[0] : 0,
+            z: this.config?.rotation ? this.config.rotation[2] : 0,
+            duration: 0.65,
+            ease: "elastic.out(1.2, 0.3)",
+          });
+        },
+      });
+    }
 
     let normal = null;
     if (hit.face?.normal) {
@@ -195,7 +269,11 @@ export class LiquidBlob {
   }
 
   currentSticker() {
-    return this.stickerField.target?.id;
+    return (
+      this.stickerField?.target?.id ||
+      this.stickerField?.pickRandomAvailable()?.id ||
+      Object.keys(stickerLibrary)[0]
+    );
   }
 
   preview(hit) {
@@ -207,16 +285,46 @@ export class LiquidBlob {
   }
 
   async addSticker(id, hit) {
-    if (!stickerLibrary[id] || !hit || !this.config) return false;
-    const target = this.stickerField.target;
-    if (target?.id !== id) return false;
+    if (!hit || !this.config) return false;
+    let stickerId = id;
+    if (!stickerId || !stickerLibrary[stickerId]) {
+      stickerId = this.currentSticker();
+    }
+    if (!stickerLibrary[stickerId]) return false;
+
+    // Ensure artwork is loaded
+    await this.surfaceStickers.load(stickerId).catch(() => {});
+
     const { center, tangent } = this.surfaceFrame(hit);
-    // Reserve the exact highlighted record synchronously, even during rapid input.
-    const attached = await this.stickerField.fly(target, center, tangent);
+    let target = this.stickerField?.target;
+    let attached = null;
+
+    if (target && target.id === stickerId && this.stickerField?.visible) {
+      attached = await this.stickerField.fly(target, center, tangent);
+    } else {
+      // Direct add to 3D surface (reliable for mobile & touch)
+      const index = this.surfaceStickers.add(
+        stickerId,
+        center,
+        tangent,
+        this.reduced,
+      );
+      attached = { id: stickerId, index, center, tangent };
+      if (this.stickerField) {
+        this.stickerField.target = null;
+        const next = this.stickerField.pickRandomAvailable();
+        if (next) {
+          this.stickerField.target = next;
+          this.stickerField.setState(next, "TARGETED");
+        }
+      }
+    }
+
     if (!attached || this.destroyed) return false;
-    this.impact({ point: this.mesh.localToWorld(center.clone()) }, 0.85);
+    soundFX.stickerPop();
+    this.triggerImpact(hit, 1.35);
     this.stickers.push({
-      id,
+      id: stickerId,
       center,
       tangent,
       index: attached.index,
@@ -234,11 +342,11 @@ export class LiquidBlob {
     this.time += this.reduced ? 0 : delta;
     for (let remaining = Math.min(delta, 0.1); remaining > 0; ) {
       const dt = Math.min(remaining, 1 / 120);
-      this.velocity += (-42 * this.spring - 5.2 * this.velocity) * dt;
+      this.velocity += (-52 * this.spring - 5.6 * this.velocity) * dt;
       this.spring = THREE.MathUtils.clamp(
         this.spring + this.velocity * dt,
-        -0.16,
-        0.16,
+        -0.38,
+        0.38,
       );
       remaining -= dt;
     }
@@ -273,7 +381,11 @@ export class LiquidBlob {
       .set(x * halfHeight * camera.aspect, y * halfHeight, -distance)
       .applyMatrix4(camera.matrixWorld);
     this.group.quaternion.copy(camera.quaternion);
-    this.group.scale.setScalar(scale);
+    this.group.scale.set(
+      scale * this.punchScale.x,
+      scale * this.punchScale.y,
+      scale * this.punchScale.z,
+    );
     this.mesh.rotation.y += this.reduced
       ? 0
       : delta * this.config.rotationSpeed;
@@ -309,6 +421,7 @@ export class LiquidBlob {
   destroy() {
     this.destroyed = true;
     this.hide(true);
+    this.punchTimeline?.kill();
     gsap.killTweensOf(this.reveal);
     this.clickStarBurst.destroy();
     this.stickerField.destroy();

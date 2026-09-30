@@ -98,7 +98,11 @@ export function mountDestinationHero(root, destination, controller) {
   describe();
   listen(window, "routeChanged", describe);
   const attach = async (hit) => {
-    const id = controller.currentSticker();
+    let id = controller.currentSticker();
+    if (!id || !stickerLibrary[id]) {
+      controller.targetSticker(0, 0);
+      id = controller.currentSticker() || Object.keys(stickerLibrary)[0];
+    }
     try {
       const pending = controller.attachSticker(id, hit);
       describe();
@@ -106,8 +110,10 @@ export function mountDestinationHero(root, destination, controller) {
         const nextId = controller.currentSticker();
         updateCursorPreview(nextId, hover.x, hover.y);
       }
-      if ((await pending) && alive)
-        status.textContent = `${stickerLibrary[id].label} attached.`;
+      if ((await pending) && alive) {
+        const label = stickerLibrary[id]?.label || "Artwork";
+        status.textContent = `${label} attached.`;
+      }
     } catch {
       if (alive) status.textContent = "Artwork could not load. Try again.";
     }
@@ -117,7 +123,7 @@ export function mountDestinationHero(root, destination, controller) {
     const center = controller.ballCenter();
     const hit = center && controller.hitBall(center.x, center.y);
     if (hit) {
-      controller.triggerClickImpact(hit);
+      controller.triggerClickImpact(hit, 1.3);
       controller.targetSticker(center.x, center.y);
       attach(hit);
     }
@@ -159,15 +165,14 @@ export function mountDestinationHero(root, destination, controller) {
         !start ||
         event.pointerId !== start.id ||
         blocked(event.target) ||
-        Math.hypot(event.clientX - start.x, event.clientY - start.y) > 10 ||
-        Math.abs(scrollY - start.scroll) > 8
+        Math.hypot(event.clientX - start.x, event.clientY - start.y) > 16 ||
+        Math.abs(scrollY - start.scroll) > 12
       )
         return;
       const hit = controller.hitBall(event.clientX, event.clientY);
       if (hit) {
-        controller.triggerClickImpact(hit);
-        if (!controller.currentSticker())
-          controller.targetSticker(event.clientX, event.clientY);
+        controller.triggerClickImpact(hit, 1.3);
+        controller.targetSticker(event.clientX, event.clientY);
         attach(hit);
       }
     },

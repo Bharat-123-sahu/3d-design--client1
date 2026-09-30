@@ -223,17 +223,17 @@ export class ElectricThunderEffect {
     this.branchCount = this.reduceMotion ? 3 : this.isMobile ? 5 : 9;
 
     this.layers = [
-      this.createRibbonLayer("#ffffff", 0.98, 0.024, 0.04),
-      this.createRibbonLayer("#ff1a35", 0.85, 0.075, 0.09),
-      this.createRibbonLayer("#d80018", 0.58, 0.22, 0.18),
+      this.createRibbonLayer("#ffffff", 0.98, 0.032, 0.04),
+      this.createRibbonLayer("#00f0ff", 0.9, 0.095, 0.1),
+      this.createRibbonLayer("#0055ff", 0.65, 0.26, 0.2),
     ];
 
     this.branches = [];
     for (let i = 0; i < this.branchCount; i += 1) {
       const layer = this.createRibbonLayer(
-        i % 2 ? "#ff3348" : "#ff0520",
-        0.72,
-        0.038,
+        i % 2 ? "#00e5ff" : "#0066ff",
+        0.78,
+        0.048,
         0.12,
       );
       this.branches.push({
@@ -246,7 +246,7 @@ export class ElectricThunderEffect {
 
     this.sparkField = this.createSparks();
     this.impactGlow = this.createImpactGlow();
-    this.light = new THREE.PointLight("#ff1229", 0, 14, 1.5);
+    this.light = new THREE.PointLight("#00d4ff", 0, 16, 1.4);
     this.light.position.set(0, 0.1, 2.2);
     this.scene.add(this.light);
 
@@ -302,7 +302,7 @@ export class ElectricThunderEffect {
         uTime: { value: 0 },
         uBurst: { value: 0 },
         uPixelRatio: { value: getViewportProfile().dpr },
-        uColor: { value: new THREE.Color("#ff1830") },
+        uColor: { value: new THREE.Color("#00f0ff") },
         uOpacity: { value: 0.06 },
       },
       transparent: true,
@@ -322,7 +322,7 @@ export class ElectricThunderEffect {
       vertexShader: glowVertex,
       fragmentShader: glowFragment,
       uniforms: {
-        uColor: { value: new THREE.Color("#ff132f") },
+        uColor: { value: new THREE.Color("#0066ff") },
         uOpacity: { value: 0 },
         uTime: { value: 0 },
       },

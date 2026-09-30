@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import { INTRO_STATES } from "../effects/ElectricThunderEffect.js";
+import { soundFX } from "../effects/SoundFX.js";
 
 export class ThunderIntro {
   constructor({
@@ -54,11 +55,19 @@ export class ThunderIntro {
         <span></span><span></span><span></span><span></span><span></span>
       </div>
       <div class="thunder-intro__copy">
-        <h1 class="thunder-intro__title" aria-label="Enter the digital world">
-          <span class="thunder-intro__line">ENTER</span>
-          <span class="thunder-intro__line">THE</span>
-          <span class="thunder-intro__line">DIGITAL</span>
-          <span class="thunder-intro__line">WORLD</span>
+        <h1 class="thunder-intro__title roman-typography" aria-label="Enter the digital world">
+          <span class="thunder-intro__line">
+            <span class="thunder-intro__char">E</span><span class="thunder-intro__char">N</span><span class="thunder-intro__char">T</span><span class="thunder-intro__char">E</span><span class="thunder-intro__char">R</span>
+          </span>
+          <span class="thunder-intro__line">
+            <span class="thunder-intro__char">T</span><span class="thunder-intro__char">H</span><span class="thunder-intro__char">E</span>
+          </span>
+          <span class="thunder-intro__line">
+            <span class="thunder-intro__char">D</span><span class="thunder-intro__char">I</span><span class="thunder-intro__char">G</span><span class="thunder-intro__char">I</span><span class="thunder-intro__char">T</span><span class="thunder-intro__char">A</span><span class="thunder-intro__char">L</span>
+          </span>
+          <span class="thunder-intro__line">
+            <span class="thunder-intro__char">W</span><span class="thunder-intro__char">O</span><span class="thunder-intro__char">R</span><span class="thunder-intro__char">L</span><span class="thunder-intro__char">D</span>
+          </span>
         </h1>
         <button class="thunder-intro__start magnetic" type="button" data-intro-start data-cursor="start">
           <span>START</span>
@@ -67,6 +76,7 @@ export class ThunderIntro {
       <div class="thunder-intro__veil" aria-hidden="true"></div>
     `;
     document.body.appendChild(overlay);
+    this.chars = [...overlay.querySelectorAll(".thunder-intro__char")];
     return overlay;
   }
 
@@ -106,7 +116,13 @@ export class ThunderIntro {
     this.timeline?.kill();
     this.timeline = gsap.timeline();
 
-    gsap.set(this.titleLines, { autoAlpha: 0, y: 40, filter: "blur(10px)" });
+    gsap.set(this.chars, {
+      autoAlpha: 0,
+      y: 32,
+      filter: "blur(10px)",
+      scale: 0.92,
+    });
+    gsap.set(this.titleLines, { autoAlpha: 1 });
     gsap.set(this.button, { autoAlpha: 0, y: 20, scale: 0.92 });
 
     this.timeline
@@ -144,14 +160,15 @@ export class ThunderIntro {
       )
       .call(() => this.revealWorld(), null, "<")
       .to(
-        this.titleLines,
+        this.chars,
         {
           autoAlpha: 1,
           y: 0,
+          scale: 1,
           filter: "blur(0px)",
           duration: this.reduceMotion ? 0.35 : 0.85,
-          stagger: this.reduceMotion ? 0.03 : 0.08,
-          ease: "power3.out",
+          stagger: this.reduceMotion ? 0.02 : 0.045,
+          ease: "power2.out",
         },
         ">-0.2",
       )
@@ -224,6 +241,7 @@ export class ThunderIntro {
 
   handleStart() {
     if (this.state !== INTRO_STATES.READY || this.isComplete) return;
+    soundFX.thunderZap();
     const worldExit = this.threeScene?.introEffect?.startExit?.();
     this.setState(INTRO_STATES.STARTING);
 
@@ -339,15 +357,15 @@ export class ThunderIntro {
       const h = window.innerHeight;
       this.ctx.clearRect(0, 0, w, h);
 
-      // Flash background slightly on lightning strike
+      // Flash background with Dragon Ball Super electric blue ki on lightning strike
       if (this.ambientFlash > 0.01) {
-        this.ctx.fillStyle = `rgba(255, 15, 35, ${this.ambientFlash * 0.12})`;
+        this.ctx.fillStyle = `rgba(0, 190, 255, ${this.ambientFlash * 0.16})`;
         this.ctx.fillRect(0, 0, w, h);
         this.ambientFlash *= 0.88;
       }
 
       // In READY state or LIGHTNING_REVEAL, continuously generate electric bolts
-      const spawnInterval = this.state === INTRO_STATES.READY ? 75 : 140;
+      const spawnInterval = this.state === INTRO_STATES.READY ? 70 : 130;
       if (
         (this.state === INTRO_STATES.READY ||
           this.state === INTRO_STATES.LIGHTNING_REVEAL) &&
@@ -363,12 +381,12 @@ export class ThunderIntro {
         for (let i = 0; i < count; i++) {
           this.spawnLightningBolt(w, h);
         }
-        if (Math.random() < 0.28) this.ambientFlash = 0.85;
+        if (Math.random() < 0.32) this.ambientFlash = 0.88;
       }
 
       // Update and draw existing bolts
       this.bolts = this.bolts.filter((bolt) => {
-        bolt.life -= 0.055;
+        bolt.life -= 0.052;
         if (bolt.life <= 0) return false;
 
         this.drawLightningBolt(bolt);
@@ -388,7 +406,7 @@ export class ThunderIntro {
     if (burst) {
       sx = targetX;
       sy = targetY;
-      const dist = Math.max(w, h) * (0.4 + Math.random() * 0.5);
+      const dist = Math.max(w, h) * (0.42 + Math.random() * 0.55);
       ex = sx + Math.cos(angle) * dist;
       ey = sy + Math.sin(angle) * dist;
     } else {
@@ -416,6 +434,7 @@ export class ThunderIntro {
     }
 
     const segments = [];
+    const sparks = [];
     const buildBranch = (x1, y1, x2, y2, depth) => {
       if (depth <= 0) {
         segments.push({ x1, y1, x2, y2 });
@@ -428,40 +447,54 @@ export class ThunderIntro {
       const len = Math.hypot(dx, dy) || 1;
       const nx = -dy / len;
       const ny = dx / len;
-      const displacement = (Math.random() - 0.5) * len * 0.42;
+      // Bold cartoon/anime zig-zag displacement (Dragon Ball Super sharp angles)
+      const displacement = (Math.random() - 0.5) * len * 0.55;
       const px = midX + nx * displacement;
       const py = midY + ny * displacement;
+
+      // Add anime ki spark at sharp corners
+      if (depth >= 2 && Math.random() < 0.4) {
+        sparks.push({
+          x: px,
+          y: py,
+          size: 3 + Math.random() * 4,
+          rot: Math.random() * Math.PI,
+        });
+      }
 
       buildBranch(x1, y1, px, py, depth - 1);
       buildBranch(px, py, x2, y2, depth - 1);
 
-      if (Math.random() < 0.32 && depth >= 2) {
-        const theta = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.1;
-        const bLen = len * 0.45;
+      if (Math.random() < 0.35 && depth >= 2) {
+        const theta = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.35;
+        const bLen = len * 0.52;
         const bx = px + Math.cos(theta) * bLen;
         const by = py + Math.sin(theta) * bLen;
         buildBranch(px, py, bx, by, depth - 2);
       }
     };
 
-    buildBranch(sx, sy, ex, ey, 5);
-    this.bolts.push({ segments, life: 1.0, maxLife: 1.0 });
+    buildBranch(sx, sy, ex, ey, 4);
+    const thickness = burst ? 1.55 : 1.1 + Math.random() * 0.65;
+    this.bolts.push({ segments, sparks, thickness, life: 1.0, maxLife: 1.0 });
   }
 
   drawLightningBolt(bolt) {
     if (!this.ctx) return;
     const alpha = Math.min(1.0, bolt.life * 1.5);
     const ctx = this.ctx;
+    const thickness = bolt.thickness || 1.2;
 
     ctx.save();
     ctx.lineCap = "round";
-    ctx.lineJoin = "round";
+    ctx.lineJoin = "miter";
+    ctx.miterLimit = 3;
 
-    // Pass 1: Neon Crimson Wide Aura Glow
-    ctx.shadowBlur = 26;
-    ctx.shadowColor = "#ff0022";
-    ctx.strokeStyle = `rgba(255, 10, 45, ${alpha * 0.55})`;
-    ctx.lineWidth = 6;
+    // Pass 1: Dragon Ball Super Deep Blue Ki Aura (thick stylized outer glow)
+    ctx.shadowBlur = 32;
+    ctx.shadowColor = "#0055ff";
+    ctx.strokeStyle = `rgba(0, 95, 255, ${alpha * 0.75})`;
+    ctx.lineWidth = Math.max(12, 19 * thickness);
     ctx.beginPath();
     for (const s of bolt.segments) {
       ctx.moveTo(s.x1, s.y1);
@@ -469,19 +502,39 @@ export class ThunderIntro {
     }
     ctx.stroke();
 
-    // Pass 2: Bright Red Plasma Core
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = "#ff2244";
-    ctx.strokeStyle = `rgba(255, 60, 85, ${alpha * 0.85})`;
-    ctx.lineWidth = 2.4;
+    // Pass 2: Electric Cyan Super Saiyan Blue Plasma Core
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = "#00f0ff";
+    ctx.strokeStyle = `rgba(0, 240, 255, ${alpha * 0.95})`;
+    ctx.lineWidth = Math.max(6, 8.5 * thickness);
     ctx.stroke();
 
-    // Pass 3: Hot White Core Center
-    ctx.shadowBlur = 4;
+    // Pass 3: Searing Pure White Hot Core Center
+    ctx.shadowBlur = 6;
     ctx.shadowColor = "#ffffff";
-    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
-    ctx.lineWidth = 1.0;
+    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 1.0})`;
+    ctx.lineWidth = Math.max(2.6, 3.8 * thickness);
     ctx.stroke();
+
+    // Pass 4: Anime Diamond Ki Sparks along bolt nodes
+    if (bolt.sparks && bolt.sparks.length) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = "#00f0ff";
+      for (const sp of bolt.sparks) {
+        ctx.save();
+        ctx.translate(sp.x, sp.y);
+        ctx.rotate(sp.rot);
+        ctx.beginPath();
+        ctx.moveTo(0, -sp.size);
+        ctx.lineTo(sp.size * 0.6, 0);
+        ctx.lineTo(0, sp.size);
+        ctx.lineTo(-sp.size * 0.6, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+    }
 
     ctx.restore();
   }

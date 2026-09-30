@@ -806,10 +806,30 @@ export class WorldScene {
       if (!this.isActive) return;
       const hit = this._pickDestination(event);
       const nodeId = hit?.object?.userData?.navNode;
-      if (!nodeId) return;
+      if (nodeId) {
+        event.preventDefault();
+        this.onDestinationSelect?.(nodeId);
+        return;
+      }
 
-      event.preventDefault();
-      this.onDestinationSelect?.(nodeId);
+      // Check if user tapped/clicked Pip character
+      const allHits = this.raycaster.intersectObjects(
+        this.scene.children,
+        true,
+      );
+      const pipHit = allHits.find((h) => {
+        let curr = h.object;
+        while (curr) {
+          if (curr.name === "PipOriginalMouse" || curr.userData?.isCharacter)
+            return true;
+          curr = curr.parent;
+        }
+        return false;
+      });
+      if (pipHit) {
+        event.preventDefault();
+        window.dispatchEvent(new CustomEvent("pipClicked"));
+      }
     };
 
     this.container.addEventListener("pointermove", this._handlePointerMove);
@@ -1046,15 +1066,9 @@ export class WorldScene {
   }
 
   handleResize(profile = getViewportProfile()) {
-    const isMobile =
-      (profile.width || window.innerWidth) <= 768 ||
-      (profile.aspect || window.innerWidth / window.innerHeight) < 1.0;
-    const aspect =
-      profile.aspect || window.innerWidth / Math.max(1, window.innerHeight);
-    const mobileScale = isMobile
-      ? Math.min(1.0, Math.max(0.65, aspect * 1.45))
-      : 1.0;
-    this.worldGroup.scale.setScalar(mobileScale);
+    // Preserve full 1.0 world scale across mobile and desktop so destinations have
+    // spacious distance and travel journeys feel substantial and clear.
+    this.worldGroup.scale.setScalar(1.0);
   }
 
   destroy() {

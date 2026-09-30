@@ -227,7 +227,11 @@ export class CharacterNavigationManager {
     } else if (this.isMoving) {
       this.cameraLook.copy(this.model.root.position);
       this.cameraLook.y += 0.6;
-      this.cameraTarget.copy(this.cameraLook).add(this.followOffset);
+      const isMobile = this.profile.width <= 768 || this.camera.aspect < 1.0;
+      const chaseOffset = isMobile
+        ? new THREE.Vector3(0, 1.8, 3.2)
+        : this.followOffset;
+      this.cameraTarget.copy(this.cameraLook).add(chaseOffset);
     } else {
       this.cameraLook.copy(node.cameraLookAt);
       this.cameraTarget.copy(node.cameraPosition);
@@ -235,8 +239,7 @@ export class CharacterNavigationManager {
     const isMobile = this.profile.width <= 768 || this.camera.aspect < 1.0;
     let fit;
     if (isMobile) {
-      const aspectFactor = Math.max(0.35, Math.min(1.0, this.camera.aspect));
-      fit = Math.max(1.35, 1.25 / aspectFactor);
+      fit = 1.15;
     } else {
       fit = Math.max(1, this.profile.cameraDistance * 0.8);
     }
